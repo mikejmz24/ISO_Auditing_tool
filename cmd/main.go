@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/a-h/templ"
-	"iso_auditing_tool/main/views/components"
+	"iso_auditing_tool/main/views"
 	"net/http"
 )
 
 func main() {
-	component := components.Greeting()
+	component := views.LandingPage()
 	http.Handle("/", templ.Handler(component))
 	fmt.Printf("Listening on :3000")
 	err := http.ListenAndServe(":3000", nil)

@@ -1,0 +1,17 @@
+package views
+
+import "iso_auditing_tool/main/views/components"
+
+templ LandingPage() {
+	<!DOCTYPE html>
+	<html lang="en">
+		@components.Header()
+		<body>
+			<main class="minh-screen w-full">
+				<h3 class="min-h-screen w-full">Go App</h3>
+				@components.Greeting()
+			</main>
+		</body>
+		@components.Footer()
+	</html>
+}
