@@ -3,15 +3,12 @@ package web
 templ Base() {
 	<!DOCTYPE html>
 	<html lang="en">
-		<head>
-			<meta charset="utf-8"/>
-			<title>Go Blueprint Hello</title>
-			<script src="assets/js/htmx.min.js"></script>
-		</head>
+		@Header()
 		<body>
-			<main>
-				{ children... }
+			<main class="min-h-screen w-full">
+				<h3 class="text-base lg:text-lg font-medium text-center">ISO Auditing Tool</h3>
 			</main>
 		</body>
+		@Footer()
 	</html>
 }

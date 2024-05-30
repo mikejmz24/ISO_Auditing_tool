@@ -22,6 +22,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 		templ.Handler(web.HelloForm()).ServeHTTP(c.Writer, c.Request)
 	})
 
+	r.GET("/landing", func(c *gin.Context) {
+		templ.Handler(web.Base()).ServeHTTP(c.Writer, c.Request)
+	})
+
 	r.POST("/hello", func(c *gin.Context) {
 		web.HelloWebHandler(c.Writer, c.Request)
 	})
