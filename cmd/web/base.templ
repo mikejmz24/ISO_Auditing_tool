@@ -1,14 +1,16 @@
 package web
 
+import "ISO_Auditing_Tool/cmd/web/components"
+
 templ Base() {
 	<!DOCTYPE html>
 	<html lang="en">
-		@Header()
+		@components.Header()
 		<body>
 			<main class="min-h-screen w-full">
 				<h3 class="text-base lg:text-lg font-medium text-center">ISO Auditing Tool</h3>
 			</main>
 		</body>
-		@Footer()
+		@components.Footer()
 	</html>
 }
