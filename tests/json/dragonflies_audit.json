@@ -1,0 +1,66 @@
+{
+  "id": 1,
+  "datetime": "2009-11-10 23:00:00 +0000 UTC m=+0.000000001",
+  "name": "Dragonflies GAP Analysis",
+  "team": "Dragonflies",
+  "leadAuditor": {
+    "id": "joshua.calderon@thermofisher.com",
+    "name": "Joshua Calderon"
+  },
+  "audit": [
+    {
+      "clause": {
+        "id": 1,
+        "name": "Leadership",
+        "section": "Organizational roles, responsibilities and authorities",
+        "question": "What roles and responsibilities are part of your team?"
+      },
+      "evidence": {
+        "id": 1,
+        "expected": "Clarity on roles and responsibilities",
+        "provided": "https://confluence.amer.thermo.com/display/INTGPT/Dragonflies+-+SDP+Addendum"
+      },
+      "comments": [
+        {
+          "id": 1,
+          "user": {
+            "id": "joshua.calderon@thermofisher.com",
+            "name": "Joshua Calderon"
+          },
+          "text": "is described in the main page."
+        },
+        {
+          "id": 2,
+          "user": {
+            "id": "joshua.calderon@thermofisher.com",
+            "name": "Joshua Calderon"
+          },
+          "text": "Observation, agregar todos los roles con sus responsabilidades, en su main space, debe hacer match con su sdp addendum"
+        }
+      ]
+    },
+    {
+      "clause": {
+        "id": 2,
+        "name": "Leadership",
+        "section": "Organizational roles, responsibilities and authorities",
+        "question": "When the team is unable to agree on a a decision, who has the authority to make the final decision? Show evidence",
+      },
+      "evidence": {
+        "id": 2,
+        "expected": "Documentation of these roles and responsibilities in the team page, must be up to date",
+        "provided": "",
+      },
+      "comments": [
+        {
+          "id": 3,
+          "user": {
+            "id": "joshua.calderon@thermofisher.com",
+            "name": "Joshua Calderon"
+          },
+          "text": "depende de las task: pueden tomar decisiones y si esta documentado"
+        }
+      ]
+    }
+  ]
+}
