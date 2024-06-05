@@ -22,6 +22,8 @@ type Service interface {
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
+	DB() *sql.DB
+	// GetAllClauses() ([]types.Clause, error)k
 }
 
 type service struct {
@@ -43,6 +45,11 @@ func New() Service {
 		return dbInstance
 	}
 
+	// Ensure all necessary environment variables are set
+	if dbname == "" || password == "" || username == "" || port == "" || host == "" {
+		log.Fatal("One or more required environment variables (DB_DATABASE, DB_PASSWORD, DB_USERNAME, DB_PORT, DB_HOST) are not set")
+	}
+
 	// Opening a driver typically will not attempt to connect to the database.
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname))
 	if err != nil {
@@ -53,6 +60,11 @@ func New() Service {
 	db.SetConnMaxLifetime(0)
 	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(50)
+
+	// Verify the connection
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 
 	dbInstance = &service{
 		db: db,
@@ -118,3 +130,30 @@ func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
 }
+
+func (s *service) DB() *sql.DB {
+	return s.db
+}
+
+// func (s *service) GetAllClauses() ([]types.Clause, error) {
+// 	query := "SELECT id, name, section FROM clause_section;"
+// 	rows, err := s.db.Query(query)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+//
+// 	clauses := []types.Clause{}
+// 	for rows.Next() {
+// 		clause := types.Clause{}
+// 		err := rows.Scan(&clause.ID, &clause.Name, &clause.Section)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		clauses = append(clauses, clause)
+// 	}
+// 	if err := rows.Err(); err != nil {
+// 		return nil, err
+// 	}
+// 	return clauses, nil
+// }
