@@ -35,6 +35,12 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 		web.HelloWebHandler(c.Writer, c.Request)
 	})
 
+	api := r.Group("/api")
+	{
+		api.GET("/clauses", s.clauseController.GetAllClauses)
+	}
+	// api.GET("/clauses", s.clauseController.GetAllClauses)
+
 	r.GET("/clauses", s.clauseController.GetAllClauses)
 
 	return r
