@@ -5,39 +5,50 @@ import (
 	"database/sql"
 )
 
-type ClauseRepository interface {
+type Repository interface {
 	GetAllClauses() ([]types.Clause, error)
 }
 
-type clauseRepository struct {
+type repository struct {
 	db *sql.DB
 }
 
-func NewClauseRepository(db *sql.DB) ClauseRepository {
-	return &clauseRepository{
+func NewClauseRepository(db *sql.DB) Repository {
+	return &repository{
 		db: db,
 	}
 }
 
-func (r *clauseRepository) GetAllClauses() ([]types.Clause, error) {
+func (r *repository) GetAllClauses() ([]types.Clause, error) {
 	query := "SELECT id, name, section FROM clause_section;"
-	rows, err := r.db.Query(query)
+	return executeQuery(r.db, query, scanClause)
+}
+
+// executeQuery is a generic function that executes a query and scans the results
+func executeQuery[T any](db *sql.DB, query string, scanFunc func(*sql.Rows) (T, error)) ([]T, error) {
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	clauses := []types.Clause{}
+	var results []T
 	for rows.Next() {
-		clause := types.Clause{}
-		err := rows.Scan(&clause.ID, &clause.Name, &clause.Section)
+		item, err := scanFunc(rows)
 		if err != nil {
 			return nil, err
 		}
-		clauses = append(clauses, clause)
+		results = append(results, item)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return clauses, nil
+	return results, nil
+}
+
+// scanClause scans a single row into a Clause struct
+func scanClause(rows *sql.Rows) (types.Clause, error) {
+	var clause types.Clause
+	err := rows.Scan(&clause.ID, &clause.Name, &clause.Section)
+	return clause, err
 }

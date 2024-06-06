@@ -7,10 +7,10 @@ import (
 )
 
 type ClauseController struct {
-	Repo repositories.ClauseRepository
+	Repo repositories.Repository
 }
 
-func NewClauseController(repo repositories.ClauseRepository) *ClauseController {
+func NewClauseController(repo repositories.Repository) *ClauseController {
 	return &ClauseController{
 		Repo: repo,
 	}
