@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"ISO_Auditing_Tool/internal/server"
+	"ISO_Auditing_Tool/cmd/internal/server"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"

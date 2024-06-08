@@ -5,9 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	// "ISO_Auditing_Tool/cmd/api/types"
-	"ISO_Auditing_Tool/cmd/web"
-	"ISO_Auditing_Tool/internal/database"
+	"ISO_Auditing_Tool/cmd/internal/database"
+	"ISO_Auditing_Tool/templates"
 	"database/sql"
 
 	"github.com/a-h/templ"
@@ -24,23 +23,21 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	r.Static("/assets", "./cmd/web/assets")
 
 	r.GET("/web", func(c *gin.Context) {
-		templ.Handler(web.HelloForm()).ServeHTTP(c.Writer, c.Request)
+		templ.Handler(templates.HelloForm()).ServeHTTP(c.Writer, c.Request)
 	})
 
 	r.GET("/landing", func(c *gin.Context) {
-		templ.Handler(web.Base()).ServeHTTP(c.Writer, c.Request)
+		templ.Handler(templates.Base()).ServeHTTP(c.Writer, c.Request)
 	})
 
 	r.POST("/hello", func(c *gin.Context) {
-		web.HelloWebHandler(c.Writer, c.Request)
+		templates.HelloWebHandler(c.Writer, c.Request)
 	})
 
 	api := r.Group("/api")
 	{
-		// api.GET("/clauses", s.clauseController.GetAllClauses)
 		api.GET("/clauses", s.apiClauseController.GetAllClauses)
 	}
-	// api.GET("/clauses", s.clauseController.GetAllClauses)
 
 	r.GET("/clauses", s.htmlClauseController.GetAllClauses)
 

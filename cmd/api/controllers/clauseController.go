@@ -1,22 +1,22 @@
-package controllers
+package api
 
 import (
-	"ISO_Auditing_Tool/cmd/api/repositories"
+	"ISO_Auditing_Tool/pkg/repositories"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type ClauseController struct {
+type ApiClauseController struct {
 	Repo repositories.Repository
 }
 
-func NewClauseController(repo repositories.Repository) *ClauseController {
-	return &ClauseController{
+func NewApiClauseController(repo repositories.Repository) *ApiClauseController {
+	return &ApiClauseController{
 		Repo: repo,
 	}
 }
 
-func (cc *ClauseController) GetAllClauses(c *gin.Context) {
+func (cc *ApiClauseController) GetAllClauses(c *gin.Context) {
 	clauses, err := cc.Repo.GetAllClauses()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

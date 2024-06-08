@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"ISO_Auditing_Tool/cmd/api/types"
+	"ISO_Auditing_Tool/pkg/types"
 	"database/sql"
 )
 

@@ -10,32 +10,28 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	// "ISO_Auditing_Tool/cmd/api/controllers"
-	"ISO_Auditing_Tool/cmd/api/controllers/api"
-	"ISO_Auditing_Tool/cmd/api/controllers/html"
-	"ISO_Auditing_Tool/cmd/api/repositories"
-	"ISO_Auditing_Tool/internal/database"
+	apiControllers "ISO_Auditing_Tool/cmd/api/controllers"
+	"ISO_Auditing_Tool/cmd/internal/database"
+	webControllers "ISO_Auditing_Tool/cmd/web/controllers"
+	"ISO_Auditing_Tool/pkg/repositories"
 )
 
 type Server struct {
-	port int
-	db   database.Service
-	// clauseController *controllers.ClauseController
-	apiClauseController  *api.ApiClauseController
-	htmlClauseController *html.HtmlClauseController
+	port                 int
+	db                   database.Service
+	apiClauseController  *apiControllers.ApiClauseController
+	htmlClauseController *webControllers.HtmlClauseController
 }
 
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
 	clauseRepo := repositories.NewClauseRepository(db.DB())
-	// clauseController := controllers.NewClauseController(clauseRepo)
-	apiClauseController := api.NewApiClauseController(clauseRepo)
-	htmlClauseController := html.NewHtmlClauseController(clauseRepo)
+	apiClauseController := apiControllers.NewApiClauseController(clauseRepo)
+	htmlClauseController := webControllers.NewHtmlClauseController(clauseRepo)
 	NewServer := &Server{
-		port: port,
-		db:   database.New(),
-		// clauseController: clauseController,
+		port:                 port,
+		db:                   database.New(),
 		apiClauseController:  apiClauseController,
 		htmlClauseController: htmlClauseController,
 	}
