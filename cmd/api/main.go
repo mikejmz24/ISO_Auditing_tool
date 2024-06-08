@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ISO_Auditing_Tool/cmd/internal/server"
+	"ISO_Auditing_Tool/cmd/server"
 	"fmt"
 )
 
