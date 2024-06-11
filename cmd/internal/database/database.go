@@ -134,26 +134,3 @@ func (s *service) Close() error {
 func (s *service) DB() *sql.DB {
 	return s.db
 }
-
-// func (s *service) GetAllClauses() ([]types.Clause, error) {
-// 	query := "SELECT id, name, section FROM clause_section;"
-// 	rows, err := s.db.Query(query)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-//
-// 	clauses := []types.Clause{}
-// 	for rows.Next() {
-// 		clause := types.Clause{}
-// 		err := rows.Scan(&clause.ID, &clause.Name, &clause.Section)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		clauses = append(clauses, clause)
-// 	}
-// 	if err := rows.Err(); err != nil {
-// 		return nil, err
-// 	}
-// 	return clauses, nil
-// }
