@@ -36,9 +36,10 @@ type AuditQuestion struct {
 }
 
 type Clause struct {
-	ID      int    `json:"id"`
-	Name    string `json:"name"`
-	Section string `json:"section"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	// Section string `json:"section"`
+	Sections []string `json:"sections"`
 }
 
 type Comment struct {

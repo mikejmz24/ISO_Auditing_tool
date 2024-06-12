@@ -52,7 +52,8 @@ func (r *repository) GetClauseByID(id int) (types.Clause, error) {
 // CreateClause inserts a new clause into the database
 func (r *repository) CreateClause(clause types.Clause) (int64, error) {
 	query := "INSERT INTO clause_section (name, section) VALUES (?, ?);"
-	result, err := r.db.Exec(query, clause.Name, clause.Section)
+	// result, err := r.db.Exec(query, clause.Name, clause.Section)
+	result, err := r.db.Exec(query, clause.Name, clause.Sections)
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +63,8 @@ func (r *repository) CreateClause(clause types.Clause) (int64, error) {
 // UpdateClause updates an existing clause in the database
 func (r *repository) UpdateClause(clause types.Clause) error {
 	query := "UPDATE clause_section SET name = ?, section = ? WHERE id = ?;"
-	_, err := r.db.Exec(query, clause.Name, clause.Section, clause.ID)
+	// _, err := r.db.Exec(query, clause.Name, clause.Section, clause.ID)
+	_, err := r.db.Exec(query, clause.Name, clause.Sections, clause.ID)
 	return err
 }
 
@@ -98,6 +100,7 @@ func executeQuery[T any](db *sql.DB, query string, scanFunc func(*sql.Rows) (T, 
 // scanClause scans a single row into a Clause struct
 func scanClause(rows *sql.Rows) (types.Clause, error) {
 	var clause types.Clause
-	err := rows.Scan(&clause.ID, &clause.Name, &clause.Section)
+	// err := rows.Scan(&clause.ID, &clause.Name, &clause.Section)
+	err := rows.Scan(&clause.ID, &clause.Name, &clause.Sections)
 	return clause, err
 }

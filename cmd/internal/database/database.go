@@ -15,15 +15,10 @@ import (
 
 // Service represents a service that interacts with a database.
 type Service interface {
-	// Health returns a map of health status information.
-	// The keys and values in the map are service-specific.
 	Health() map[string]string
-
-	// Close terminates the database connection.
-	// It returns an error if the connection cannot be closed.
 	Close() error
 	DB() *sql.DB
-	// GetAllClauses() ([]types.Clause, error)k
+	Migrate() error
 }
 
 type service struct {
@@ -40,28 +35,22 @@ var (
 )
 
 func New() Service {
-	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
 
-	// Ensure all necessary environment variables are set
 	if dbname == "" || password == "" || username == "" || port == "" || host == "" {
 		log.Fatal("One or more required environment variables (DB_DATABASE, DB_PASSWORD, DB_USERNAME, DB_PORT, DB_HOST) are not set")
 	}
 
-	// Opening a driver typically will not attempt to connect to the database.
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname))
 	if err != nil {
-		// This will not be a connection error, but a DSN parse error or
-		// another initialization error.
 		log.Fatal(err)
 	}
 	db.SetConnMaxLifetime(0)
 	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(50)
 
-	// Verify the connection
 	if err := db.Ping(); err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -72,28 +61,23 @@ func New() Service {
 	return dbInstance
 }
 
-// Health checks the health of the database connection by pinging the database.
-// It returns a map with keys indicating various health statistics.
 func (s *service) Health() map[string]string {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
 	stats := make(map[string]string)
 
-	// Ping the database
 	err := s.db.PingContext(ctx)
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
-		log.Fatalf(fmt.Sprintf("db down: %v", err)) // Log the error and terminate the program
+		log.Fatalf(fmt.Sprintf("db down: %v", err))
 		return stats
 	}
 
-	// Database is up, add more statistics
 	stats["status"] = "up"
 	stats["message"] = "It's healthy"
 
-	// Get database stats (like open connections, in use, idle, etc.)
 	dbStats := s.db.Stats()
 	stats["open_connections"] = strconv.Itoa(dbStats.OpenConnections)
 	stats["in_use"] = strconv.Itoa(dbStats.InUse)
@@ -103,8 +87,7 @@ func (s *service) Health() map[string]string {
 	stats["max_idle_closed"] = strconv.FormatInt(dbStats.MaxIdleClosed, 10)
 	stats["max_lifetime_closed"] = strconv.FormatInt(dbStats.MaxLifetimeClosed, 10)
 
-	// Evaluate stats to provide a health message
-	if dbStats.OpenConnections > 40 { // Assuming 50 is the max for this example
+	if dbStats.OpenConnections > 40 {
 		stats["message"] = "The database is experiencing heavy load."
 	}
 	if dbStats.WaitCount > 1000 {
@@ -122,10 +105,6 @@ func (s *service) Health() map[string]string {
 	return stats
 }
 
-// Close closes the database connection.
-// It logs a message indicating the disconnection from the specific database.
-// If the connection is successfully closed, it returns nil.
-// If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
@@ -133,4 +112,86 @@ func (s *service) Close() error {
 
 func (s *service) DB() *sql.DB {
 	return s.db
+}
+
+func (s *service) Migrate() error {
+	queries := []string{
+		`CREATE TABLE IF NOT EXISTS Users (
+			id VARCHAR(255) PRIMARY KEY,
+			name VARCHAR(255) NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS ISO_Standard (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			name VARCHAR(255) NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS Clause (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			iso_standard_id INT NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			FOREIGN KEY (iso_standard_id) REFERENCES ISO_Standard(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Section (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			clause_id INT NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			FOREIGN KEY (clause_id) REFERENCES Clause(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Question (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			section_id INT NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			FOREIGN KEY (section_id) REFERENCES Section(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Evidence (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			expected TEXT NOT NULL
+		);`,
+		`CREATE TABLE IF NOT EXISTS Evidence_Provided (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			evidence_id INT NOT NULL,
+			provided TEXT NOT NULL,
+			FOREIGN KEY (evidence_id) REFERENCES Evidence(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Comment (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			user_id VARCHAR(255) NOT NULL,
+			text TEXT NOT NULL,
+			FOREIGN KEY (user_id) REFERENCES Users(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Audit (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			datetime DATETIME NOT NULL,
+			iso_standard_id INT NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			team VARCHAR(255) NOT NULL,
+			user_id VARCHAR(255) NOT NULL,
+			FOREIGN KEY (iso_standard_id) REFERENCES ISO_Standard(id),
+			FOREIGN KEY (user_id) REFERENCES Users(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Audit_Questions (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			audit_id INT NOT NULL,
+			evidence_provided_id INT,
+			question_id INT NOT NULL,
+			FOREIGN KEY (audit_id) REFERENCES Audit(id),
+			FOREIGN KEY (evidence_provided_id) REFERENCES Evidence_Provided(id),
+			FOREIGN KEY (question_id) REFERENCES Question(id)
+		);`,
+		`CREATE TABLE IF NOT EXISTS Audit_Question_Comments (
+			id INT AUTO_INCREMENT PRIMARY KEY,
+			audit_question_id INT NOT NULL,
+			comment_id INT NOT NULL,
+			FOREIGN KEY (audit_question_id) REFERENCES Audit_Questions(id),
+			FOREIGN KEY (comment_id) REFERENCES Comment(id)
+		);`,
+	}
+
+	for _, query := range queries {
+		if _, err := s.db.Exec(query); err != nil {
+			return fmt.Errorf("failed to execute query: %w", err)
+		}
+	}
+
+	log.Println("Database tables created successfully")
+	return nil
 }
