@@ -40,7 +40,11 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	}
 
 	r.GET("/clauses", s.htmlClauseController.GetAllClauses)
+	r.GET("/clauses/add", func(c *gin.Context) {
+		templ.Handler(templates.AddClause()).ServeHTTP(c.Writer, c.Request)
+	})
 
+	r.POST("/clauses/add", s.htmlClauseController.AddClause)
 	return r
 }
 

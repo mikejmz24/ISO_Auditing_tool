@@ -1,7 +1,6 @@
 package server
 
 import (
-	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
@@ -26,12 +25,20 @@ type Server struct {
 func NewServer() *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
+
+	// Call Migrate method to create tables
+	if err := db.Migrate(); err != nil {
+		fmt.Printf("Failed to migrate database: %v\n", err)
+		os.Exit(1)
+	}
+
 	clauseRepo := repositories.NewClauseRepository(db.DB())
 	apiClauseController := apiControllers.NewApiClauseController(clauseRepo)
 	htmlClauseController := webControllers.NewHtmlClauseController(clauseRepo)
+
 	NewServer := &Server{
 		port:                 port,
-		db:                   database.New(),
+		db:                   db,
 		apiClauseController:  apiClauseController,
 		htmlClauseController: htmlClauseController,
 	}
@@ -39,7 +46,7 @@ func NewServer() *http.Server {
 	// Declare Server config
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      NewServer.RegisterRoutes(&sql.DB{}),
+		Handler:      NewServer.RegisterRoutes(db.DB()),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
