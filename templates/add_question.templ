@@ -1,0 +1,34 @@
+
+package templates
+
+import (
+	"ISO_Auditing_Tool/pkg/types"
+	"ISO_Auditing_Tool/templates/components"
+	"fmt"
+)
+
+templ AddQuestion(sections []types.Section) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@components.Header()
+		<body>
+			<main class="min-h-screen w-full flex items-center justify-center">
+				<section class="border-t border-t-zinc-200 mt-6 px-2 py-4 w-96">
+					<h2 class="text-xl font-bold">Add Question</h2>
+					<form method="POST" action="/questions/add">
+						<label for="section" class="block text-sm font-medium text-gray-700">Section</label>
+						<select name="section_id" id="section" class="mt-1 block w-full" required>
+							for _, section := range sections {
+								<option value={ fmt.Sprintf("%v", section.ID) }>{ section.Name }</option>
+							}
+						</select>
+						<label for="questionText" class="block text-sm font-medium text-gray-700 mt-4">Question Text</label>
+						<input type="text" name="questionText" id="questionText" class="mt-1 block w-full" required/>
+						<button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Add Question</button>
+					</form>
+				</section>
+			</main>
+		</body>
+		@components.Footer()
+	</html>
+}

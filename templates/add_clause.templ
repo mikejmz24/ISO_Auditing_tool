@@ -1,29 +1,29 @@
 package templates
 
 import (
+	"ISO_Auditing_Tool/pkg/types"
+	"fmt"
 	"ISO_Auditing_Tool/templates/components"
 )
 
-templ AddClause() {
+templ AddClause(standards []types.ISOStandard) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@components.Header()
 		<body>
-			<main class="min-h-screen w-full">
-				<h2>Add Clause</h2>
+			<main class="min-h-screen w-full flex items-center justify-center">
 				<section class="border-t border-t-zinc-200 mt-6 px-2 py-4 w-96">
+					<h2 class="text-xl font-bold">Add Clause</h2>
 					<form method="POST" action="/clauses/add">
-						<div class="mb-4">
-							<label for="clauseName" class="block text-sm font-medium text-gray-700">Clause Name</label>
-							<input type="text" id="clauseName" name="clauseName" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required/>
-						</div>
-						<div class="mb-4">
-							<label for="sections" class="block text-sm font-medium text-gray-700">Sections (comma separated)</label>
-							<textarea id="sections" name="sections" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required></textarea>
-						</div>
-						<div class="flex justify-end">
-							<button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Add Clause</button>
-						</div>
+						<label for="iso_standard" class="block text-sm font-medium text-gray-700">ISO Standard</label>
+						<select name="iso_standard_id" id="iso_standard" class="mt-1 block w-full" required>
+							for _, standard := range standards {
+								<option value={ fmt.Sprintf("%v", standard.ID) }>{ standard.Name }</option>
+							}
+						</select>
+						<label for="clauseName" class="block text-sm font-medium text-gray-700 mt-4">Clause Name</label>
+						<input type="text" name="clauseName" id="clauseName" class="mt-1 block w-full" required/>
+						<button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Add Clause</button>
 					</form>
 				</section>
 			</main>

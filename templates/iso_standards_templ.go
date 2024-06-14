@@ -16,7 +16,7 @@ import (
 	"fmt"
 )
 
-func AddClause(standards []types.ISOStandard) templ.Component {
+func ISOStandards(standards []types.ISOStandard) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -37,43 +37,66 @@ func AddClause(standards []types.ISOStandard) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body><main class=\"min-h-screen w-full flex items-center justify-center\"><section class=\"border-t border-t-zinc-200 mt-6 px-2 py-4 w-96\"><h2 class=\"text-xl font-bold\">Add Clause</h2><form method=\"POST\" action=\"/clauses/add\"><label for=\"iso_standard\" class=\"block text-sm font-medium text-gray-700\">ISO Standard</label> <select name=\"iso_standard_id\" id=\"iso_standard\" class=\"mt-1 block w-full\" required>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<body><main class=\"min-h-screen w-full\"><h2>ISO Standards</h2><section class=\"border-t border-t-zinc-200 mt-6 px-2 py-4 w-96\"><ul id=\"standards-list\" class=\"list-none\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, standard := range standards {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<option value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"ml-4 ml-4 border p-2 rounded-lg mb-2\" id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", standard.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/add_clause.templ`, Line: 21, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/iso_standards.templ`, Line: 20, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><p class=\"font-medium text-sm\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(standard.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/add_clause.templ`, Line: 21, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/iso_standards.templ`, Line: 21, Col: 54}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</option>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><ul class=\"list-disc pl-6\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, clause := range standard.Clauses {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"text-sm text-zinc-500 mb-2\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(clause.Name)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/iso_standards.templ`, Line: 26, Col: 24}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</li>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><div class=\"flex gap-4 items-center mt-2\"><a href=\"#\" class=\"flex items-center border py-1 px-2 rounded-lg\"><p class=\"text-sm\">Edit</p></a></div></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select> <label for=\"clauseName\" class=\"block text-sm font-medium text-gray-700 mt-4\">Clause Name</label> <input type=\"text\" name=\"clauseName\" id=\"clauseName\" class=\"mt-1 block w-full\" required> <button type=\"submit\" class=\"mt-4 bg-blue-500 text-white py-2 px-4 rounded\">Add Clause</button></form></section></main></body>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></section></main></body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
