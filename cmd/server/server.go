@@ -16,10 +16,12 @@ import (
 )
 
 type Server struct {
-	port                 int
-	db                   database.Service
-	apiClauseController  *apiControllers.ApiClauseController
-	htmlClauseController *webControllers.HtmlClauseController
+	port                      int
+	db                        database.Service
+	apiIsoStandardController  *apiControllers.ApiIsoStandardController
+	apiClauseController       *apiControllers.ApiClauseController
+	htmlIsoStandardController *webControllers.HtmlIsoStandardController
+	htmlClauseController      *webControllers.HtmlClauseController
 }
 
 func NewServer() *http.Server {
@@ -33,14 +35,20 @@ func NewServer() *http.Server {
 	}
 
 	clauseRepo := repositories.NewClauseRepository(db.DB())
+	apiStandardRepo := repositories.NewIsoStandardRepository(db.DB())
+
 	apiClauseController := apiControllers.NewApiClauseController(clauseRepo)
+	apiIsoStandardController := apiControllers.NewApiIsoStandardController(apiStandardRepo)
 	htmlClauseController := webControllers.NewHtmlClauseController(clauseRepo)
+	htmlIsoStandardController := webControllers.NewHtmlIsoStandardController(apiStandardRepo)
 
 	NewServer := &Server{
-		port:                 port,
-		db:                   db,
-		apiClauseController:  apiClauseController,
-		htmlClauseController: htmlClauseController,
+		port:                      port,
+		db:                        db,
+		apiIsoStandardController:  apiIsoStandardController,
+		apiClauseController:       apiClauseController,
+		htmlIsoStandardController: htmlIsoStandardController,
+		htmlClauseController:      htmlClauseController,
 	}
 
 	// Declare Server config

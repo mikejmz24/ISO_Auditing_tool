@@ -42,11 +42,11 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 		api.PUT("/clauses/:id", s.apiClauseController.UpdateClause)
 		api.DELETE("/clauses/:id", s.apiClauseController.DeleteClause)
 
-		api.GET("/iso_standards", s.apiClauseController.GetAllISOStandards)
-		api.GET("/iso_standards/:id", s.apiClauseController.GetISOStandardByID)
-		api.POST("/iso_standards", s.apiClauseController.CreateISOStandard)
-		api.PUT("/iso_standards/:id", s.apiClauseController.UpdateISOStandard)
-		api.DELETE("/iso_standards/:id", s.apiClauseController.DeleteISOStandard)
+		api.GET("/iso_standards", s.apiIsoStandardController.GetAllISOStandards)
+		api.GET("/iso_standards/:id", s.apiIsoStandardController.GetISOStandardByID)
+		api.POST("/iso_standards", s.apiIsoStandardController.CreateISOStandard)
+		api.PUT("/iso_standards/:id", s.apiIsoStandardController.UpdateISOStandard)
+		api.DELETE("/iso_standards/:id", s.apiIsoStandardController.DeleteISOStandard)
 
 		api.GET("/sections", s.apiClauseController.GetAllSections)
 		api.GET("/sections/:id", s.apiClauseController.GetSectionByID)
@@ -70,12 +70,9 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 		// })
 		html.POST("/clauses/add", s.htmlClauseController.CreateClause)
 
-		html.GET("/iso_standards", s.htmlClauseController.GetAllISOStandards)
-		html.GET("/iso_standards/add", s.htmlClauseController.CreateISOStandard)
-		// html.GET("/iso_standards/add", func(c *gin.Context) {
-		// 	templ.Handler(templates.AddISOStandard()).ServeHTTP(c.Writer, c.Request)
-		// })
-		html.POST("/iso_standards/add", s.htmlClauseController.GetAllISOStandards)
+		html.GET("/iso_standards", s.htmlIsoStandardController.GetAllISOStandards)
+		html.GET("/iso_standards/add", s.htmlIsoStandardController.RenderAddISOStandardForm)
+		html.POST("/iso_standards/add", s.htmlIsoStandardController.CreateISOStandard)
 
 		html.GET("/sections", s.htmlClauseController.GetAllSections)
 		// html.GET("/sections/add", func(c *gin.Context) {

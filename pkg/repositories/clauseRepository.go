@@ -16,13 +16,6 @@ type Repository interface {
 	UpdateClause(clause types.Clause) error
 	DeleteClause(id int) error
 
-	// ISO Standard methods
-	GetAllISOStandards() ([]types.ISOStandard, error)
-	GetISOStandardByID(id int) (types.ISOStandard, error)
-	CreateISOStandard(standard types.ISOStandard) (int64, error)
-	UpdateISOStandard(standard types.ISOStandard) error
-	DeleteISOStandard(id int) error
-
 	// Section methods
 	GetAllSections() ([]types.Section, error)
 	GetSectionByID(id int) (types.Section, error)
@@ -158,52 +151,6 @@ func (r *repository) UpdateClause(clause types.Clause) error {
 
 func (r *repository) DeleteClause(id int) error {
 	query := "DELETE FROM clause WHERE id = ?;"
-	_, err := r.db.Exec(query, id)
-	return err
-}
-
-// ISO Standard methods
-
-func (r *repository) GetAllISOStandards() ([]types.ISOStandard, error) {
-	query := "SELECT id, name FROM iso_standard;"
-	return executeQuery(r.db, query, scanISOStandard)
-}
-
-func (r *repository) GetISOStandardByID(id int) (types.ISOStandard, error) {
-	query := "SELECT id, name FROM iso_standard WHERE id = ?;"
-	rows, err := r.db.Query(query, id)
-	if err != nil {
-		return types.ISOStandard{}, err
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		standard, err := scanISOStandard(rows)
-		if err != nil {
-			return types.ISOStandard{}, err
-		}
-		return standard, nil
-	}
-	return types.ISOStandard{}, errors.New("ISO standard not found")
-}
-
-func (r *repository) CreateISOStandard(standard types.ISOStandard) (int64, error) {
-	query := "INSERT INTO iso_standard (name) VALUES (?);"
-	result, err := r.db.Exec(query, standard.Name)
-	if err != nil {
-		return 0, err
-	}
-	return result.LastInsertId()
-}
-
-func (r *repository) UpdateISOStandard(standard types.ISOStandard) error {
-	query := "UPDATE iso_standard SET name = ? WHERE id = ?;"
-	_, err := r.db.Exec(query, standard.Name, standard.ID)
-	return err
-}
-
-func (r *repository) DeleteISOStandard(id int) error {
-	query := "DELETE FROM iso_standard WHERE id = ?;"
 	_, err := r.db.Exec(query, id)
 	return err
 }
