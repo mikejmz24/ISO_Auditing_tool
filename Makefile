@@ -33,7 +33,11 @@ docker-down:
 # Test the application
 test:
 	@echo "Testing..."
-	@go test ./tests -v
+	@go test ./tests/... -v
+
+# Test short results
+test-short:
+	@go test -v ./tests/... 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN"
 
 # Clean the binary
 clean:
