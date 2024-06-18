@@ -1,4 +1,4 @@
-package api
+package controllers
 
 import (
 	"ISO_Auditing_Tool/pkg/repositories"

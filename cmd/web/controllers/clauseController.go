@@ -1,4 +1,4 @@
-package html
+package controllers
 
 import (
 	"ISO_Auditing_Tool/pkg/repositories"

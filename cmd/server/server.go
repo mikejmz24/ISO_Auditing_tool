@@ -24,7 +24,7 @@ type Server struct {
 	htmlClauseController      *webControllers.HtmlClauseController
 }
 
-func NewServer() *http.Server {
+func NewServer() *Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
 
@@ -42,7 +42,7 @@ func NewServer() *http.Server {
 	htmlClauseController := webControllers.NewHtmlClauseController(clauseRepo)
 	htmlIsoStandardController := webControllers.NewHtmlIsoStandardController(apiStandardRepo)
 
-	NewServer := &Server{
+	return &Server{
 		port:                      port,
 		db:                        db,
 		apiIsoStandardController:  apiIsoStandardController,
@@ -50,11 +50,13 @@ func NewServer() *http.Server {
 		htmlIsoStandardController: htmlIsoStandardController,
 		htmlClauseController:      htmlClauseController,
 	}
+}
 
+func (s *Server) Start() *http.Server {
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      NewServer.RegisterRoutes(db.DB()),
+		Addr:         fmt.Sprintf(":%d", s.port),
+		Handler:      s.RegisterRoutes(s.db.DB()),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
