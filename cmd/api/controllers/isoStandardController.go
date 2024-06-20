@@ -38,7 +38,11 @@ func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
 	}
 	isoStandard, err := cc.Repo.GetISOStandardByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err.Error() == "not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, isoStandard)
@@ -48,7 +52,12 @@ func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
 func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 	var isoStandard types.ISOStandard
 	if err := c.ShouldBindJSON(&isoStandard); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		return
+	}
+	// Additional validation for business rules
+	if isoStandard.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
 	id, err := cc.Repo.CreateISOStandard(isoStandard)
@@ -63,11 +72,21 @@ func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	var isoStandard types.ISOStandard
 	if err := c.ShouldBindJSON(&isoStandard); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		return
+	}
+
+	// Additional validation for business rules
+	if isoStandard.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
 	if err := cc.Repo.UpdateISOStandard(isoStandard); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err.Error() == "not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
@@ -81,7 +100,11 @@ func (cc *ApiIsoStandardController) DeleteISOStandard(c *gin.Context) {
 		return
 	}
 	if err := cc.Repo.DeleteISOStandard(id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err.Error() == "not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ISO standard deleted"})

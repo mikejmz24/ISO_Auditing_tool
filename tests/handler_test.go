@@ -31,17 +31,3 @@ func TestHelloWorldHandler(t *testing.T) {
 		t.Errorf("Handler returned unexpected body: got %v want %v", rr.Body.String(), expected)
 	}
 }
-
-// func setupRouter() *gin.Engine {
-// 	s := &server.Server{}
-// 	r := gin.New()
-// 	s.SetupRoutes(r)
-// 	return r
-// }
-//
-// func performRequest(r http.Handler, method, path string, body io.Reader) *httptest.ResponseRecorder {
-// 	req, _ := http.NewRequest(method, path, body)
-// 	rr := httptest.NewRecorder()
-// 	r.ServeHTTP(rr, req)
-// 	return rr
-// }
