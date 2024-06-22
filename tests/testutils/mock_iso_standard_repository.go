@@ -14,22 +14,22 @@ func (m *MockIsoStandardRepository) GetAllISOStandards() ([]types.ISOStandard, e
 	return args.Get(0).([]types.ISOStandard), args.Error(1)
 }
 
-func (m *MockIsoStandardRepository) GetISOStandardByID(id int) (types.ISOStandard, error) {
+func (m *MockIsoStandardRepository) GetISOStandardByID(id int64) (types.ISOStandard, error) {
 	args := m.Called(id)
 	return args.Get(0).(types.ISOStandard), args.Error(1)
 }
 
-func (m *MockIsoStandardRepository) CreateISOStandard(standard types.ISOStandard) (int64, error) {
-	args := m.Called(standard)
+func (m *MockIsoStandardRepository) CreateISOStandard(isoStandard types.ISOStandard) (int64, error) {
+	args := m.Called(isoStandard)
 	return args.Get(0).(int64), args.Error(1)
 }
 
-func (m *MockIsoStandardRepository) UpdateISOStandard(standard types.ISOStandard) error {
-	args := m.Called(standard)
+func (m *MockIsoStandardRepository) UpdateISOStandard(isoStandard types.ISOStandard) error {
+	args := m.Called(isoStandard)
 	return args.Error(0)
 }
 
-func (m *MockIsoStandardRepository) DeleteISOStandard(id int) error {
+func (m *MockIsoStandardRepository) DeleteISOStandard(id int64) error {
 	args := m.Called(id)
 	return args.Error(0)
 }

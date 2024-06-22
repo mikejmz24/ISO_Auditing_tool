@@ -10,10 +10,10 @@ import (
 type IsoStandardRepository interface {
 	// ISO Standard methods
 	GetAllISOStandards() ([]types.ISOStandard, error)
-	GetISOStandardByID(id int) (types.ISOStandard, error)
-	CreateISOStandard(standard types.ISOStandard) (int64, error)
-	UpdateISOStandard(standard types.ISOStandard) error
-	DeleteISOStandard(id int) error
+	GetISOStandardByID(id int64) (types.ISOStandard, error)
+	CreateISOStandard(isoStandard types.ISOStandard) (int64, error)
+	UpdateISOStandard(isoStandard types.ISOStandard) error
+	DeleteISOStandard(id int64) error
 }
 
 // repository struct holds the database connection
@@ -34,7 +34,7 @@ func (r *isoStandardRepository) GetAllISOStandards() ([]types.ISOStandard, error
 	return executeQuery(r.db, query, scanISOStandard)
 }
 
-func (r *isoStandardRepository) GetISOStandardByID(id int) (types.ISOStandard, error) {
+func (r *isoStandardRepository) GetISOStandardByID(id int64) (types.ISOStandard, error) {
 	query := "SELECT id, name FROM iso_standard WHERE id = ?;"
 	rows, err := r.db.Query(query, id)
 	if err != nil {
@@ -67,7 +67,7 @@ func (r *isoStandardRepository) UpdateISOStandard(standard types.ISOStandard) er
 	return err
 }
 
-func (r *isoStandardRepository) DeleteISOStandard(id int) error {
+func (r *isoStandardRepository) DeleteISOStandard(id int64) error {
 	query := "DELETE FROM iso_standard WHERE id = ?;"
 	_, err := r.db.Exec(query, id)
 	return err

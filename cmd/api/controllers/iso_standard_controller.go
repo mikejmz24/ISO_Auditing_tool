@@ -31,7 +31,7 @@ func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 
 // Get ISO standard by ID
 func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
 		return
@@ -94,7 +94,7 @@ func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 
 // Delete an ISO standard
 func (cc *ApiIsoStandardController) DeleteISOStandard(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
 		return
