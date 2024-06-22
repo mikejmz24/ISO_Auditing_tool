@@ -64,27 +64,27 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	// // HTML routes group
 	html := r.Group("/html")
 	{
-		html.GET("/clauses", s.htmlClauseController.GetAllClauses)
+		html.GET("/clauses", s.webClauseController.GetAllClauses)
 		// html.GET("/clauses/add", func(c *gin.Context) {
 		// 	templ.Handler(templates.AddClause()).ServeHTTP(c.Writer, c.Request)
 		// })
-		html.POST("/clauses/add", s.htmlClauseController.CreateClause)
+		html.POST("/clauses/add", s.webClauseController.CreateClause)
 
-		html.GET("/iso_standards", s.htmlIsoStandardController.GetAllISOStandards)
-		html.GET("/iso_standards/add", s.htmlIsoStandardController.RenderAddISOStandardForm)
-		html.POST("/iso_standards/add", s.htmlIsoStandardController.CreateISOStandard)
+		html.GET("/iso_standards", s.webIsoStandardController.GetAllISOStandards)
+		html.GET("/iso_standards/add", s.webIsoStandardController.RenderAddISOStandardForm)
+		html.POST("/iso_standards/add", s.webIsoStandardController.CreateISOStandard)
 
-		html.GET("/sections", s.htmlClauseController.GetAllSections)
+		html.GET("/sections", s.webClauseController.GetAllSections)
 		// html.GET("/sections/add", func(c *gin.Context) {
 		// 	templ.Handler(templates.AddSection()).ServeHTTP(c.Writer, c.Request)
 		// })
-		html.POST("/sections/add", s.htmlClauseController.CreateSection)
+		html.POST("/sections/add", s.webClauseController.CreateSection)
 
-		html.GET("/questions", s.htmlClauseController.GetAllQuestions)
+		html.GET("/questions", s.webClauseController.GetAllQuestions)
 		// html.GET("/questions/add", func(c *gin.Context) {
 		// 	templ.Handler(templates.AddQuestion()).ServeHTTP(c.Writer, c.Request)
 		// })
-		html.POST("/questions/add", s.htmlClauseController.CreateQuestion)
+		html.POST("/questions/add", s.webClauseController.CreateQuestion)
 	}
 
 	return r

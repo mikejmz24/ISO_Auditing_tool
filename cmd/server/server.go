@@ -16,12 +16,12 @@ import (
 )
 
 type Server struct {
-	port                      int
-	db                        database.Service
-	apiIsoStandardController  *apiControllers.ApiIsoStandardController
-	apiClauseController       *apiControllers.ApiClauseController
-	htmlIsoStandardController *webControllers.HtmlIsoStandardController
-	htmlClauseController      *webControllers.HtmlClauseController
+	port                     int
+	db                       database.Service
+	apiIsoStandardController *apiControllers.ApiIsoStandardController
+	apiClauseController      *apiControllers.ApiClauseController
+	webIsoStandardController *webControllers.WebIsoStandardController
+	webClauseController      *webControllers.HtmlClauseController
 }
 
 func NewServer() *Server {
@@ -40,15 +40,15 @@ func NewServer() *Server {
 	apiClauseController := apiControllers.NewApiClauseController(clauseRepo)
 	apiIsoStandardController := apiControllers.NewApiIsoStandardController(apiStandardRepo)
 	htmlClauseController := webControllers.NewHtmlClauseController(clauseRepo)
-	htmlIsoStandardController := webControllers.NewHtmlIsoStandardController(apiStandardRepo)
+	htmlIsoStandardController := webControllers.NewWebIsoStandardController(apiIsoStandardController)
 
 	return &Server{
-		port:                      port,
-		db:                        db,
-		apiIsoStandardController:  apiIsoStandardController,
-		apiClauseController:       apiClauseController,
-		htmlIsoStandardController: htmlIsoStandardController,
-		htmlClauseController:      htmlClauseController,
+		port:                     port,
+		db:                       db,
+		apiIsoStandardController: apiIsoStandardController,
+		apiClauseController:      apiClauseController,
+		webIsoStandardController: htmlIsoStandardController,
+		webClauseController:      htmlClauseController,
 	}
 }
 
