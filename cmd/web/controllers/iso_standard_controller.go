@@ -1,54 +1,51 @@
 package controllers
 
 import (
-	"ISO_Auditing_Tool/cmd/api/controllers"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"net/http/httptest"
+
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/templates"
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
-type WebIsoStandardController struct {
-	ApiController *controllers.ApiIsoStandardController
+// Interface for the API controller to allow for easier testing and mocking
+type ApiIsoStandardController interface {
+	GetAllISOStandards(c *gin.Context)
+	GetISOStandardByID(c *gin.Context)
+	CreateISOStandard(c *gin.Context)
+	UpdateISOStandard(c *gin.Context)
+	DeleteISOStandard(c *gin.Context)
 }
 
-func NewWebIsoStandardController(apiController *controllers.ApiIsoStandardController) *WebIsoStandardController {
+type WebIsoStandardController struct {
+	ApiController ApiIsoStandardController
+}
+
+func NewWebIsoStandardController(apiController ApiIsoStandardController) *WebIsoStandardController {
 	return &WebIsoStandardController{ApiController: apiController}
 }
 
 func (wc *WebIsoStandardController) GetAllISOStandards(c *gin.Context) {
-	apiContext := &gin.Context{Request: c.Request, Writer: c.Writer}
-	wc.ApiController.GetAllISOStandards(apiContext)
-	var isoStandards []types.ISOStandard
-	if err := apiContext.BindJSON(&isoStandards); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to bind JSON"})
+	isoStandards, err := wc.fetchAllISOStandards()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch ISO standards"})
 		return
 	}
 	templ.Handler(templates.ISOStandards(isoStandards)).ServeHTTP(c.Writer, c.Request)
 }
 
 func (wc *WebIsoStandardController) GetISOStandardByID(c *gin.Context) {
-	// id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
-	// 	return
-	// }
-	//
-	// standard, err := cc.Repo.GetISOStandardByID(id)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	apiContext := &gin.Context{Request: c.Request, Writer: c.Writer}
-	wc.ApiController.GetISOStandardByID(apiContext)
-	var isoStandard types.ISOStandard
-	if err := apiContext.BindJSON(&isoStandard); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to bind JSON"})
+	id := c.Param("id")
+	isoStandard, err := wc.fetchISOStandardByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch ISO standard"})
 		return
 	}
-
-	// c.JSON(http.StatusOK, standard)
 	c.HTML(http.StatusOK, "iso_standard.html", gin.H{"isoStandard": isoStandard})
 }
 
@@ -57,55 +54,72 @@ func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
 }
 
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
-	// var standard types.ISOStandard
-	// // if err := c.ShouldBindJSON(&standard); err != nil {
-	// if err := c.ShouldBind(&standard); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	//
-	// // id, err := cc.Repo.CreateISOStandard(standard)
-	// _, err := cc.Repo.CreateISOStandard(standard)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	apiContext := &gin.Context{Request: c.Request, Writer: c.Writer}
-	wc.ApiController.CreateISOStandard(apiContext)
+	apiContext, _ := gin.CreateTestContext(httptest.NewRecorder())
+	apiContext.Request = c.Request
+	apiContext.Writer = c.Writer
 
-	// c.JSON(http.StatusCreated, gin.H{"id": id})
+	wc.ApiController.CreateISOStandard(apiContext)
 	c.Redirect(http.StatusFound, "/html/iso_standards")
-	// templ.Handler(templates.AddISOStandard()).ServeHTTP(c.Writer, c.Request)
 }
 
 func (wc *WebIsoStandardController) UpdateISOStandard(c *gin.Context) {
-	// var standard types.ISOStandard
-	// if err := c.ShouldBindJSON(&standard); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	//
-	// if err := cc.Repo.UpdateISOStandard(standard); err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	apiContext := &gin.Context{Request: c.Request, Writer: c.Writer}
+	apiContext, _ := gin.CreateTestContext(httptest.NewRecorder())
+	apiContext.Request = c.Request
+	apiContext.Writer = c.Writer
+
 	wc.ApiController.UpdateISOStandard(apiContext)
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
 }
 
 func (wc *WebIsoStandardController) DeleteISOStandard(c *gin.Context) {
-	// id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	// if err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
-	// 	return
-	// }
-	//
-	// if err := cc.Repo.DeleteISOStandard(id); err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-	apiContext := &gin.Context{Request: c.Request, Writer: c.Writer}
+	apiContext, _ := gin.CreateTestContext(httptest.NewRecorder())
+	apiContext.Request = c.Request
+	apiContext.Writer = c.Writer
+
 	wc.ApiController.DeleteISOStandard(apiContext)
 	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
+}
+
+// Helper functions for fetching data from the API controller
+func (wc *WebIsoStandardController) fetchAllISOStandards() ([]types.ISOStandard, error) {
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/iso_standards", nil)
+	apiContext, _ := gin.CreateTestContext(recorder)
+	apiContext.Request = req
+
+	wc.ApiController.GetAllISOStandards(apiContext)
+
+	if recorder.Code != http.StatusOK {
+		log.Printf("Error fetching ISO standards: %s", recorder.Body.String())
+		return nil, fmt.Errorf("error fetching ISO standards")
+	}
+
+	var isoStandards []types.ISOStandard
+	if err := json.Unmarshal(recorder.Body.Bytes(), &isoStandards); err != nil {
+		log.Printf("Error unmarshalling ISO standards: %v", err)
+		return nil, err
+	}
+	return isoStandards, nil
+}
+
+func (wc *WebIsoStandardController) fetchISOStandardByID(id string) (*types.ISOStandard, error) {
+	requestURL := "/api/iso_standards/" + id
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, requestURL, nil)
+	apiContext, _ := gin.CreateTestContext(recorder)
+	apiContext.Request = req
+
+	wc.ApiController.GetISOStandardByID(apiContext)
+
+	if recorder.Code != http.StatusOK {
+		log.Printf("Error fetching ISO standard by ID: %s", recorder.Body.String())
+		return nil, fmt.Errorf("error fetching ISO standard by ID")
+	}
+
+	var isoStandard types.ISOStandard
+	if err := json.Unmarshal(recorder.Body.Bytes(), &isoStandard); err != nil {
+		log.Printf("Error unmarshalling ISO standard: %v", err)
+		return nil, err
+	}
+	return &isoStandard, nil
 }

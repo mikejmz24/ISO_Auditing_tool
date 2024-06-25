@@ -5,14 +5,19 @@ import (
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/tests/testutils"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,8 +26,8 @@ type IsoStandardControllerTestSuite struct {
 	router      *gin.Engine
 	mockRepo    *testutils.MockIsoStandardRepository
 	standard    types.ISOStandard
-	formData    string
-	updatedData string
+	formData    []byte
+	updatedData []byte
 }
 
 func (suite *IsoStandardControllerTestSuite) setupMockRepo() {
@@ -42,37 +47,40 @@ func (suite *IsoStandardControllerTestSuite) setupRouter() {
 }
 
 func (suite *IsoStandardControllerTestSuite) setupSampleData() {
-	suite.standard = types.ISOStandard{
-		ID:   1,
-		Name: "ISO 9001",
-		Clauses: []types.Clause{
-			{
-				ID: 1, Name: "Clause 1", Sections: []types.Section{
-					{ID: 1, Name: "Section 1", Questions: []types.Question{
-						{ID: 1, Text: "Question 1"},
-					}},
-				},
-			},
-		},
+	filePath := "../../testdata/iso_standards_test01.json"
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(fmt.Errorf("failed to open JSON file: %w", err))
 	}
-	fmt.Printf("Sample Data: %v\n", suite.standard)
-	suite.formData = `{
-        "id": 1,
-        "name": "ISO 9001",
-        "clauses": [{
-            "id": 1,
-            "name": "Clause 1",
-            "sections": [{
-                "id": 1,
-                "name": "Section 1",
-                "questions": [{
-                    "id": 1,
-                    "text": "Question 1"
-                }]
-            }]
-        }]
-    }`
-	suite.updatedData = `{
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		panic(fmt.Errorf("failed to read JSON file: %w", err))
+	}
+
+	var jsonData struct {
+		ISOStandards []types.ISOStandard `json:"iso_standards"`
+	}
+	err = json.Unmarshal(data, &jsonData)
+	if err != nil {
+		panic(fmt.Errorf("failed to unmarshal JSON data: %w", err))
+	}
+	// Assuming the first standard in the JSON file for testing purposes
+	if len(jsonData.ISOStandards) > 0 {
+		suite.standard = jsonData.ISOStandards[0]
+	} else {
+		panic("no ISO standards found in JSON data")
+	}
+
+	suite.formData, err = json.Marshal(suite.standard)
+	if err != nil {
+		panic(fmt.Errorf("failed to marshal JSON data: %w", err))
+	}
+
+	fmt.Printf("Unmarshalled Data: %+v\n", suite.standard)
+
+	suite.updatedData = []byte(`{
         "id": 1,
         "name": "ISO 9001 Updated",
         "clauses": [{
@@ -87,7 +95,7 @@ func (suite *IsoStandardControllerTestSuite) setupSampleData() {
                 }]
             }]
         }]
-    }`
+    }`)
 }
 
 func (suite *IsoStandardControllerTestSuite) SetupTest() {
@@ -144,8 +152,8 @@ func (suite *IsoStandardControllerTestSuite) performRequest(method, url string, 
 
 func (suite *IsoStandardControllerTestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBodyContains string) {
 	fmt.Printf("Validating response: status=%d, body=%s\n", w.Code, w.Body.String())
-	suite.Equal(expectedStatus, w.Code)
-	suite.Contains(w.Body.String(), expectedBodyContains)
+	require.Equal(suite.T(), expectedStatus, w.Code)
+	assert.Contains(suite.T(), w.Body.String(), expectedBodyContains)
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 
@@ -171,7 +179,10 @@ func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandard() {
 	expectedID := int64(1)
 	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(expectedID, nil)
 
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(suite.formData))
+	fmt.Printf("Form Data: %s\n", suite.formData) // Print form data for debugging
+
+	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBuffer(suite.formData))
+	fmt.Printf("Response Body: %s\n", w.Body.String()) // Print response body for debugging
 	suite.validateResponse(w, http.StatusCreated, `"id":1`)
 }
 
@@ -189,9 +200,33 @@ func (suite *IsoStandardControllerTestSuite) TestAPIUpdateISOStandard() {
 	fmt.Println("Running TestAPIUpdateISOStandard")
 	updatedStandard := suite.standard
 	updatedStandard.Name = "ISO 9001 Updated"
-	suite.mockRepo.On("UpdateISOStandard", updatedStandard).Return(nil)
+	updatedStandard.Clauses = &[]types.Clause{
+		{
+			ID:   1,
+			Name: "Clause 1",
+			Sections: &[]types.Section{
+				{
+					ID:   1,
+					Name: "Section 1",
+					Questions: &[]types.Question{
+						{
+							ID:   1,
+							Text: "Question 1",
+						},
+					},
+				},
+			},
+		},
+	}
 
-	w := suite.performRequest("PUT", "/api/iso_standards/1", bytes.NewBufferString(suite.updatedData))
+	suite.mockRepo.On("UpdateISOStandard", mock.MatchedBy(func(isoStandard types.ISOStandard) bool {
+		return isoStandard.ID == updatedStandard.ID &&
+			isoStandard.Name == updatedStandard.Name &&
+			len(*isoStandard.Clauses) == len(*updatedStandard.Clauses) &&
+			(*isoStandard.Clauses)[0].Name == (*updatedStandard.Clauses)[0].Name
+	})).Return(nil)
+
+	w := suite.performRequest("PUT", "/api/iso_standards/1", bytes.NewBuffer(suite.updatedData))
 	suite.validateResponse(w, http.StatusOK, `{"status":"updated"}`)
 }
 
@@ -199,7 +234,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIUpdateISOStandardNotFound() 
 	fmt.Println("Running TestAPIUpdateISOStandardNotFound")
 	suite.mockRepo.On("UpdateISOStandard", suite.standard).Return(errors.New("not found"))
 
-	w := suite.performRequest("PUT", "/api/iso_standards/2", bytes.NewBufferString(suite.formData))
+	w := suite.performRequest("PUT", "/api/iso_standards/2", bytes.NewBuffer(suite.formData))
 	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
 }
 
@@ -235,7 +270,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandardInternalSer
 	fmt.Println("Running TestAPICreateISOStandardInternalServerError")
 	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(int64(0), errors.New("internal server error"))
 
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(suite.formData))
+	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBuffer(suite.formData))
 	suite.validateResponse(w, http.StatusInternalServerError, `{"error":"internal server error"}`)
 }
 

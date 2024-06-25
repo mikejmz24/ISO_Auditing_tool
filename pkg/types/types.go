@@ -38,23 +38,23 @@ type AuditQuestion struct {
 }
 
 type ISOStandard struct {
-	ID      int      `form:"id" json:"id"`
-	Name    string   `form:"name" json:"name"`
-	Clauses []Clause `form:"clauses" json:"clauses"`
+	ID      int       `json:"id"`
+	Name    string    `json:"name"`
+	Clauses *[]Clause `json:"clauses,omitempty"`
 }
 
 type Clause struct {
-	ID            int       `json:"id"`
-	ISOStandardID int       `json:"iso_standard_id"`
-	Name          string    `json:"name"`
-	Sections      []Section `json:"sections"`
+	ID            int        `json:"id"`
+	ISOStandardID int        `json:"iso_standard_id"`
+	Name          string     `json:"name"`
+	Sections      *[]Section `json:"sections,omitempty"`
 }
 
 type Section struct {
-	ID        int        `json:"id"`
-	ClauseID  int        `json:"clause_id"`
-	Name      string     `json:"name"`
-	Questions []Question `json:"questions"`
+	ID        int         `json:"id"`
+	ClauseID  int         `json:"clause_id"`
+	Name      string      `json:"name"`
+	Questions *[]Question `json:"questions,omitempty"`
 }
 
 type Question struct {

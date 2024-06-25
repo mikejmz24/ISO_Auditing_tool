@@ -1,0 +1,136 @@
+{
+  "iso_standards": [
+    {
+      "id": 1,
+      "name": "ISO 9001",
+      "clauses": [
+        {
+          "id": 1,
+          "name": "Quality Management System",
+          "sections": [
+            {
+              "id": 1,
+              "name": "Context of the Organization",
+              "questions": [
+                {
+                  "id": 1,
+                  "text": "Have the external and internal issues that are relevant to the organization's purpose and strategic direction been determined?"
+                },
+                {
+                  "id": 2,
+                  "text": "Have the interested parties that are relevant to the quality management system been determined?"
+                },
+                {
+                  "id": 3,
+                  "text": "Has the scope of the quality management system been defined?"
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "name": "Leadership",
+              "questions": [
+                {
+                  "id": 4,
+                  "text": "Has top management demonstrated leadership and commitment to the quality management system?"
+                },
+                {
+                  "id": 5,
+                  "text": "Have the quality policy and quality objectives been established?"
+                },
+                {
+                  "id": 6,
+                  "text": "Has top management ensured the integration of the quality management system requirements into the organization's business processes?"
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "name": "Planning",
+              "questions": [
+                {
+                  "id": 7,
+                  "text": "Has the organization determined the risks and opportunities that need to be addressed to ensure the quality management system can achieve its intended outcomes?"
+                },
+                {
+                  "id": 8,
+                  "text": "Has the organization determined the actions needed to address the risks and opportunities identified?"
+                },
+                {
+                  "id": 9,
+                  "text": "Has the organization integrated the actions into its quality management system processes?"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ISO 27001",
+      "clauses": [
+        {
+          "id": 1,
+          "name": "Information Security Management System",
+          "sections": [
+            {
+              "id": 1,
+              "name": "Context of the Organization",
+              "questions": [
+                {
+                  "id": 1,
+                  "text": "Has the organization identified the internal and external issues that are relevant to its information security management system?"
+                },
+                {
+                  "id": 2,
+                  "text": "Has the organization determined the interested parties that are relevant to its information security management system?"
+                },
+                {
+                  "id": 3,
+                  "text": "Has the organization determined the scope of its information security management system?"
+                }
+              ]
+            },
+            {
+              "id": 2,
+              "name": "Leadership",
+              "questions": [
+                {
+                  "id": 4,
+                  "text": "Has top management demonstrated leadership and commitment to the information security management system?"
+                },
+                {
+                  "id": 5,
+                  "text": "Has the information security policy been established, implemented, and maintained?"
+                },
+                {
+                  "id": 6,
+                  "text": "Has top management ensured that the responsibilities and authorities for roles relevant to information security are assigned and communicated?"
+                }
+              ]
+            },
+            {
+              "id": 3,
+              "name": "Planning",
+              "questions": [
+                {
+                  "id": 7,
+                  "text": "Has the organization determined the risks and opportunities that need to be addressed to ensure the information security management system can achieve its intended outcomes?"
+                },
+                {
+                  "id": 8,
+                  "text": "Has the organization established, implemented, and maintained processes to address the risks and opportunities identified?"
+                },
+                {
+                  "id": 9,
+                  "text": "Has the organization integrated the actions into its information security management system processes?"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

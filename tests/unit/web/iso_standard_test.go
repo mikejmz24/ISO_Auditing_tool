@@ -6,10 +6,13 @@ import (
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/tests/testutils"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -25,6 +28,36 @@ type WebIsoStandardControllerTestSuite struct {
 	standard    types.ISOStandard
 	formData    string
 	updatedData string
+}
+
+func (suite *WebIsoStandardControllerTestSuite) loadTestData(filePath string) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load test data file: %v", err))
+	}
+
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	if err != nil {
+		panic(fmt.Errorf("Failed to read test data: %w", err))
+	}
+
+	var testData struct {
+		Standard    types.ISOStandard `json:"standard"`
+		FormData    string            `json:"formData"`
+		UpdatedData string            `json:"updatedData"`
+	}
+
+	if err := json.Unmarshal(data, &testData); err != nil {
+		panic(fmt.Sprintf("Failed to unmarshal test data: %v", err))
+	}
+
+	suite.standard = testData.Standard
+	formDataBytes, _ := json.Marshal(testData.FormData)
+	updatedDataBytes, _ := json.Marshal(testData.UpdatedData)
+	suite.formData = string(formDataBytes)
+	suite.updatedData = string(updatedDataBytes)
 }
 
 func (suite *WebIsoStandardControllerTestSuite) setupMockRepo() {
@@ -43,60 +76,11 @@ func (suite *WebIsoStandardControllerTestSuite) setupRouter() {
 	fmt.Printf("Router initialized: %v\n", suite.router)
 }
 
-func (suite *WebIsoStandardControllerTestSuite) setupSampleData() {
-	suite.standard = types.ISOStandard{
-		ID:   1,
-		Name: "ISO 9001",
-		Clauses: []types.Clause{
-			{
-				ID: 1, Name: "Clause 1", Sections: []types.Section{
-					{ID: 1, Name: "Section 1", Questions: []types.Question{
-						{ID: 1, Text: "Question 1"},
-					}},
-				},
-			},
-		},
-	}
-	fmt.Printf("Sample Data: %v\n", suite.standard)
-	suite.formData = `{
-        "id": 1,
-        "name": "ISO 9001",
-        "clauses": [{
-            "id": 1,
-            "name": "Clause 1",
-            "sections": [{
-                "id": 1,
-                "name": "Section 1",
-                "questions": [{
-                    "id": 1,
-                    "text": "Question 1"
-                }]
-            }]
-        }]
-    }`
-	suite.updatedData = `{
-        "id": 1,
-        "name": "ISO 9001 Updated",
-        "clauses": [{
-            "id": 1,
-            "name": "Clause 1",
-            "sections": [{
-                "id": 1,
-                "name": "Section 1",
-                "questions": [{
-                    "id": 1,
-                    "text": "Question 1"
-                }]
-            }]
-        }]
-    }`
-}
-
 func (suite *WebIsoStandardControllerTestSuite) SetupTest() {
 	fmt.Println("Setting up test")
 	suite.setupMockRepo()
 	suite.setupRouter()
-	suite.setupSampleData()
+	suite.loadTestData("../../testdata/iso_standards_test01.json")
 	fmt.Printf("Setup complete: router=%v, mockRepo=%v, sampleData=%v\n", suite.router, suite.mockRepo, suite.standard)
 }
 

@@ -19,14 +19,16 @@ templ ISOStandards(standards []types.ISOStandard) {
 						for _, standard := range standards {
 							<li class="ml-4 ml-4 border p-2 rounded-lg mb-2" id={ fmt.Sprintf("%v", standard.ID) }>
 								<p class="font-medium text-sm">{ standard.Name }</p>
-								// Nested list for clauses
-								<ul class="list-disc pl-6">
-									for _, clause := range standard.Clauses {
-										<li class="text-sm text-zinc-500 mb-2">
-											{ clause.Name }
-										</li>
-									}
-								</ul>
+								if standard.Clauses != nil {
+									// Nested list for clausesa
+									<ul class="list-disc pl-6">
+										for _, clause := range *standard.Clauses {
+											<li class="text-sm text-zinc-500 mb-2">
+												{ clause.Name }
+											</li>
+										}
+									</ul>
+								}
 								<div class="flex gap-4 items-center mt-2">
 									<a
 										href="#"

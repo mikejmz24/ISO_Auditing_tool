@@ -62,7 +62,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	}
 
 	// // HTML routes group
-	html := r.Group("/html")
+	html := r.Group("/web")
 	{
 		html.GET("/clauses", s.webClauseController.GetAllClauses)
 		// html.GET("/clauses/add", func(c *gin.Context) {
