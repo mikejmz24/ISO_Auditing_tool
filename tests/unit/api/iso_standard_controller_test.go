@@ -30,6 +30,22 @@ type IsoStandardControllerTestSuite struct {
 	updatedData []byte
 }
 
+type MarshallingTestSuite struct {
+	suite.Suite
+	standard types.ISOStandard
+}
+
+type ValidationTestSuite struct {
+	suite.Suite
+	router *gin.Engine
+}
+
+type PersistenceTestSuite struct {
+	suite.Suite
+	mockRepo *testutils.MockIsoStandardRepository
+	standard types.ISOStandard
+}
+
 func (suite *IsoStandardControllerTestSuite) setupMockRepo() {
 	suite.mockRepo = new(testutils.MockIsoStandardRepository)
 	if suite.mockRepo == nil {

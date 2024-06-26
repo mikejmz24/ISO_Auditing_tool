@@ -71,15 +71,6 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	// Debug: Print the JSON data
 	fmt.Println("Marshalled JSON:", string(jsonData))
 
-	// Validation step: unmarshal into ISOStandard struct
-	var isoStandard types.ISOStandard
-	if err := json.Unmarshal(jsonData, &isoStandard); err != nil {
-		// Debug: Print the unmarshalling error
-		fmt.Println("Unmarshal error:", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
-		return
-	}
-
 	// Initialize httptest.ResponseRecorder to capture the response
 	recorder := httptest.NewRecorder()
 	apiContext, _ := gin.CreateTestContext(recorder)
@@ -103,7 +94,8 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	if apiStatus == http.StatusCreated {
 		c.Redirect(http.StatusFound, "/web/iso_standards")
 	} else {
-		c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to create ISO standard"})
+		// c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to create ISO standard"})
+		c.JSON(apiContext.Writer.Status(), string(responseBody))
 	}
 }
 

@@ -22,11 +22,11 @@ import (
 
 type WebIsoStandardControllerTestSuite struct {
 	suite.Suite
-	router      *gin.Engine
-	mockRepo    *testutils.MockIsoStandardRepository
-	standard    types.ISOStandard
-	formData    string
-	updatedData string
+	router   *gin.Engine
+	mockRepo *testutils.MockIsoStandardRepository
+	standard types.ISOStandard
+	// formData    string
+	// updatedData string
 }
 
 type MarshallingTestSuite struct {
@@ -46,17 +46,27 @@ type PersistenceTestSuite struct {
 }
 
 func (suite *WebIsoStandardControllerTestSuite) SetupTest() {
+	fmt.Println("Setting up test")
 	suite.setupMockRepo()
 	suite.setupRouter()
 	suite.loadTestData("../../testdata/iso_standards_test01.json")
+	fmt.Printf("Setup complete: router=%v, mockRepo=%v, sampleData=%v\n", suite.router, suite.mockRepo, suite.standard)
 }
 
 func (suite *WebIsoStandardControllerTestSuite) setupMockRepo() {
 	suite.mockRepo = new(testutils.MockIsoStandardRepository)
+	if suite.mockRepo == nil {
+		panic("mockRepo is nil")
+	}
+	fmt.Printf("Mock Repository initialized: %v\n", suite.mockRepo)
 }
 
 func (suite *WebIsoStandardControllerTestSuite) setupRouter() {
 	suite.router = setupRouter(suite.mockRepo)
+	if suite.router == nil {
+		panic("router is nil")
+	}
+	fmt.Printf("Router initialized: %v\n", suite.router)
 }
 
 func (suite *WebIsoStandardControllerTestSuite) loadTestData(filePath string) {
@@ -72,19 +82,12 @@ func (suite *WebIsoStandardControllerTestSuite) loadTestData(filePath string) {
 		panic(fmt.Errorf("Failed to read test data: %w", err))
 	}
 
-	var testData struct {
-		Standard    types.ISOStandard `json:"standard"`
-		FormData    string            `json:"formData"`
-		UpdatedData string            `json:"updatedData"`
-	}
-
+	var testData types.ISOStandard
 	if err := json.Unmarshal(data, &testData); err != nil {
 		panic(fmt.Sprintf("Failed to unmarshal test data: %v", err))
 	}
 
-	suite.standard = testData.Standard
-	suite.formData = testData.FormData
-	suite.updatedData = testData.UpdatedData
+	suite.standard = testData
 }
 
 func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
@@ -100,7 +103,7 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 		webGroup.GET("/iso_standards", webController.GetAllISOStandards)
 		webGroup.GET("/iso_standards/:id", webController.GetISOStandardByID)
 		webGroup.GET("/iso_standards/add", webController.RenderAddISOStandardForm)
-		webGroup.POST("/iso_standards", webController.CreateISOStandard)
+		webGroup.POST("/iso_standards/add", webController.CreateISOStandard)
 		webGroup.PUT("/iso_standards/:id", webController.UpdateISOStandard)
 		webGroup.DELETE("/iso_standards/:id", webController.DeleteISOStandard)
 	}
@@ -141,13 +144,13 @@ func (suite *ValidationTestSuite) SetupSuite() {
 func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_InvalidData() {
 	invalidJSON := `{"invalidField": "invalidData"}`
 
-	req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards", bytes.NewBuffer([]byte(invalidJSON)))
+	req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON)))
 	req.Header.Set("Content-Type", "application/json")
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 
-	suite.Equal(suite.T(), http.StatusBadRequest, resp.Code)
-	suite.Contains(suite.T(), resp.Body.String(), "Invalid data")
+	suite.Equal(http.StatusBadRequest, resp.Code)
+	suite.Contains(resp.Body.String(), "Invalid data")
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 

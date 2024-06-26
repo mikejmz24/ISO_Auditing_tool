@@ -36,17 +36,17 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	// API routes group
 	api := r.Group("/api")
 	{
-		api.GET("/clauses", s.apiClauseController.GetAllClauses)
-		api.GET("/clauses/:id", s.apiClauseController.GetClauseByID)
-		api.POST("/clauses", s.apiClauseController.CreateClause)
-		api.PUT("/clauses/:id", s.apiClauseController.UpdateClause)
-		api.DELETE("/clauses/:id", s.apiClauseController.DeleteClause)
-
 		api.GET("/iso_standards", s.apiIsoStandardController.GetAllISOStandards)
 		api.GET("/iso_standards/:id", s.apiIsoStandardController.GetISOStandardByID)
 		api.POST("/iso_standards", s.apiIsoStandardController.CreateISOStandard)
 		api.PUT("/iso_standards/:id", s.apiIsoStandardController.UpdateISOStandard)
 		api.DELETE("/iso_standards/:id", s.apiIsoStandardController.DeleteISOStandard)
+
+		api.GET("/clauses", s.apiClauseController.GetAllClauses)
+		api.GET("/clauses/:id", s.apiClauseController.GetClauseByID)
+		api.POST("/clauses", s.apiClauseController.CreateClause)
+		api.PUT("/clauses/:id", s.apiClauseController.UpdateClause)
+		api.DELETE("/clauses/:id", s.apiClauseController.DeleteClause)
 
 		api.GET("/sections", s.apiClauseController.GetAllSections)
 		api.GET("/sections/:id", s.apiClauseController.GetSectionByID)
@@ -64,26 +64,17 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	// // HTML routes group
 	html := r.Group("/web")
 	{
-		html.GET("/clauses", s.webClauseController.GetAllClauses)
-		// html.GET("/clauses/add", func(c *gin.Context) {
-		// 	templ.Handler(templates.AddClause()).ServeHTTP(c.Writer, c.Request)
-		// })
-		html.POST("/clauses/add", s.webClauseController.CreateClause)
-
 		html.GET("/iso_standards", s.webIsoStandardController.GetAllISOStandards)
 		html.GET("/iso_standards/add", s.webIsoStandardController.RenderAddISOStandardForm)
 		html.POST("/iso_standards/add", s.webIsoStandardController.CreateISOStandard)
 
+		html.GET("/clauses", s.webClauseController.GetAllClauses)
+		html.POST("/clauses/add", s.webClauseController.CreateClause)
+
 		html.GET("/sections", s.webClauseController.GetAllSections)
-		// html.GET("/sections/add", func(c *gin.Context) {
-		// 	templ.Handler(templates.AddSection()).ServeHTTP(c.Writer, c.Request)
-		// })
 		html.POST("/sections/add", s.webClauseController.CreateSection)
 
 		html.GET("/questions", s.webClauseController.GetAllQuestions)
-		// html.GET("/questions/add", func(c *gin.Context) {
-		// 	templ.Handler(templates.AddQuestion()).ServeHTTP(c.Writer, c.Request)
-		// })
 		html.POST("/questions/add", s.webClauseController.CreateQuestion)
 	}
 
