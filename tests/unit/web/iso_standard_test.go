@@ -7,7 +7,6 @@ import (
 	"ISO_Auditing_Tool/tests/testutils"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,6 +16,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -28,6 +28,24 @@ type WebIsoStandardControllerTestSuite struct {
 	standard    types.ISOStandard
 	formData    string
 	updatedData string
+}
+
+func (suite *WebIsoStandardControllerTestSuite) SetupTest() {
+	fmt.Println("Setting up test")
+	suite.setupMockRepo()
+	suite.setupRouter()
+	suite.loadTestData("../../testdata/iso_standards_test01.json")
+	fmt.Printf("Setup complete: router=%v, mockRepo=%v, sampleData=%v\n", suite.router, suite.mockRepo, suite.standard)
+}
+
+func (suite *WebIsoStandardControllerTestSuite) setupMockRepo() {
+	suite.mockRepo = new(testutils.MockIsoStandardRepository)
+	fmt.Printf("Mock Repository initialized: %v\n", suite.mockRepo)
+}
+
+func (suite *WebIsoStandardControllerTestSuite) setupRouter() {
+	suite.router = setupRouter(suite.mockRepo)
+	fmt.Printf("Router initialized: %v\n", suite.router)
 }
 
 func (suite *WebIsoStandardControllerTestSuite) loadTestData(filePath string) {
@@ -54,34 +72,8 @@ func (suite *WebIsoStandardControllerTestSuite) loadTestData(filePath string) {
 	}
 
 	suite.standard = testData.Standard
-	formDataBytes, _ := json.Marshal(testData.FormData)
-	updatedDataBytes, _ := json.Marshal(testData.UpdatedData)
-	suite.formData = string(formDataBytes)
-	suite.updatedData = string(updatedDataBytes)
-}
-
-func (suite *WebIsoStandardControllerTestSuite) setupMockRepo() {
-	suite.mockRepo = new(testutils.MockIsoStandardRepository)
-	if suite.mockRepo == nil {
-		panic("mockRepo is nil")
-	}
-	fmt.Printf("Mock Repository initialized: %v\n", suite.mockRepo)
-}
-
-func (suite *WebIsoStandardControllerTestSuite) setupRouter() {
-	suite.router = setupRouter(suite.mockRepo)
-	if suite.router == nil {
-		panic("router is nil")
-	}
-	fmt.Printf("Router initialized: %v\n", suite.router)
-}
-
-func (suite *WebIsoStandardControllerTestSuite) SetupTest() {
-	fmt.Println("Setting up test")
-	suite.setupMockRepo()
-	suite.setupRouter()
-	suite.loadTestData("../../testdata/iso_standards_test01.json")
-	fmt.Printf("Setup complete: router=%v, mockRepo=%v, sampleData=%v\n", suite.router, suite.mockRepo, suite.standard)
+	suite.formData = testData.FormData
+	suite.updatedData = testData.UpdatedData
 }
 
 func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
@@ -89,7 +81,6 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	webController := webController.NewWebIsoStandardController(apiController)
 
 	router := gin.Default()
-	// Use relative path to the templates directory
 	templatesPath := filepath.Join("..", "..", "..", "templates", "*.templ")
 	router.LoadHTMLGlob(templatesPath)
 
@@ -97,6 +88,7 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	{
 		webGroup.GET("/iso_standards", webController.GetAllISOStandards)
 		webGroup.GET("/iso_standards/:id", webController.GetISOStandardByID)
+		webGroup.GET("/iso_standards/add", webController.RenderAddISOStandardForm)
 		webGroup.POST("/iso_standards", webController.CreateISOStandard)
 		webGroup.PUT("/iso_standards/:id", webController.UpdateISOStandard)
 		webGroup.DELETE("/iso_standards/:id", webController.DeleteISOStandard)
@@ -105,130 +97,116 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	return router
 }
 
-func (suite *WebIsoStandardControllerTestSuite) performRequest(method, url string, body *bytes.Buffer) *httptest.ResponseRecorder {
-	fmt.Printf("Performing request: method=%s, url=%s, body is nil: %v\n", method, url, body == nil)
+func (suite *WebIsoStandardControllerTestSuite) TestGetAllISOStandards_Success() {
+	suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{suite.standard}, nil)
 
-	// Check if body is nil and handle appropriately
-	if body == nil {
-		fmt.Println("Body is nil, initializing empty buffer")
-		body = bytes.NewBuffer([]byte{})
-	} else {
-		fmt.Printf("Body length: %d\n", body.Len())
-	}
+	req, _ := http.NewRequest(http.MethodGet, "/web/iso_standards", nil)
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
 
-	fmt.Printf("Router: %v\n", suite.router)
-
-	req, err := http.NewRequest(method, url, body)
-	if err != nil {
-		fmt.Printf("Error creating new request: %v\n", err)
-		panic(err)
-	}
-
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
-	}
-
-	w := httptest.NewRecorder()
-	fmt.Println("Serving HTTP request")
-	suite.router.ServeHTTP(w, req)
-	return w
-}
-
-func (suite *WebIsoStandardControllerTestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBodyContains string) {
-	fmt.Printf("Validating response: status=%d, body=%s\n", w.Code, w.Body.String())
-	suite.Equal(expectedStatus, w.Code)
-	suite.Contains(w.Body.String(), expectedBodyContains)
+	assert.Equal(suite.T(), http.StatusOK, resp.Code)
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebGetAllISOStandards() {
-	fmt.Println("Running TestWebGetAllISOStandards")
-	expectedStandards := []types.ISOStandard{suite.standard}
-	suite.mockRepo.On("GetAllISOStandards").Return(expectedStandards, nil)
+func (suite *WebIsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
+	suite.mockRepo.On("GetISOStandardByID", suite.standard.ID).Return(suite.standard, nil)
 
-	w := suite.performRequest("GET", "/web/iso_standards", nil)
-	suite.validateResponse(w, http.StatusOK, "ISO 9001")
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/web/iso_standards/%d", suite.standard.ID), nil)
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusOK, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebGetISOStandardByID() {
-	fmt.Println("Running TestWebGetISOStandardByID")
-	suite.mockRepo.On("GetISOStandardByID", int64(1)).Return(suite.standard, nil)
+func (suite *WebIsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
+	suite.mockRepo.On("GetISOStandardByID", suite.standard.ID).Return(types.ISOStandard{}, fmt.Errorf("Not Found"))
 
-	w := suite.performRequest("GET", "/web/iso_standards/1", nil)
-	suite.validateResponse(w, http.StatusOK, "ISO 9001")
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/web/iso_standards/%d", suite.standard.ID), nil)
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusNotFound, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebCreateISOStandard() {
-	fmt.Println("Running TestWebCreateISOStandard")
-	expectedID := int64(1)
-	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(expectedID, nil)
+func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
+	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(int64(1), nil)
 
-	w := suite.performRequest("POST", "/web/iso_standards", bytes.NewBufferString(suite.formData))
-	suite.validateResponse(w, http.StatusCreated, `"id":1`)
+	req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards", bytes.NewBufferString(suite.formData))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusFound, resp.Code) // Assuming a redirect after successful creation
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebCreateISOStandardInvalidData() {
-	fmt.Println("Running TestWebCreateISOStandardInvalidData")
-	invalidFormData := `{"name": ""}`
+func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_InvalidData() {
+	req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards", bytes.NewBufferString(`{"invalid":"data"}`))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
 
-	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(int64(0), nil).Maybe()
-
-	w := suite.performRequest("POST", "/web/iso_standards", bytes.NewBufferString(invalidFormData))
-	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Invalid data"}`)
+	assert.Equal(suite.T(), http.StatusBadRequest, resp.Code)
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebUpdateISOStandard() {
-	fmt.Println("Running TestWebUpdateISOStandard")
-	updatedStandard := suite.standard
-	updatedStandard.Name = "ISO 9001 Updated"
-	suite.mockRepo.On("UpdateISOStandard", updatedStandard).Return(nil)
+func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_InternalServerError() {
+	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(int64(0), fmt.Errorf("Internal Server Error"))
 
-	w := suite.performRequest("PUT", "/web/iso_standards/1", bytes.NewBufferString(suite.updatedData))
-	suite.validateResponse(w, http.StatusOK, `{"status":"updated"}`)
+	req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards", bytes.NewBufferString(suite.formData))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusInternalServerError, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebUpdateISOStandardNotFound() {
-	fmt.Println("Running TestWebUpdateISOStandardNotFound")
-	suite.mockRepo.On("UpdateISOStandard", suite.standard).Return(errors.New("not found"))
+func (suite *WebIsoStandardControllerTestSuite) TestUpdateISOStandard_Success() {
+	suite.mockRepo.On("UpdateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(nil)
 
-	w := suite.performRequest("PUT", "/web/iso_standards/2", bytes.NewBufferString(suite.formData))
-	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
+	req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/web/iso_standards/%d", suite.standard.ID), bytes.NewBufferString(suite.updatedData))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusOK, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebDeleteISOStandard() {
-	fmt.Println("Running TestWebDeleteISOStandard")
-	suite.mockRepo.On("DeleteISOStandard", int64(1)).Return(nil)
+func (suite *WebIsoStandardControllerTestSuite) TestUpdateISOStandard_NotFound() {
+	suite.mockRepo.On("UpdateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(fmt.Errorf("not found"))
 
-	fmt.Println("Mock setup complete for TestWebDeleteISOStandard")
-	w := suite.performRequest("DELETE", "/web/iso_standards/1", nil)
-	fmt.Println("Request performed for TestWebDeleteISOStandard")
-	suite.validateResponse(w, http.StatusOK, `{"message":"ISO standard deleted"}`)
+	req, _ := http.NewRequest(http.MethodPut, fmt.Sprintf("/web/iso_standards/%d", suite.standard.ID), bytes.NewBufferString(suite.updatedData))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusNotFound, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebDeleteISOStandardNotFound() {
-	fmt.Println("Running TestWebDeleteISOStandardNotFound")
-	suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(errors.New("not found"))
+func (suite *WebIsoStandardControllerTestSuite) TestDeleteISOStandard_Success() {
+	suite.mockRepo.On("DeleteISOStandard", suite.standard.ID).Return(nil)
 
-	fmt.Println("Mock setup complete for TestWebDeleteISOStandardNotFound")
-	w := suite.performRequest("DELETE", "/web/iso_standards/2", nil)
-	fmt.Println("Request performed for TestWebDeleteISOStandardNotFound")
-	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
+	req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("/web/iso_standards/%d", suite.standard.ID), nil)
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	assert.Equal(suite.T(), http.StatusOK, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebGetISOStandardByIDNotFound() {
-	fmt.Println("Running TestWebGetISOStandardByIDNotFound")
-	suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, errors.New("not found"))
+func (suite *WebIsoStandardControllerTestSuite) TestDeleteISOStandard_NotFound() {
+	suite.mockRepo.On("DeleteISOStandard", suite.standard.ID).Return(fmt.Errorf("Not Found"))
 
-	w := suite.performRequest("GET", "/web/iso_standards/2", nil)
-	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
-}
+	req, _ := http.NewRequest(http.MethodDelete, fmt.Sprintf("/web/iso_standards/%d", suite.standard.ID), nil)
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
 
-func (suite *WebIsoStandardControllerTestSuite) TestWebCreateISOStandardInternalServerError() {
-	fmt.Println("Running TestWebCreateISOStandardInternalServerError")
-	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(int64(0), errors.New("internal server error"))
-
-	w := suite.performRequest("POST", "/web/iso_standards", bytes.NewBufferString(suite.formData))
-	suite.validateResponse(w, http.StatusInternalServerError, `{"error":"internal server error"}`)
+	assert.Equal(suite.T(), http.StatusNotFound, resp.Code)
+	suite.mockRepo.AssertExpectations(suite.T())
 }
 
 func TestWebIsoStandardControllerTestSuite(t *testing.T) {

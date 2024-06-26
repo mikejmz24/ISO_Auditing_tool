@@ -43,10 +43,10 @@ func (wc *WebIsoStandardController) GetISOStandardByID(c *gin.Context) {
 	id := c.Param("id")
 	isoStandard, err := wc.fetchISOStandardByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch ISO standard"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
 		return
 	}
-	c.HTML(http.StatusOK, "iso_standard.html", gin.H{"isoStandard": isoStandard})
+	templ.Handler(templates.ISOStandard(*isoStandard)).ServeHTTP(c.Writer, c.Request)
 }
 
 func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
@@ -59,7 +59,12 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	apiContext.Writer = c.Writer
 
 	wc.ApiController.CreateISOStandard(apiContext)
-	c.Redirect(http.StatusFound, "/html/iso_standards")
+
+	if apiContext.Writer.Status() == http.StatusCreated {
+		c.Redirect(http.StatusFound, "/web/iso_standards")
+	} else {
+		c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to create ISO standard"})
+	}
 }
 
 func (wc *WebIsoStandardController) UpdateISOStandard(c *gin.Context) {
@@ -68,7 +73,12 @@ func (wc *WebIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	apiContext.Writer = c.Writer
 
 	wc.ApiController.UpdateISOStandard(apiContext)
-	c.JSON(http.StatusOK, gin.H{"status": "updated"})
+
+	if apiContext.Writer.Status() == http.StatusOK {
+		c.JSON(http.StatusOK, gin.H{"status": "updated"})
+	} else {
+		c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to update ISO standard"})
+	}
 }
 
 func (wc *WebIsoStandardController) DeleteISOStandard(c *gin.Context) {
@@ -77,7 +87,12 @@ func (wc *WebIsoStandardController) DeleteISOStandard(c *gin.Context) {
 	apiContext.Writer = c.Writer
 
 	wc.ApiController.DeleteISOStandard(apiContext)
-	c.JSON(http.StatusOK, gin.H{"status": "deleted"})
+
+	if apiContext.Writer.Status() == http.StatusOK {
+		c.JSON(http.StatusOK, gin.H{"status": "deleted"})
+	} else {
+		c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to delete ISO standard"})
+	}
 }
 
 // Helper functions for fetching data from the API controller

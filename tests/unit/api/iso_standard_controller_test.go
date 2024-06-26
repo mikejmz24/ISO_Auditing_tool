@@ -157,7 +157,7 @@ func (suite *IsoStandardControllerTestSuite) validateResponse(w *httptest.Respon
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPIGetAllISOStandards() {
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Success() {
 	fmt.Println("Running TestAPIGetAllISOStandards")
 	expectedStandards := []types.ISOStandard{suite.standard}
 	suite.mockRepo.On("GetAllISOStandards").Return(expectedStandards, nil)
@@ -166,7 +166,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIGetAllISOStandards() {
 	suite.validateResponse(w, http.StatusOK, "ISO 9001")
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPIGetISOStandardByID() {
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
 	fmt.Println("Running TestAPIGetISOStandardByID")
 	suite.mockRepo.On("GetISOStandardByID", int64(1)).Return(suite.standard, nil)
 
@@ -174,7 +174,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIGetISOStandardByID() {
 	suite.validateResponse(w, http.StatusOK, "ISO 9001")
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandard() {
+func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
 	fmt.Println("Running TestAPICreateISOStandard")
 	expectedID := int64(1)
 	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(expectedID, nil)
@@ -186,7 +186,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandard() {
 	suite.validateResponse(w, http.StatusCreated, `"id":1`)
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandardInvalidData() {
+func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_InvalidData() {
 	fmt.Println("Running TestAPICreateISOStandardInvalidData")
 	invalidFormData := `{"name": ""}`
 
@@ -196,7 +196,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandardInvalidData
 	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Invalid data"}`)
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPIUpdateISOStandard() {
+func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_Success() {
 	fmt.Println("Running TestAPIUpdateISOStandard")
 	updatedStandard := suite.standard
 	updatedStandard.Name = "ISO 9001 Updated"
@@ -230,7 +230,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIUpdateISOStandard() {
 	suite.validateResponse(w, http.StatusOK, `{"status":"updated"}`)
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPIUpdateISOStandardNotFound() {
+func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_NotFound() {
 	fmt.Println("Running TestAPIUpdateISOStandardNotFound")
 	suite.mockRepo.On("UpdateISOStandard", suite.standard).Return(errors.New("not found"))
 
@@ -248,7 +248,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIDeleteISOStandard() {
 	suite.validateResponse(w, http.StatusOK, `{"message":"ISO standard deleted"}`)
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPIDeleteISOStandardNotFound() {
+func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_NotFound() {
 	fmt.Println("Running TestAPIDeleteISOStandardNotFound")
 	suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(errors.New("not found"))
 
@@ -258,7 +258,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIDeleteISOStandardNotFound() 
 	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPIGetISOStandardByIDNotFound() {
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
 	fmt.Println("Running TestAPIGetISOStandardByIDNotFound")
 	suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, errors.New("not found"))
 
@@ -266,7 +266,7 @@ func (suite *IsoStandardControllerTestSuite) TestAPIGetISOStandardByIDNotFound()
 	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
 }
 
-func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandardInternalServerError() {
+func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_InternalServerError() {
 	fmt.Println("Running TestAPICreateISOStandardInternalServerError")
 	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(int64(0), errors.New("internal server error"))
 
@@ -274,6 +274,6 @@ func (suite *IsoStandardControllerTestSuite) TestAPICreateISOStandardInternalSer
 	suite.validateResponse(w, http.StatusInternalServerError, `{"error":"internal server error"}`)
 }
 
-func TestIsoStandardControllerTestSuite(t *testing.T) {
+func TestAPIISOStandardControllerTestSuite(t *testing.T) {
 	suite.Run(t, new(IsoStandardControllerTestSuite))
 }
