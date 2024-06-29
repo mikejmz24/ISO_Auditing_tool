@@ -46,6 +46,8 @@ type PersistenceTestSuite struct {
 	standard types.ISOStandard
 }
 
+// TODO: Examine applying an error handling middleware
+
 func (suite *IsoStandardControllerTestSuite) setupMockRepo() {
 	suite.mockRepo = new(testutils.MockIsoStandardRepository)
 	if suite.mockRepo == nil {
@@ -192,13 +194,14 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
 
 func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
 	fmt.Println("Running TestAPICreateISOStandard")
-	expectedID := int64(1)
-	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(expectedID, nil)
-
+	// expectedID := int64(1)
+	// suite.mockRepo.On("CreateISOStandard", suite.standard).Return(expectedID, nil)
+	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(suite.standard, nil)
 	fmt.Printf("Form Data: %s\n", suite.formData) // Print form data for debugging
 
 	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBuffer(suite.formData))
 	fmt.Printf("Response Body: %s\n", w.Body.String()) // Print response body for debugging
+	// suite.validateResponse(w, http.StatusCreated, `"id":1`)
 	suite.validateResponse(w, http.StatusCreated, `"id":1`)
 }
 
@@ -250,7 +253,7 @@ func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_NotFound() {
 	fmt.Println("Running TestAPIUpdateISOStandardNotFound")
 	suite.mockRepo.On("UpdateISOStandard", suite.standard).Return(errors.New("not found"))
 
-	w := suite.performRequest("PUT", "/api/iso_standards/2", bytes.NewBuffer(suite.formData))
+	w := suite.performRequest("PUT", "/api/iso_standards/1", bytes.NewBuffer(suite.formData))
 	suite.validateResponse(w, http.StatusNotFound, `{"error":"ISO standard not found"}`)
 }
 
@@ -284,7 +287,8 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
 
 func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_InternalServerError() {
 	fmt.Println("Running TestAPICreateISOStandardInternalServerError")
-	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(int64(0), errors.New("internal server error"))
+	// suite.mockRepo.On("CreateISOStandard", suite.standard).Return(int64(0), errors.New("internal server error"))
+	suite.mockRepo.On("CreateISOStandard", suite.standard).Return(types.ISOStandard{}, errors.New("internal server error"))
 
 	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBuffer(suite.formData))
 	suite.validateResponse(w, http.StatusInternalServerError, `{"error":"internal server error"}`)

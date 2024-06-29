@@ -11,6 +11,7 @@ type MockIsoStandardRepository struct {
 
 func (m *MockIsoStandardRepository) GetAllISOStandards() ([]types.ISOStandard, error) {
 	args := m.Called()
+	// Assert the mocked response is of the expected type
 	return args.Get(0).([]types.ISOStandard), args.Error(1)
 }
 
@@ -19,9 +20,9 @@ func (m *MockIsoStandardRepository) GetISOStandardByID(id int64) (types.ISOStand
 	return args.Get(0).(types.ISOStandard), args.Error(1)
 }
 
-func (m *MockIsoStandardRepository) CreateISOStandard(isoStandard types.ISOStandard) (int64, error) {
+func (m *MockIsoStandardRepository) CreateISOStandard(isoStandard types.ISOStandard) (types.ISOStandard, error) {
 	args := m.Called(isoStandard)
-	return args.Get(0).(int64), args.Error(1)
+	return args.Get(0).(types.ISOStandard), args.Error(1)
 }
 
 func (m *MockIsoStandardRepository) UpdateISOStandard(isoStandard types.ISOStandard) error {

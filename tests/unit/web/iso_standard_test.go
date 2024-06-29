@@ -11,8 +11,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -164,13 +166,62 @@ func (suite *PersistenceTestSuite) SetupSuite() {
 	}
 }
 
-func (suite *PersistenceTestSuite) TestCreateISOStandard_Success() {
-	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(int64(1), nil)
+func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
+	// Prepare the test data
+	standard := types.ISOStandard{
+		ID:   1,
+		Name: "ISO 9001",
+	}
 
-	id, err := suite.mockRepo.CreateISOStandard(suite.standard)
+	// If the handler expects form data, use url.Values
+	formData := url.Values{
+		"name": {standard.Name},
+	}
 
+	// Set up the mock repository
+	suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
+	suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil) // Mock GetAllISOStandards method
+
+	// Perform the POST request to create the ISO standard
+	req, err := http.NewRequest(http.MethodPost, "/web/iso_standards/add", strings.NewReader(formData.Encode()))
 	suite.NoError(err)
-	suite.Equal(int64(1), id)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp := httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	// Validate the response code and location header for redirect
+	suite.Equal(http.StatusFound, resp.Code)
+	location := resp.Header().Get("Location")
+	suite.Equal("/web/iso_standards", location)
+
+	// Perform a GET request to the redirected URL
+	req, err = http.NewRequest(http.MethodGet, location, nil)
+	suite.NoError(err)
+
+	resp = httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	// Validate the response contains the newly created ISO standard
+	suite.Equal(http.StatusOK, resp.Code)
+	suite.Contains(resp.Body.String(), "ISO 9001")
+
+	// Ensure the mock expectations are met
+	suite.mockRepo.AssertExpectations(suite.T())
+	suite.Equal("/web/iso_standards", location)
+
+	// Perform a GET request to the redirected URL
+	req, err = http.NewRequest(http.MethodGet, location, nil)
+	suite.NoError(err)
+
+	resp = httptest.NewRecorder()
+	suite.router.ServeHTTP(resp, req)
+
+	// Validate the response contains the newly created ISO standard
+	suite.Equal(http.StatusOK, resp.Code)
+	suite.Contains(resp.Body.String(), "ISO 9001")
+
+	// Ensure the mock expectations are met
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 

@@ -285,7 +285,7 @@ func scanClause(rows *sql.Rows) (types.Clause, error) {
 // scanISOStandard scans a single row into an ISOStandard struct
 func scanISOStandard(rows *sql.Rows) (types.ISOStandard, error) {
 	var standard types.ISOStandard
-	err := rows.Scan(&standard.ID, &standard.Name)
+	err := rows.Scan(&standard.ID, &standard.Name, &standard.Clauses)
 	return standard, err
 }
 

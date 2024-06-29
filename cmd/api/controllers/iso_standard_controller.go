@@ -59,12 +59,14 @@ func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
-	id, err := cc.Repo.CreateISOStandard(isoStandard)
+	// id, err := cc.Repo.CreateISOStandard(isoStandard)
+	_, err := cc.Repo.CreateISOStandard(isoStandard)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"id": id})
+	// c.JSON(http.StatusCreated, gin.H{"id": id})
+	c.JSON(http.StatusCreated, isoStandard)
 }
 
 // Update an ISO standard
@@ -80,6 +82,13 @@ func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 		return
 	}
+	// Extract the ID from the request URL or request body, depending on your API design
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
+	}
+
+	isoStandard.ID = id
 	if err := cc.Repo.UpdateISOStandard(isoStandard); err != nil {
 		if err.Error() == "not found" {
 			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})

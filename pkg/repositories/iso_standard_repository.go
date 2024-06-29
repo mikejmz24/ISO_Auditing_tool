@@ -4,6 +4,7 @@ import (
 	"ISO_Auditing_Tool/pkg/types"
 	"database/sql"
 	"errors"
+	"fmt"
 )
 
 // Repository interface defines the methods for interacting with the database
@@ -11,7 +12,7 @@ type IsoStandardRepository interface {
 	// ISO Standard methods
 	GetAllISOStandards() ([]types.ISOStandard, error)
 	GetISOStandardByID(id int64) (types.ISOStandard, error)
-	CreateISOStandard(isoStandard types.ISOStandard) (int64, error)
+	CreateISOStandard(isoStandard types.ISOStandard) (types.ISOStandard, error)
 	UpdateISOStandard(isoStandard types.ISOStandard) error
 	DeleteISOStandard(id int64) error
 }
@@ -52,23 +53,54 @@ func (r *isoStandardRepository) GetISOStandardByID(id int64) (types.ISOStandard,
 	return types.ISOStandard{}, errors.New("ISO standard not found")
 }
 
-func (r *isoStandardRepository) CreateISOStandard(standard types.ISOStandard) (int64, error) {
+func (r *isoStandardRepository) CreateISOStandard(standard types.ISOStandard) (types.ISOStandard, error) {
 	query := "INSERT INTO iso_standard (name) VALUES (?);"
 	result, err := r.db.Exec(query, standard.Name)
 	if err != nil {
-		return 0, err
+		return types.ISOStandard{}, err
 	}
-	return result.LastInsertId()
+	// return result.LastInsertId()
+	id, err := result.LastInsertId()
+	if err != nil {
+		return types.ISOStandard{}, err
+	}
+	standard.ID = int(id)
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return types.ISOStandard{}, err
+	}
+	fmt.Printf("Created %v row(s)", rowsAffected)
+	return standard, nil
 }
 
 func (r *isoStandardRepository) UpdateISOStandard(standard types.ISOStandard) error {
 	query := "UPDATE iso_standard SET name = ? WHERE id = ?;"
-	_, err := r.db.Exec(query, standard.Name, standard.ID)
-	return err
+	result, err := r.db.Exec(query, standard.Name, standard.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return nil
 }
 
 func (r *isoStandardRepository) DeleteISOStandard(id int64) error {
 	query := "DELETE FROM iso_standard WHERE id = ?;"
-	_, err := r.db.Exec(query, id)
-	return err
+	result, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("not found")
+	}
+	return nil
 }
