@@ -18,100 +18,102 @@ func NewApiIsoStandardController(repo repositories.IsoStandardRepository) *ApiIs
 	return &ApiIsoStandardController{Repo: repo}
 }
 
-// Get all ISO standards
+func respondWithError(c *gin.Context, code int, message string) {
+	c.JSON(code, gin.H{"error": message})
+}
+
+// GetAllISOStandards retrieves all ISO standards
 func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 	isoStandards, err := cc.Repo.GetAllISOStandards()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		respondWithError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, isoStandards)
 }
 
-// Get ISO standard by ID
+// GetISOStandardByID retrieves an ISO standard by its ID
 func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
+		respondWithError(c, http.StatusBadRequest, "invalid ISO standard ID")
 		return
 	}
 	isoStandard, err := cc.Repo.GetISOStandardByID(id)
 	if err != nil {
 		if err.Error() == "not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
+			respondWithError(c, http.StatusNotFound, "ISO standard not found")
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			respondWithError(c, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
 	c.JSON(http.StatusOK, isoStandard)
 }
 
-// Create a new ISO standard
+// CreateISOStandard creates a new ISO standard
 func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 	var isoStandard types.ISOStandard
 	if err := c.ShouldBindJSON(&isoStandard); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		respondWithError(c, http.StatusBadRequest, "Invalid data")
 		return
 	}
 	// Additional validation for business rules
 	if isoStandard.Name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		respondWithError(c, http.StatusBadRequest, "Invalid data")
 		return
 	}
-	// id, err := cc.Repo.CreateISOStandard(isoStandard)
-	_, err := cc.Repo.CreateISOStandard(isoStandard)
+	createdISOStandard, err := cc.Repo.CreateISOStandard(isoStandard)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		respondWithError(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	// c.JSON(http.StatusCreated, gin.H{"id": id})
-	c.JSON(http.StatusCreated, isoStandard)
+	c.JSON(http.StatusCreated, createdISOStandard)
 }
 
-// Update an ISO standard
+// UpdateISOStandard updates an existing ISO standard
 func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	var isoStandard types.ISOStandard
 	if err := c.ShouldBindJSON(&isoStandard); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		respondWithError(c, http.StatusBadRequest, "Invalid data")
 		return
 	}
 
 	// Additional validation for business rules
 	if isoStandard.Name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+		respondWithError(c, http.StatusBadRequest, "Invalid data")
 		return
 	}
-	// Extract the ID from the request URL or request body, depending on your API design
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
+		respondWithError(c, http.StatusBadRequest, "invalid ISO standard ID")
+		return
 	}
 
 	isoStandard.ID = id
 	if err := cc.Repo.UpdateISOStandard(isoStandard); err != nil {
 		if err.Error() == "not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
+			respondWithError(c, http.StatusNotFound, "ISO standard not found")
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			respondWithError(c, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
 }
 
-// Delete an ISO standard
+// DeleteISOStandard deletes an ISO standard
 func (cc *ApiIsoStandardController) DeleteISOStandard(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid ISO standard ID"})
+		respondWithError(c, http.StatusBadRequest, "invalid ISO standard ID")
 		return
 	}
 	if err := cc.Repo.DeleteISOStandard(id); err != nil {
 		if err.Error() == "not found" {
-			c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
+			respondWithError(c, http.StatusNotFound, "ISO standard not found")
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			respondWithError(c, http.StatusInternalServerError, err.Error())
 		}
 		return
 	}

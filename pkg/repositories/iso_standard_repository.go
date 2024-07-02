@@ -31,6 +31,7 @@ func NewIsoStandardRepository(db *sql.DB) IsoStandardRepository {
 
 // ISO Standard methods
 func (r *isoStandardRepository) GetAllISOStandards() ([]types.ISOStandard, error) {
+	// query := "SELECT id, name FROM iso_standard;"
 	query := "SELECT id, name FROM iso_standard;"
 	return executeQuery(r.db, query, scanISOStandard)
 }
