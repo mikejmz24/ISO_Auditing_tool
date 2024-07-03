@@ -28,11 +28,15 @@ func NewServer() *Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
 
-	// Call Migrate method to create tables
-	if err := db.Migrate(); err != nil {
-		fmt.Printf("Failed to migrate database: %v\n", err)
-		os.Exit(1)
-	}
+	// if err := db.Migrate(); err != nil {
+	// 	fmt.Printf("Failed to migrate database: %v\n", err)
+	// 	os.Exit(1)
+	// }
+	//
+	// if err := db.Seed(); err != nil {
+	// 	fmt.Printf("Failed to seed the database: %v\n", err)
+	// 	os.Exit(1)
+	// }
 
 	clauseRepo := repositories.NewClauseRepository(db.DB())
 	apiStandardRepo := repositories.NewIsoStandardRepository(db.DB())

@@ -57,6 +57,13 @@ type Section struct {
 	Questions *[]Question `json:"questions,omitempty"`
 }
 
+type Subsection struct {
+	ID        int         `json:"id"`
+	SectionID int         `json:"section_id"`
+	Name      string      `json:"name"`
+	Questions *[]Question `json:"questions,omitempty"`
+}
+
 type Question struct {
 	ID        int    `json:"id"`
 	SectionID int    `json:"section_id"`
