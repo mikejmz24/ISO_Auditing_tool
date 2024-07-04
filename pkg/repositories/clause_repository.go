@@ -46,13 +46,68 @@ func NewClauseRepository(db *sql.DB) Repository {
 // Clause methods
 
 func (r *repository) GetAllClauses() ([]types.Clause, error) {
+	// query := `
+	// 	SELECT c.id, c.name,
+	// 		IFNULL(JSON_ARRAYAGG(JSON_OBJECT('id', s.id, 'name', s.name)), '[]') AS sections
+	// 	FROM clause c
+	// 	LEFT JOIN section s ON c.id = s.clause_id
+	// 	GROUP BY c.id, c.name;
+	// `
 	query := `
-		SELECT c.id, c.name, 
-			IFNULL(JSON_ARRAYAGG(JSON_OBJECT('id', s.id, 'name', s.name)), '[]') AS sections 
-		FROM clause c
-		LEFT JOIN section s ON c.id = s.clause_id
-		GROUP BY c.id, c.name;
-	`
+  WITH OrderedSubsections AS (
+   SELECT 
+       sub.id, 
+       sub.name, 
+       sub.section_id
+   FROM subsection sub
+   ORDER BY sub.name ASC
+  ),
+  OrderedSections AS (
+     SELECT 
+         s.id, 
+         s.name, 
+         s.clause_id,
+         JSON_ARRAYAGG(
+             JSON_OBJECT(
+                 'name', osub.name
+             )
+         ) AS subsections
+     FROM section s
+     LEFT JOIN OrderedSubsections osub ON s.id = osub.section_id
+     GROUP BY s.id
+     ORDER BY s.name ASC
+  ),
+  OrderedClauses AS (
+     SELECT 
+         c.id, 
+         c.name, 
+         c.iso_standard_id,
+         JSON_ARRAYAGG(
+             JSON_OBJECT(
+                 'name', os.name,
+                 'subsections', IFNULL(os.subsections, '[]')
+             )
+         ) AS sections
+     FROM clause c
+     LEFT JOIN OrderedSections os ON c.id = os.clause_id
+     GROUP BY c.id
+     ORDER BY c.name ASC
+  )
+  SELECT 
+     iso.name AS iso_name,
+     IFNULL(
+         JSON_ARRAYAGG(
+             JSON_OBJECT(
+                 'name', oc.name,
+                 'sections', IFNULL(oc.sections, '[]')
+             )
+         ), '[]'
+     ) AS clauses
+  FROM iso_standard iso
+  LEFT JOIN OrderedClauses oc ON iso.id = oc.iso_standard_id
+  GROUP BY iso.name
+  ORDER BY iso.name ASC;
+  `
 	return executeQuery(r.db, query, scanClause)
 }
 

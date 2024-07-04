@@ -11,14 +11,13 @@ var seedFuncs = []func(*sql.DB) error{
 	seedClauses,
 	seedSections,
 	seedSubsections,
-	// Add other seed functions here
+	seedQuestions,
 }
 
 func Seed(db *sql.DB) error {
-	log.Println("Starting the seeding process...")
 	for _, seedFunc := range seedFuncs {
-		log.Printf("Running seed function: %T\n", seedFunc)
 		if err := seedFunc(db); err != nil {
+			log.Printf("Failed to execute seed function: %v", err)
 			return fmt.Errorf("failed to execute seed: %w", err)
 		}
 	}
@@ -26,46 +25,36 @@ func Seed(db *sql.DB) error {
 	return nil
 }
 
-func seedISOStandards(db *sql.DB) error {
-	log.Println("Seeding ISO Standards...")
+func seeding(db *sql.DB, table_name string, query string) error {
+	log.Printf("Seeding %v table...", table_name)
 	var count int
-	row := db.QueryRow("SELECT COUNT(*) FROM iso_standard")
+	queryString := fmt.Sprintf("SELECT COUNT(*) FROM %v", table_name)
+	row := db.QueryRow(queryString)
 	if err := row.Scan(&count); err != nil {
-		log.Printf("Error querying iso_standard count: %v\n", err)
+		log.Printf("Error counting rows in %v: %v", table_name, err)
 		return err
 	}
-	log.Printf("ISO Standards count: %d\n", count)
+	log.Printf("Count in %v: %d", table_name, count)
 	if count > 0 {
-		log.Println("ISO Standards already seeded")
+		log.Printf("%v table already seeded, skipping...", table_name)
 		return nil // Data already exists
 	}
-
-	query := `INSERT INTO iso_standard (name) VALUES 
-	('ISO 9001:2015'),
-	('ISO 27001:2013');`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Printf("Error inserting ISO Standards: %v\n", err)
+	if _, err := db.Exec(query); err != nil {
+		log.Printf("Error inserting into %v: %v", table_name, err)
 		return err
 	}
-	log.Println("ISO Standards seeded successfully")
+	log.Printf("%v table seeded successfully", table_name)
 	return nil
 }
 
-func seedClauses(db *sql.DB) error {
-	log.Println("Seeding Clauses...")
-	var count int
-	row := db.QueryRow("SELECT COUNT(*) FROM clause")
-	if err := row.Scan(&count); err != nil {
-		log.Printf("Error querying clause count: %v\n", err)
-		return err
-	}
-	log.Printf("Clauses count: %d\n", count)
-	if count > 0 {
-		log.Println("Clauses already seeded")
-		return nil // Data already exists
-	}
+func seedISOStandards(db *sql.DB) error {
+	query := `INSERT INTO iso_standard (name) VALUES 
+	('ISO 9001:2015'),
+	('ISO 27001:2013');`
+	return seeding(db, "iso_standard", query)
+}
 
+func seedClauses(db *sql.DB) error {
 	query := `INSERT INTO clause (id, iso_standard_id, name) VALUES
 	(1, 1, '4. Context of the Organization'),
 	(2, 1, '5 Leadership'),
@@ -74,31 +63,12 @@ func seedClauses(db *sql.DB) error {
 	(5, 1, '8 Operation'),
 	(6, 1, '9 Performance evaluation'),
 	(7, 1, '10 Improvement');`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Printf("Error inserting Clauses: %v\n", err)
-		return err
-	}
-	log.Println("Clauses seeded successfully")
-	return nil
+	return seeding(db, "clause", query)
 }
 
 func seedSections(db *sql.DB) error {
-	log.Println("Seeding Sections...")
-	var count int
-	row := db.QueryRow("SELECT COUNT(*) FROM section")
-	if err := row.Scan(&count); err != nil {
-		log.Printf("Error querying section count: %v\n", err)
-		return err
-	}
-	log.Printf("Sections count: %d\n", count)
-	if count > 0 {
-		log.Println("Sections already seeded")
-		return nil // Data already exists
-	}
-
 	query := `INSERT INTO section (id, clause_id, name) VALUES
-	(1, 1, '4.1 Understanding the organization and its context'),
+  (1, 1, '4.1 Understanding the organization and its context'),
 	(2, 1, '4.2 Understanding the needs and expectations of interested parties'),
 	(3, 1, '4.3 Determining the scope of the quality management system'),
 	(4, 1, '4.4 Quality management system and its processes'),
@@ -126,42 +96,23 @@ func seedSections(db *sql.DB) error {
 	(26, 7, '10.1 General'),
 	(27, 7, '10.2 Nonconformity and corrective action'),
 	(28, 7, '10.3 Continual improvement');`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Printf("Error inserting Sections: %v\n", err)
-		return err
-	}
-	log.Println("Sections seeded successfully")
-	return nil
+	return seeding(db, "section", query)
 }
 
 func seedSubsections(db *sql.DB) error {
-	log.Println("Seeding Subsections...")
-	var count int
-	row := db.QueryRow("SELECT COUNT(*) FROM subsection")
-	if err := row.Scan(&count); err != nil {
-		log.Printf("Error querying subsection count: %v\n", err)
-		return err
-	}
-	log.Printf("Subsections count: %d\n", count)
-	if count > 0 {
-		log.Println("Subsections already seeded")
-		return nil // Data already exists
-	}
-
 	query := `INSERT INTO subsection (id, section_id, name) VALUES
 	(1, 5, '5.1.1 General'),
 	(2, 5, '5.1.2 Customer focus'),
 	(3, 6, '5.2.1 Establishing the quality policy'),
 	(4, 6, '5.2.2 Communicating the quality policy'),
 	(5, 11, '7.1.1 General'),
-	(5, 11, '7.1.2 People'),
-	(6, 11, '7.1.3 Infrastructure'),
-	(7, 11, '7.1.4 Environment for the operation of processes'),
-	(8, 11, '7.1.5 Monitoring and measuring resources'),
-	(9, 11, '7.1.5.1 General'),
-	(10, 11, '7.1.5.2 Measurement traceability'),
-	(11, 11, '7.1.6 Organizational knowledge'),
+	(6, 11, '7.1.2 People'),
+	(7, 11, '7.1.3 Infrastructure'),
+	(8, 11, '7.1.4 Environment for the operation of processes'),
+	(9, 11, '7.1.5 Monitoring and measuring resources'),
+	(10, 11, '7.1.5.1 General'),
+	(11, 11, '7.1.5.2 Measurement traceability'),
+	(12, 11, '7.1.6 Organizational knowledge'),
 	(13, 15, '7.5.1 General'),
 	(14, 15, '7.5.2 Creating and updating'),
 	(15, 15, '7.5.3 Control of documented information'),
@@ -190,11 +141,39 @@ func seedSubsections(db *sql.DB) error {
 	(38, 25, '9.3.1 General'),
 	(39, 25, '9.3.2 Management review inputs'),
 	(40, 25, '9.3.3 Management review outputs');`
-	_, err := db.Exec(query)
-	if err != nil {
-		log.Printf("Error inserting Subsections: %v\n", err)
-		return err
-	}
-	log.Println("Subsections seeded successfully")
-	return nil
+	return seeding(db, "subsection", query)
+}
+
+func seedQuestions(db *sql.DB) error {
+	query := `INSERT INTO question (id, section_id, subsection_id, name) VALUES
+  (1, 3, NULL, 'What is the scope of the QMS?'),
+	(2, 7, NULL, 'What roles and responsibilities are part of your team?'),
+	(3, 7, NULL, 'When the team is unable to agree on a decision, who has the authority to make the final decision?'),
+	(4, 7, NULL, 'What happens when a role is absent? Do you have a proces in place to determine who assumes the role responsibilities in the mean time?'),
+	(5, 9, NULL, 'Define the objectives and how you apply those actions in your planning.'),
+	(6, 10, NULL, 'How do you handle changes in your planning? Do you have any supporting methodology for this?'),
+	(7, NULL, 5, 'Proces of TA with the manager - recruitment process and document repository'),
+  (8, NULL, 6, 'How are the competences for each job determined?'),
+	(9, NULL, 6, 'Determine the necessary competence for personnel performing work affecting product quality.'),
+	(10, NULL, 6, 'How are you going to make sure that the training provides the missing competences?'),
+	(11, NULL, 6, 'How do you handle a situation of having a new employee with a knowledge gap? For example, the colleague was hired with a certian level of knowledge but the job requires a higher level.'),
+	(12, 12, NULL, 'On-boarding plans.'),
+	(13, 12, NULL, 'Off-boarding plans.'),
+	(14, 12, NULL, 'On-boarding for the manager.'),
+	(15, 12, NULL, 'Knowledge transfer.'),
+	(16, 12, NULL, 'Skill Matrix Plan?'),
+	(17, 12, NULL, 'There must be evidence of removal of acceses when an employee changed teams. Check for the last change on the team and review the access removal evidence.'),
+	(18, NULL, 16, 'How is communication facilitated with customers?'),
+	(19, NULL, 18, 'How do you review requirements for your product or service?'),
+	(20, NULL, 19, 'How do you manage changes in requirements for your product or service?'),
+	(21, 18, NULL, 'What development framework does the team follow?'),
+	(22, 18, NULL, 'Is there an SDP describing the team\'s development process?'),
+	(23, NULL, 22, 'What is your process for gathering requirements?'),
+	(24, NULL, 22, 'Where do your requirements come from?'),
+	(25, NULL, 22, 'How fo you ensusre that a requirement is ready to be taken?'),
+	(26, NULL, 22, 'How are Non-Functional Requirements (NFR) handled?'),
+	(27, NULL, 22, 'What is you feature architecture design process?'),
+	(28, NULL, 22, 'How do you handle architectural decisions?'),
+	(29, NULL, 22, 'How are project risks managed?');`
+	return seeding(db, "question", query)
 }

@@ -35,9 +35,15 @@ var queries = []string{
 		) AUTO_INCREMENT=1;`,
 	`CREATE TABLE IF NOT EXISTS question (
 			id INT AUTO_INCREMENT PRIMARY KEY,
-			section_id INT NOT NULL,
+			section_id INT NULL,
+      subsection_id INT NULL,
 			name VARCHAR(255) NOT NULL,
-			FOREIGN KEY (section_id) REFERENCES section(id)
+    CONSTRAINT fk_section
+       FOREIGN KEY (section_id) 
+       REFERENCES section(id),
+    CONSTRAINT fk_subsection
+       FOREIGN KEY (subsection_id) 
+       REFERENCES subsection(id)
 		) AUTO_INCREMENT=1;`,
 	`CREATE TABLE IF NOT EXISTS evidence (
 			id INT AUTO_INCREMENT PRIMARY KEY,

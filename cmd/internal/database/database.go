@@ -15,7 +15,6 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-// Service represents a service that interacts with a database.
 type Service interface {
 	Health() map[string]string
 	Close() error
@@ -47,9 +46,11 @@ func New() Service {
 		log.Fatal("One or more required environment variables (DB_DATABASE, DB_PASSWORD, DB_USERNAME, DB_PORT, DB_HOST) are not set")
 	}
 
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname))
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname)
+	log.Println("Connecting to database...")
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to open database: %v", err)
 	}
 	db.SetConnMaxLifetime(0)
 	db.SetMaxIdleConns(50)
@@ -59,6 +60,7 @@ func New() Service {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	log.Printf("Connected to database: %s", dbname)
 	dbInstance = &service{
 		db: db,
 	}
@@ -117,25 +119,50 @@ func (s *service) DB() *sql.DB {
 }
 
 func (s *service) Migrate() error {
-	return migrations.Migrate(s.db)
+	log.Println("Running migrations...")
+	if err := migrations.Migrate(s.db); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+	log.Println("Migrations completed successfully")
+	return nil
 }
 
 func (s *service) Seed() error {
 	env := os.Getenv("ENV")
 	if env == "development" || env == "test" {
-		return seeds.Seed(s.db)
+		log.Println("Seeding database...")
+		if err := seeds.Seed(s.db); err != nil {
+			log.Fatalf("Failed to seed database: %v", err)
+		}
+		log.Println("Database seeding completed successfully")
+	} else {
+		log.Println("Skipping database seeding in non-development environment")
 	}
 	return nil
 }
 
 func (s *service) Truncate() error {
-	tables := []string{"iso_standard", "clause", "section", "subsection"}
+	log.Println("Truncating seed tables...")
+
+	// Disable foreign key checks
+	if _, err := s.db.Exec("SET FOREIGN_KEY_CHECKS = 0"); err != nil {
+		return fmt.Errorf("failed to disable foreign key checks: %w", err)
+	}
+
+	tables := []string{"question", "subsection", "section", "clause", "iso_standard"}
 	for _, table := range tables {
 		query := fmt.Sprintf("TRUNCATE TABLE %s", table)
+		log.Printf("Executing query: %s", query)
 		if _, err := s.db.Exec(query); err != nil {
 			return fmt.Errorf("failed to truncate table %s: %w", table, err)
 		}
 	}
+
+	// Re-enable foreign key checks
+	if _, err := s.db.Exec("SET FOREIGN_KEY_CHECKS = 1"); err != nil {
+		return fmt.Errorf("failed to re-enable foreign key checks: %w", err)
+	}
+
 	log.Println("All seed tables truncated successfully")
 	return nil
 }

@@ -65,9 +65,10 @@ type Subsection struct {
 }
 
 type Question struct {
-	ID        int    `json:"id"`
-	SectionID int    `json:"section_id"`
-	Text      string `json:"text"`
+	ID           int    `json:"id"`
+	SectionID    int    `json:"section_id"`
+	SubsectionID int    `json:"subsection_id"`
+	Text         string `json:"text"`
 }
 
 type Evidence struct {
