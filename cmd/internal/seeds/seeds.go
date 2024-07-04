@@ -6,6 +6,8 @@ import (
 	"log"
 )
 
+// TODO: Investigate how to seed via csv files instead of hard coded data
+
 var seedFuncs = []func(*sql.DB) error{
 	seedISOStandards,
 	seedClauses,

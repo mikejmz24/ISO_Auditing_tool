@@ -28,13 +28,11 @@ type Audit struct {
 }
 
 type AuditQuestion struct {
-	ID                 int              `json:"id"`
-	AuditID            int              `json:"audit_id"`
-	EvidenceProvidedID int              `json:"evidence_provided_id"`
-	QuestionID         int              `json:"question_id"`
-	EvidenceProvided   EvidenceProvided `json:"evidence_provided"`
-	Question           Question         `json:"question"`
-	Comments           []Comment        `json:"comments"`
+	ID               int                `json:"id"`
+	AuditID          int                `json:"audit_id"`
+	QuestionID       int                `json:"question_id"`
+	EvidenceProvided []EvidenceProvided `json:"evidence_provided"`
+	Comments         []Comment          `json:"comments"`
 }
 
 type ISOStandard struct {
@@ -65,22 +63,24 @@ type Subsection struct {
 }
 
 type Question struct {
-	ID           int    `json:"id"`
-	SectionID    int    `json:"section_id"`
-	SubsectionID int    `json:"subsection_id"`
-	Text         string `json:"text"`
+	ID           int         `json:"id"`
+	SectionID    int         `json:"section_id"`
+	SubsectionID int         `json:"subsection_id"`
+	Text         string      `json:"text"`
+	Evidence     *[]Evidence `json:"evidence,omitempty"`
 }
 
 type Evidence struct {
-	ID       int    `json:"id"`
-	Expected string `json:"expected"`
+	ID         int    `json:"id"`
+	QuestionID int    `json:"question_id"`
+	Expected   string `json:"expected"`
 }
 
 type EvidenceProvided struct {
-	ID         int      `json:"id"`
-	EvidenceID int      `json:"evidence_id"`
-	Provided   []string `json:"provided"`
-	Evidence   Evidence `json:"evidence"`
+	ID              int    `json:"id"`
+	EvidenceID      int    `json:"evidence_id"`
+	AuditQuestionID int    `json:"audit_question_id"`
+	Provided        string `json:"provided"`
 }
 
 type Comment struct {

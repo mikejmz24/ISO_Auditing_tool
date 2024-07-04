@@ -47,13 +47,17 @@ var queries = []string{
 		) AUTO_INCREMENT=1;`,
 	`CREATE TABLE IF NOT EXISTS evidence (
 			id INT AUTO_INCREMENT PRIMARY KEY,
-			expected VARCHAR(255) NOT NULL
+      question_id INT NOT NULL,
+			expected VARCHAR(255) NOT NULL,
+      FOREIGN KEY (question_id) REFERENCES question(id)
 		) AUTO_INCREMENT=1;`,
 	`CREATE TABLE IF NOT EXISTS evidence_provided (
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			evidence_id INT NOT NULL,
+      audit_question_id INT NOT NULL,
 			provided TEXT NOT NULL,
-			FOREIGN KEY (evidence_id) REFERENCES evidence(id)
+			FOREIGN KEY (evidence_id) REFERENCES evidence(id),
+      FOREIGN KEY (audit_question_id) REFERENCES audit_questions(id)
 		) AUTO_INCREMENT=1;`,
 	`CREATE TABLE IF NOT EXISTS comment (
 			id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,10 +78,8 @@ var queries = []string{
 	`CREATE TABLE IF NOT EXISTS audit_questions (
 			id INT AUTO_INCREMENT PRIMARY KEY,
 			audit_id INT NOT NULL,
-			evidence_provided_id INT NOT NULL,
 			question_id INT NOT NULL,
 			FOREIGN KEY (audit_id) REFERENCES audit(id),
-			FOREIGN KEY (evidence_provided_id) REFERENCES evidence_provided(id),
 			FOREIGN KEY (question_id) REFERENCES question(id)
 		) AUTO_INCREMENT=1;`,
 	`CREATE TABLE IF NOT EXISTS audit_question_comments (
