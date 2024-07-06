@@ -39,6 +39,18 @@ test:
 test-short:
 	@go test -v ./tests/... 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN"
 
+# Run the database migrations
+migrate:
+	@go run cmd/api/main.go migrate
+
+# Seed the database
+seed:
+	@go run cmd/api/main.go seed
+
+# Truncate the database tables
+truncate:
+	@go run cmd/api/main.go truncate
+
 # Clean the binary
 clean:
 	@echo "Cleaning..."

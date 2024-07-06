@@ -1,0 +1,29 @@
+1,3,,What is the scope of the QMS?
+2,7,,What roles and responsibilities are part of your team?
+3,7,,"When the team is unable to agree on a decision, who has the authority to make the final decision?"
+4,7,,What happens when a role is absent? Do you have a proces in place to determine who assumes the role responsibilities in the mean time?
+5,9,,Define the objectives and how you apply those actions in your planning.
+6,10,,How do you handle changes in your planning? Do you have any supporting methodology for this?
+7,,5,Proces of TA with the manager - recruitment process and document repository
+8,,6,How are the competences for each job determined?
+9,,6,Determine the necessary competence for personnel performing work affecting product quality.
+10,,6,How are you going to make sure that the training provides the missing competences?
+11,,6,"How do you handle a situation of having a new employee with a knowledge gap? For example,  the colleague was hired with a certian level of knowledge but the job requires a higher level."
+12,12,,On-boarding plans.
+13,12,,Off-boarding plans.
+14,12,,On-boarding for the manager.
+15,12,,Knowledge transfer.
+16,12,,Skill Matrix Plan?
+17,12,,There must be evidence of removal of acceses when an employee changed teams. Check for the last change on the team and review the access removal evidence.
+18,,16,How is communication facilitated with customers?
+19,,18,How do you review requirements for your product or service?
+20,,19,How do you manage changes in requirements for your product or service?
+21,18,,What development framework does the team follow?
+22,18,,Is there an SDP describing the team\'s development process?
+23,,22,What is your process for gathering requirements?
+24,,22,Where do your requirements come from?
+25,,22,How fo you ensusre that a requirement is ready to be taken?
+26,,22,How are Non-Functional Requirements (NFR) handled?
+27,,22,What is you feature architecture design process?
+28,,22,How do you handle architectural decisions?
+29,,22,How are project risks managed?
