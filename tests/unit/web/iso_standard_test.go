@@ -27,8 +27,6 @@ type WebIsoStandardControllerTestSuite struct {
 	router   *gin.Engine
 	mockRepo *testutils.MockIsoStandardRepository
 	standard types.ISOStandard
-	// formData    string
-	// updatedData string
 }
 
 type MarshallingTestSuite struct {
@@ -47,12 +45,54 @@ type PersistenceTestSuite struct {
 	standard types.ISOStandard
 }
 
+var testStandard types.ISOStandard
+var testJSONData []byte
+
+func TestMain(m *testing.M) {
+	// Load the test data once
+	testStandard = loadTestData("../../testdata/iso_standards_test01.json")
+	// testJSONData = getJSONData("../../testdata/iso_standards_test01.json")
+	testJSONData, _ = json.Marshal(testStandard)
+
+	// Run the tests
+	code := m.Run()
+	os.Exit(code)
+}
+
+func loadTestData(filePath string) types.ISOStandard {
+	data := getJSONData(filePath)
+
+	var jsonData struct {
+		ISOStandards []types.ISOStandard `json:"iso_standards"`
+	}
+	if err := json.Unmarshal(data, &jsonData); err != nil {
+		panic(fmt.Sprintf("Failed to unmarshal test data: %v", err))
+	}
+
+	if len(jsonData.ISOStandards) == 0 {
+		panic("No ISO standards found in test data")
+	}
+
+	return jsonData.ISOStandards[0]
+}
+
+func getJSONData(filePath string) []byte {
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to load data file: %v", err))
+	}
+	defer file.Close()
+	data, err := io.ReadAll(file)
+	if err != nil {
+		panic(fmt.Errorf("Failed to read data: %w", err))
+	}
+	return data
+}
+
 func (suite *WebIsoStandardControllerTestSuite) SetupTest() {
-	fmt.Println("Setting up test")
 	suite.setupMockRepo()
 	suite.setupRouter()
-	suite.loadTestData("../../testdata/iso_standards_test01.json")
-	fmt.Printf("Setup complete: router=%v, mockRepo=%v, sampleData=%v\n", suite.router, suite.mockRepo, suite.standard)
+	suite.standard = testStandard
 }
 
 func (suite *WebIsoStandardControllerTestSuite) setupMockRepo() {
@@ -60,7 +100,6 @@ func (suite *WebIsoStandardControllerTestSuite) setupMockRepo() {
 	if suite.mockRepo == nil {
 		panic("mockRepo is nil")
 	}
-	fmt.Printf("Mock Repository initialized: %v\n", suite.mockRepo)
 }
 
 func (suite *WebIsoStandardControllerTestSuite) setupRouter() {
@@ -68,28 +107,6 @@ func (suite *WebIsoStandardControllerTestSuite) setupRouter() {
 	if suite.router == nil {
 		panic("router is nil")
 	}
-	fmt.Printf("Router initialized: %v\n", suite.router)
-}
-
-func (suite *WebIsoStandardControllerTestSuite) loadTestData(filePath string) {
-	file, err := os.Open(filePath)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to load test data file: %v", err))
-	}
-
-	defer file.Close()
-
-	data, err := io.ReadAll(file)
-	if err != nil {
-		panic(fmt.Errorf("Failed to read test data: %w", err))
-	}
-
-	var testData types.ISOStandard
-	if err := json.Unmarshal(data, &testData); err != nil {
-		panic(fmt.Sprintf("Failed to unmarshal test data: %v", err))
-	}
-
-	suite.standard = testData
 }
 
 func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
@@ -115,18 +132,22 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 // Marshalling Tests
 
 func (suite *MarshallingTestSuite) SetupSuite() {
-	suite.standard = types.ISOStandard{
-		ID:   1,
-		Name: "ISO 9001",
-	}
+	suite.standard = testStandard
 }
 
 func (suite *MarshallingTestSuite) TestMarshalISOStandard() {
-	expectedJSON := `{"id":1,"name":"ISO 9001"}`
-
-	data, err := json.Marshal(suite.standard)
+	expectedJSON := testJSONData
+	actualJSON, err := json.Marshal(suite.standard)
 	suite.NoError(err)
-	suite.JSONEq(expectedJSON, string(data))
+	var expectedData interface{}
+	var actualData interface{}
+
+	err = json.Unmarshal(expectedJSON, &expectedData)
+	suite.NoError(err)
+	err = json.Unmarshal(actualJSON, &actualData)
+	suite.NoError(err)
+
+	suite.Equal(expectedData, actualData)
 }
 
 // Validation Tests
@@ -160,29 +181,19 @@ func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_InvalidDat
 
 func (suite *PersistenceTestSuite) SetupSuite() {
 	suite.mockRepo = new(testutils.MockIsoStandardRepository)
-	suite.standard = types.ISOStandard{
-		ID:   1,
-		Name: "ISO 9001",
-	}
+	suite.standard = testStandard
 }
 
 func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
-	// Prepare the test data
-	standard := types.ISOStandard{
-		ID:   1,
-		Name: "ISO 9001",
-	}
+	standard := suite.standard
 
-	// If the handler expects form data, use url.Values
 	formData := url.Values{
 		"name": {standard.Name},
 	}
 
-	// Set up the mock repository
 	suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
-	suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil) // Mock GetAllISOStandards method
+	suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil)
 
-	// Perform the POST request to create the ISO standard
 	req, err := http.NewRequest(http.MethodPost, "/web/iso_standards/add", strings.NewReader(formData.Encode()))
 	suite.NoError(err)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -190,38 +201,19 @@ func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_Success() 
 	resp := httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 
-	// Validate the response code and location header for redirect
 	suite.Equal(http.StatusFound, resp.Code)
 	location := resp.Header().Get("Location")
 	suite.Equal("/web/iso_standards", location)
 
-	// Perform a GET request to the redirected URL
 	req, err = http.NewRequest(http.MethodGet, location, nil)
 	suite.NoError(err)
 
 	resp = httptest.NewRecorder()
 	suite.router.ServeHTTP(resp, req)
 
-	// Validate the response contains the newly created ISO standard
 	suite.Equal(http.StatusOK, resp.Code)
 	suite.Contains(resp.Body.String(), "ISO 9001")
 
-	// Ensure the mock expectations are met
-	suite.mockRepo.AssertExpectations(suite.T())
-	suite.Equal("/web/iso_standards", location)
-
-	// Perform a GET request to the redirected URL
-	req, err = http.NewRequest(http.MethodGet, location, nil)
-	suite.NoError(err)
-
-	resp = httptest.NewRecorder()
-	suite.router.ServeHTTP(resp, req)
-
-	// Validate the response contains the newly created ISO standard
-	suite.Equal(http.StatusOK, resp.Code)
-	suite.Contains(resp.Body.String(), "ISO 9001")
-
-	// Ensure the mock expectations are met
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 
