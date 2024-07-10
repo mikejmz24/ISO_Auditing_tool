@@ -155,7 +155,7 @@ func (r *repository) CreateClause(clause types.Clause) (int64, error) {
 		return 0, err
 	}
 
-	for _, section := range *clause.Sections {
+	for _, section := range clause.Sections {
 		query := "INSERT INTO section (clause_id, name) VALUES (?, ?);"
 		_, err := tx.Exec(query, clauseID, section.Name)
 		if err != nil {
@@ -191,7 +191,7 @@ func (r *repository) UpdateClause(clause types.Clause) error {
 		return err
 	}
 
-	for _, section := range *clause.Sections {
+	for _, section := range clause.Sections {
 		query := "INSERT INTO section (clause_id, name) VALUES (?, ?);"
 		_, err := tx.Exec(query, clause.ID, section.Name)
 		if err != nil {

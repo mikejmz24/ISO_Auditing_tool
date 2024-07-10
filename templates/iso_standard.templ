@@ -23,7 +23,7 @@ templ ISOStandard(standard types.ISOStandard) {
 							// Nested list for clauses
 							<h3 class="font-medium text-sm">Clauses:</h3>
 							<ul class="list-disc pl-6">
-								for _, clause := range *standard.Clauses {
+								for _, clause := range standard.Clauses {
 									<li class="text-sm text-zinc-500 mb-2">
 										{ clause.Name }
 									</li>

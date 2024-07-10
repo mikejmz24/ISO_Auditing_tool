@@ -12,6 +12,9 @@ type MockIsoStandardRepository struct {
 func (m *MockIsoStandardRepository) GetAllISOStandards() ([]types.ISOStandard, error) {
 	args := m.Called()
 	// Assert the mocked response is of the expected type
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
 	return args.Get(0).([]types.ISOStandard), args.Error(1)
 }
 

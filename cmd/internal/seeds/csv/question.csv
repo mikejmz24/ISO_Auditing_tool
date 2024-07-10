@@ -27,3 +27,27 @@
 27,,22,What is you feature architecture design process?
 28,,22,How do you handle architectural decisions?
 29,,22,How are project risks managed?
+30,,24,How do you ensure that deliverables meet the original requirement?
+31,,24,What happens when deliverables don't meet the original requirement?
+32,,25,How do you handle requirements and/or scope change once development has started?
+33,,25,How do you handle design changes once development has started?
+34,19,,"Outsourcing? Performance agreement with vendors providing services and tracking resources' performance inline with agreements. (Only apply for teams located in BLR, but ask to TJ teams to validate)"
+35,,26,What proces do you follow with this supplier?
+36,,28,How you manage information and security?
+37,20,,What activities are performed after software is released?
+38,,32,Any post delivery activities?
+39,21,,Do you carry out any activities once you have released?
+40,22,,How are bugs/defects identified?
+41,22,,How are bugs/defects classified?
+42,22,,What are the SLAs for bugs/defects resolution?
+43,22,,How do you  ensure that a defect won't happen again?
+44,23,,What are your goals for?
+45,23,,Completion (80%)
+46,23,,External Bugs (0)
+47,23,,CAS score (>70%)
+48,23,,What happens if one of the goals is not accomplished in the sprint?
+49,,36,How do you measure customer satisfaction?
+50,,36,How is customer feedback provided?
+51,,36,How do you address customer feedback?
+52,,36,How do you address customer complaints?
+53,28,,How do you ensure that continual improvement is applied?

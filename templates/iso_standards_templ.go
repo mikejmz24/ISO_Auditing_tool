@@ -77,7 +77,7 @@ func ISOStandards(standards []types.ISOStandard) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				for _, clause := range *standard.Clauses {
+				for _, clause := range standard.Clauses {
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li class=\"text-sm text-zinc-500 mb-2\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err

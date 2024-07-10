@@ -38,36 +38,36 @@ type AuditQuestion struct {
 type ISOStandard struct {
 	ID      int       `json:"id"`
 	Name    string    `json:"name"`
-	Clauses *[]Clause `json:"clauses,omitempty"`
+	Clauses []*Clause `json:"clauses,omitempty"`
 }
 
 type Clause struct {
 	ID            int        `json:"id"`
 	ISOStandardID int        `json:"iso_standard_id"`
 	Name          string     `json:"name"`
-	Sections      *[]Section `json:"sections,omitempty"`
+	Sections      []*Section `json:"sections,omitempty"`
 }
 
 type Section struct {
 	ID        int         `json:"id"`
 	ClauseID  int         `json:"clause_id"`
 	Name      string      `json:"name"`
-	Questions *[]Question `json:"questions,omitempty"`
+	Questions []*Question `json:"questions,omitempty"`
 }
 
 type Subsection struct {
 	ID        int         `json:"id"`
 	SectionID int         `json:"section_id"`
 	Name      string      `json:"name"`
-	Questions *[]Question `json:"questions,omitempty"`
+	Questions []*Question `json:"questions,omitempty"`
 }
 
 type Question struct {
-	ID           int         `json:"id"`
-	SectionID    int         `json:"section_id"`
-	SubsectionID int         `json:"subsection_id"`
-	Text         string      `json:"text"`
-	Evidence     *[]Evidence `json:"evidence,omitempty"`
+	ID           int        `json:"id"`
+	SectionID    int        `json:"section_id,omitempty"`
+	SubsectionID int        `json:"subsection_id,omitempty"`
+	Text         string     `json:"text"`
+	Evidence     []Evidence `json:"evidence,omitempty"`
 }
 
 type Evidence struct {

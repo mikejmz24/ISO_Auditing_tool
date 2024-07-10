@@ -21,7 +21,7 @@ templ Clauses(clauses []types.Clause) {
 								<p class="font-medium text-sm">{ clause.Name }</p>
 								// Nested list for sections
 								<ul class="list-disc pl-6">
-									for _, section := range *clause.Sections {
+									for _, section := range clause.Sections {
 										<li class="text-sm text-zinc-500 mb-2">
 											{ section.Name }
 										</li>
