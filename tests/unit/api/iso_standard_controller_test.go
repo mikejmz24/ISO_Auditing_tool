@@ -11,8 +11,10 @@ import (
 	"testing"
 
 	"ISO_Auditing_Tool/cmd/api/controllers"
+	"ISO_Auditing_Tool/pkg/middleware"
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/tests/testutils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -51,6 +53,7 @@ func (suite *IsoStandardControllerTestSuite) SetupSuite() {
 func (suite *IsoStandardControllerTestSuite) SetupTest() {
 	suite.mockRepo = new(testutils.MockIsoStandardRepository)
 	suite.router = gin.Default()
+	suite.router.Use(middleware.ErrorHandler())
 	controller := controllers.NewApiIsoStandardController(suite.mockRepo)
 	api := suite.router.Group("/api")
 	{
@@ -172,10 +175,10 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
 }
 
 func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Error() {
-	suite.mockRepo.On("GetAllISOStandards").Return(nil, errors.New("database error"))
+	suite.mockRepo.On("GetAllISOStandards").Return(nil, errors.New("Failed to fetch ISO Standards"))
 
 	w := suite.performRequest("GET", "/api/iso_standards", nil)
-	suite.validateResponse(w, http.StatusInternalServerError, `{"error":"database error"}`)
+	suite.validateResponse(w, http.StatusInternalServerError, `{"error":"Failed to fetch ISO Standards"}`)
 }
 
 func TestApiIsoStandardControllerTestSuite(t *testing.T) {

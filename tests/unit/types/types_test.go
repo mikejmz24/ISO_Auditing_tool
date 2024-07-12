@@ -85,21 +85,21 @@ func (suite *TypesTestSuite) TestISOStandard_MarshalUnmarshal() {
 	isoStandard := types.ISOStandard{
 		ID:   1,
 		Name: "ISO 9001",
-		Clauses: &[]types.Clause{
+		Clauses: []*types.Clause{
 			{
 				ID:            1,
 				ISOStandardID: 1,
 				Name:          "Clause 1",
-				Sections: &[]types.Section{
+				Sections: []*types.Section{
 					{
 						ID:       1,
 						ClauseID: 1,
 						Name:     "Section 1",
-						Questions: &[]types.Question{
+						Questions: []*types.Question{
 							{
 								ID:       1,
 								Text:     "Question 1",
-								Evidence: &[]types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
+								Evidence: []types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
 							},
 						},
 					},
@@ -231,16 +231,16 @@ func (suite *TypesTestSuite) TestClause_MarshalUnmarshal() {
 		ID:            1,
 		ISOStandardID: 1,
 		Name:          "Clause 1",
-		Sections: &[]types.Section{
+		Sections: []*types.Section{
 			{
 				ID:       1,
 				ClauseID: 1,
 				Name:     "Section 1",
-				Questions: &[]types.Question{
+				Questions: []*types.Question{
 					{
 						ID:       1,
 						Text:     "Question 1",
-						Evidence: &[]types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
+						Evidence: []types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
 					},
 				},
 			},
@@ -262,11 +262,11 @@ func (suite *TypesTestSuite) TestSection_MarshalUnmarshal() {
 		ID:       1,
 		ClauseID: 1,
 		Name:     "Section 1",
-		Questions: &[]types.Question{
+		Questions: []*types.Question{
 			{
 				ID:       1,
 				Text:     "Question 1",
-				Evidence: &[]types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
+				Evidence: []types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
 			},
 		},
 	}
@@ -286,11 +286,11 @@ func (suite *TypesTestSuite) TestSubsection_MarshalUnmarshal() {
 		ID:        1,
 		SectionID: 1,
 		Name:      "Subsection 1",
-		Questions: &[]types.Question{
+		Questions: []*types.Question{
 			{
 				ID:       1,
 				Text:     "Question 1",
-				Evidence: &[]types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
+				Evidence: []types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
 			},
 		},
 	}
@@ -309,7 +309,7 @@ func (suite *TypesTestSuite) TestQuestion_MarshalUnmarshal() {
 	question := types.Question{
 		ID:       1,
 		Text:     "Question 1",
-		Evidence: &[]types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
+		Evidence: []types.Evidence{{ID: 1, QuestionID: 1, Expected: "Evidence 1"}},
 	}
 
 	data, err := json.Marshal(question)

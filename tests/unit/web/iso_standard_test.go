@@ -51,7 +51,6 @@ var testJSONData []byte
 func TestMain(m *testing.M) {
 	// Load the test data once
 	testStandard = loadTestData("../../testdata/iso_standards_test01.json")
-	// testJSONData = getJSONData("../../testdata/iso_standards_test01.json")
 	testJSONData, _ = json.Marshal(testStandard)
 
 	// Run the tests

@@ -3,6 +3,7 @@ package server
 import (
 	"net/http"
 
+	"ISO_Auditing_Tool/pkg/middleware"
 	"github.com/gin-gonic/gin"
 
 	"ISO_Auditing_Tool/cmd/internal/database"
@@ -35,6 +36,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 
 	// API routes group
 	api := r.Group("/api")
+	api.Use(middleware.ErrorHandler())
 	{
 		api.GET("/iso_standards", s.apiIsoStandardController.GetAllISOStandards)
 		api.GET("/iso_standards/:id", s.apiIsoStandardController.GetISOStandardByID)

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"ISO_Auditing_Tool/pkg/errors"
 	"net/http"
 	"strconv"
 
@@ -26,7 +27,10 @@ func respondWithError(c *gin.Context, code int, message string) {
 func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 	isoStandards, err := cc.Repo.GetAllISOStandards()
 	if err != nil {
-		respondWithError(c, http.StatusInternalServerError, err.Error())
+		// respondWithError(c, http.StatusInternalServerError, err.Error())
+		// _ = c.Error(errors.New("Failed to fetch ISO Standards: " + err.Error()))
+		// _ = c.Error(errors.ErrFailedToFetchISOStandards)
+		_ = c.Error(errors.NewCustomError(http.StatusInternalServerError, "Failed to fetch ISO Standards", c))
 		return
 	}
 	c.JSON(http.StatusOK, isoStandards)
