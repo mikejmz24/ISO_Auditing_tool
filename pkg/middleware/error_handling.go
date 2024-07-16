@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"ISO_Auditing_Tool/pkg/errors"
+	"ISO_Auditing_Tool/pkg/custom_errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,17 +12,20 @@ func ErrorHandler() gin.HandlerFunc {
 
 		if len(c.Errors) > 0 {
 			for _, err := range c.Errors {
-				if customErr, ok := err.Err.(*errors.CustomError); ok {
-					if customErr.Context != nil {
-						c.JSON(customErr.StatusCode, gin.H{"error": customErr.Message})
-						return
-					}
-					c.JSON(customErr.StatusCode, gin.H{"error": customErr.Message})
+				if customErr, ok := err.Err.(*custom_errors.CustomError); ok {
+					respondWithError(c, customErr)
 					return
 				}
 			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-			return
 		}
 	}
+}
+
+func respondWithError(c *gin.Context, customErr *custom_errors.CustomError) {
+	response := gin.H{"error": customErr.Message}
+	if customErr.Context != nil {
+		response["Context"] = customErr.Context
+	}
+	c.JSON(customErr.StatusCode, response)
 }
