@@ -4,6 +4,7 @@ import (
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"encoding/json"
 	"fmt"
+
 	"io"
 	"net/http"
 	"strconv"
@@ -56,98 +57,28 @@ func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
 	c.JSON(http.StatusOK, isoStandard)
 }
 
-// // CreateISOStandard creates a new ISO standard
-// func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
-// 	// Read the request body
-// 	body, err := io.ReadAll(c.Request.Body)
-// 	if err != nil {
-// 		respondWithError(c, http.StatusBadRequest, "Could not read request body")
-// 		return
-// 	}
-//
-// 	// Parse JSON data into structured map for initial validation
-// 	var rawData map[string]interface{}
-// 	if err := json.Unmarshal(body, &rawData); err != nil {
-// 		respondWithError(c, http.StatusBadRequest, "Invalid JSON format")
-// 		return
-// 	}
-//
-// 	// Validate required fields and check for unexpected fields
-// 	requiredFields := []string{"name"}
-// 	if err := validateRequiredFields(rawData, requiredFields); err != nil {
-// 		respondWithError(c, http.StatusBadRequest, err.Error())
-// 		return
-// 	}
-//
-// 	// Check if name is a string
-// 	if _, ok := rawData["name"].(string); !ok {
-// 		respondWithError(c, http.StatusBadRequest, "Invalid Data - name must be a string")
-// 		return
-// 	}
-//
-// 	// Additional validation for business rules
-// 	if name, ok := rawData["name"].(string); !ok || name == "" {
-// 		respondWithError(c, http.StatusBadRequest, "ISO Standard name should not be empty")
-// 		return
-// 	}
-//
-// 	// Parse JSON data into structured ISOStandard object
-// 	var isoStandard types.ISOStandard
-// 	if err := json.Unmarshal(body, &isoStandard); err != nil {
-// 		respondWithError(c, http.StatusBadRequest, "Could not decode JSON data")
-// 		return
-// 	}
-//
-// 	// Attempt to create ISO standard in the repository
-// 	createdISOStandard, err := cc.Repo.CreateISOStandard(isoStandard)
-// 	if err != nil {
-// 		respondWithError(c, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
-//
-// 	// Respond with the created ISO standard
-// 	c.JSON(http.StatusCreated, createdISOStandard)
-// }
-
 // CreateISOStandard creates a new ISO standard
 func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
-	// Read the request body
-	body, err := io.ReadAll(c.Request.Body)
+	// // Read the request body
+	body, err := readRequestBody(c)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Could not read request body")
+		respondWithError(c, http.StatusBadRequest, "Could ont read request body")
 		return
 	}
 
-	// Parse JSON data into structured map for initial validation
-	var rawData map[string]interface{}
-	if err := json.Unmarshal(body, &rawData); err != nil {
-		respondWithError(c, http.StatusBadRequest, "Invalid JSON format")
+	rawData, err := parseJSONToMap(body)
+	if err != nil {
+		_ = c.Error(custom_errors.ErrInvalidJSON)
 		return
 	}
 
-	// Validate required fields and check for unexpected fields
-	requiredFields := []string{"name"}
-	if err := validateRequiredFields(rawData, requiredFields); err != nil {
+	if err := validateFields(rawData); err != nil {
 		respondWithError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	// Check if name is a string
-	if _, ok := rawData["name"].(string); !ok {
-		respondWithError(c, http.StatusBadRequest, "Invalid Data - name must be a string")
-		return
-	}
-
-	// Additional validation for business rules
-	if name, ok := rawData["name"].(string); !ok || name == "" {
-		respondWithError(c, http.StatusBadRequest, "ISO Standard name should not be empty")
-		return
-	}
-
-	// Parse JSON data into structured ISOStandard object
-	var isoStandard types.ISOStandard
-	if err := json.Unmarshal(body, &isoStandard); err != nil {
-		// if err := c.ShouldBindJSON(&isoStandard); err != nil {
+	isoStandard, err := parseISOStandard(body)
+	if err != nil {
 		respondWithError(c, http.StatusBadRequest, "Could not decode JSON data")
 		return
 	}
@@ -161,16 +92,6 @@ func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 
 	// Respond with the created ISO standard
 	c.JSON(http.StatusCreated, createdISOStandard)
-}
-
-// validateRequiredFields validates if all required fields are present in the given data.
-func validateRequiredFields(data map[string]interface{}, requiredFields []string) error {
-	for _, field := range requiredFields {
-		if _, ok := data[field]; !ok {
-			return fmt.Errorf("Missing required field: %s", field)
-		}
-	}
-	return nil
 }
 
 // UpdateISOStandard updates an existing ISO standard
@@ -220,4 +141,54 @@ func (cc *ApiIsoStandardController) DeleteISOStandard(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ISO standard deleted"})
+}
+
+func readRequestBody(c *gin.Context) ([]byte, error) {
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
+func parseJSONToMap(data []byte) (map[string]interface{}, error) {
+	var result map[string]interface{}
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func validateFields(data map[string]interface{}) error {
+	requiredFields := []string{"name"}
+
+	for _, field := range requiredFields {
+		if err := validateField(data, field, "ISO Standard"); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func validateField(data map[string]interface{}, field, entity string) error {
+	value, ok := data[field]
+	if !ok {
+		return fmt.Errorf("Missing required field: %s", field)
+	}
+
+	strVal, ok := value.(string)
+	if !ok {
+		return custom_errors.InvalidDataType(field, "string")
+	}
+
+	if strVal == "" {
+		return custom_errors.EmptyField(entity, field)
+	}
+
+	return nil
+}
+func parseISOStandard(data []byte) (types.ISOStandard, error) {
+	var isoStandard types.ISOStandard
+	err := json.Unmarshal(data, &isoStandard)
+	return isoStandard, err
 }
