@@ -32,7 +32,7 @@ func respondWithError(c *gin.Context, code int, message string) {
 func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 	isoStandards, err := cc.Repo.GetAllISOStandards()
 	if err != nil {
-		_ = c.Error(custom_errors.ErrFailedToFetchISOStandards)
+		_ = c.Error(custom_errors.FailedToFetch("ISO Standards"))
 		return
 	}
 	c.JSON(http.StatusOK, isoStandards)
@@ -42,16 +42,12 @@ func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		_ = c.Error(custom_errors.ErrInvalidID)
+		_ = c.Error(custom_errors.InvalidID("ISO Standard"))
 		return
 	}
 	isoStandard, err := cc.Repo.GetISOStandardByID(id)
 	if err != nil {
-		if err.Error() == "not found" {
-			respondWithError(c, http.StatusNotFound, "ISO standard not found")
-		} else {
-			respondWithError(c, http.StatusInternalServerError, err.Error())
-		}
+		_ = c.Error(custom_errors.NotFound("ISO Standard"))
 		return
 	}
 	c.JSON(http.StatusOK, isoStandard)
@@ -109,17 +105,13 @@ func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "invalid ISO standard ID")
+		_ = c.Error(custom_errors.InvalidID("ISO Standard"))
 		return
 	}
 
 	isoStandard.ID = id
 	if err := cc.Repo.UpdateISOStandard(isoStandard); err != nil {
-		if err.Error() == "not found" {
-			respondWithError(c, http.StatusNotFound, "ISO standard not found")
-		} else {
-			respondWithError(c, http.StatusInternalServerError, err.Error())
-		}
+		_ = c.Error(custom_errors.NotFound("ISO Standard"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
@@ -129,15 +121,11 @@ func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 func (cc *ApiIsoStandardController) DeleteISOStandard(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "invalid ISO standard ID")
+		_ = c.Error(custom_errors.InvalidID("ISO Standard"))
 		return
 	}
 	if err := cc.Repo.DeleteISOStandard(id); err != nil {
-		if err.Error() == "not found" {
-			respondWithError(c, http.StatusNotFound, "ISO standard not found")
-		} else {
-			respondWithError(c, http.StatusInternalServerError, err.Error())
-		}
+		_ = c.Error(custom_errors.NotFound("ISO Standard"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ISO standard deleted"})

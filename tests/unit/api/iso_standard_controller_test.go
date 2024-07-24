@@ -97,7 +97,14 @@ func (suite *IsoStandardControllerTestSuite) validateErrorResponse(w *httptest.R
 	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Success() {
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_CannotFetchError() {
+	suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to fetch ISO Standards", nil))
+
+	w := suite.performRequest("GET", "/api/iso_standards", nil)
+	suite.validateErrorResponse(w, custom_errors.FailedToFetch("ISO Standards"))
+}
+
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_ReturnOneSuccess() {
 	expectedStandard := suite.jsonData[0]
 	expectedStandards := []types.ISOStandard{expectedStandard}
 	suite.mockRepo.On("GetAllISOStandards").Return(expectedStandards, nil)
@@ -106,11 +113,25 @@ func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Success() {
 	suite.validateResponse(w, http.StatusOK, "ISO 9001")
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Error() {
-	suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to fetch ISO Standards", nil))
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_ReturnManySuccess() {
+	suite.mockRepo.On("GetAllISOStandards").Return(suite.jsonData, nil)
 
 	w := suite.performRequest("GET", "/api/iso_standards", nil)
-	suite.validateErrorResponse(w, custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to fetch ISO Standards", nil))
+	suite.validateResponse(w, http.StatusOK, "ISO 27001")
+}
+
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_CannotParseIDAsIntError() {
+	suite.mockRepo.On("GetISOStandardByID", nil).Return(types.ISOStandard{}, custom_errors.NewCustomError(http.StatusBadRequest, "Invalid ISO Standard ID", nil))
+
+	w := suite.performRequest("GET", "/api/iso_standards/a", nil)
+	suite.validateErrorResponse(w, custom_errors.InvalidID("ISO Standard"))
+}
+
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
+	suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, custom_errors.NewCustomError(http.StatusNotFound, "ISO Standard not found", nil))
+
+	w := suite.performRequest("GET", "/api/iso_standards/2", nil)
+	suite.validateErrorResponse(w, custom_errors.NotFound("ISO Standard"))
 }
 
 func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
@@ -119,13 +140,6 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
 
 	w := suite.performRequest("GET", "/api/iso_standards/1", nil)
 	suite.validateResponse(w, http.StatusOK, "ISO 9001")
-}
-
-func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Error() {
-	suite.mockRepo.On("GetISOStandardByID", int64(1)).Return(types.ISOStandard{}, custom_errors.NewCustomError(http.StatusBadRequest, "Invalid ISO ID", nil))
-
-	w := suite.performRequest("GET", "/api/iso_standards/1", nil)
-	suite.validateErrorResponse(w, custom_errors.NewCustomError(http.StatusBadRequest, "Invalid ISO ID", nil))
 }
 
 func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
@@ -228,16 +242,46 @@ func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_Success() {
 	suite.validateResponse(w, http.StatusOK, `{"status":"updated"}`)
 }
 
+func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandardByID_CannotParseIDAsIntError() {
+	expectedStandard := suite.jsonData[0]
+	updatedStandard := expectedStandard
+	updatedStandard.Name = "ISO 9001 Updated"
+
+	updatedData, err := json.Marshal(updatedStandard)
+	require.NoError(suite.T(), err, "failed to marshal JSON data")
+
+	suite.mockRepo.On("UpdateISOStandard", mock.MatchedBy(func(isoStandard types.ISOStandard) bool {
+		return isoStandard.ID == updatedStandard.ID &&
+			isoStandard.Name == updatedStandard.Name
+	})).Return(nil)
+
+	w := suite.performRequest("PUT", "/api/iso_standards/a", bytes.NewBuffer(updatedData))
+	suite.validateErrorResponse(w, custom_errors.InvalidID("ISO Standard"))
+}
+
 func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_NotFound() {
 	expectedStandard := suite.jsonData[0]
 
 	formData, err := json.Marshal(expectedStandard)
 	require.NoError(suite.T(), err, "failed to marshal JSON data")
 
-	suite.mockRepo.On("UpdateISOStandard", expectedStandard).Return(custom_errors.NewCustomError(http.StatusNotFound, "ISO standard not found", nil))
+	suite.mockRepo.On("UpdateISOStandard", expectedStandard).Return(custom_errors.NewCustomError(http.StatusNotFound, "ISO Standard not found", nil))
 
 	w := suite.performRequest("PUT", "/api/iso_standards/1", bytes.NewBuffer(formData))
-	suite.validateErrorResponse(w, custom_errors.NewCustomError(http.StatusNotFound, "ISO standard not found", nil))
+	suite.validateErrorResponse(w, custom_errors.NotFound("ISO Standard"))
+}
+
+func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_NotFound() {
+	suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(custom_errors.NewCustomError(http.StatusNotFound, "ISO Standard not found", nil))
+
+	w := suite.performRequest("DELETE", "/api/iso_standards/2", nil)
+	suite.validateErrorResponse(w, custom_errors.NotFound("ISO Standard"))
+}
+
+func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandardByID_CannotParseIDAsIntError() {
+	suite.mockRepo.On("DeleteISOStandard", int64(1)).Return(nil)
+	w := suite.performRequest("DELETE", "/api/iso_standards/a", nil)
+	suite.validateErrorResponse(w, custom_errors.InvalidID("ISO Standard"))
 }
 
 func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_Success() {
@@ -245,20 +289,6 @@ func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_Success() {
 
 	w := suite.performRequest("DELETE", "/api/iso_standards/1", nil)
 	suite.validateResponse(w, http.StatusOK, `{"message":"ISO standard deleted"}`)
-}
-
-func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_NotFound() {
-	suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(custom_errors.NewCustomError(http.StatusNotFound, "ISO standard not found", nil))
-
-	w := suite.performRequest("DELETE", "/api/iso_standards/2", nil)
-	suite.validateErrorResponse(w, custom_errors.NewCustomError(http.StatusNotFound, "ISO standard not found", nil))
-}
-
-func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
-	suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, custom_errors.NewCustomError(http.StatusNotFound, "ISO standard not found", nil))
-
-	w := suite.performRequest("GET", "/api/iso_standards/2", nil)
-	suite.validateErrorResponse(w, custom_errors.NewCustomError(http.StatusNotFound, "ISO standard not found", nil))
 }
 
 func TestApiIsoStandardControllerTestSuite(t *testing.T) {
