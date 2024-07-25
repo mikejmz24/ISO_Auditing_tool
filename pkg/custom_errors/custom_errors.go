@@ -7,7 +7,8 @@ import (
 
 // Custom error definitions
 var (
-	ErrInvalidJSON = NewCustomError(http.StatusBadRequest, "Invalid JSON format", nil)
+	ErrInvalidJSON     = NewCustomError(http.StatusBadRequest, "Invalid JSON format", nil)
+	ErrInvalidFormData = NewCustomError(http.StatusBadRequest, "Invalid Form Data", nil)
 )
 
 // CustomError struct

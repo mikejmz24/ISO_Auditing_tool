@@ -3,6 +3,8 @@ package web_test
 import (
 	apiController "ISO_Auditing_Tool/cmd/api/controllers"
 	webController "ISO_Auditing_Tool/cmd/web/controllers"
+	"ISO_Auditing_Tool/pkg/custom_errors"
+	"ISO_Auditing_Tool/pkg/middleware"
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/tests/testutils"
 	"bytes"
@@ -18,7 +20,9 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -113,6 +117,7 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	webController := webController.NewWebIsoStandardController(apiController)
 
 	router := gin.Default()
+	router.Use(middleware.ErrorHandler())
 	templatesPath := filepath.Join("..", "..", "..", "templates", "*.templ")
 	router.LoadHTMLGlob(templatesPath)
 
@@ -126,6 +131,23 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 		webGroup.DELETE("/iso_standards/:id", webController.DeleteISOStandard)
 	}
 	return router
+}
+
+func (suite *WebIsoStandardControllerTestSuite) validateErrorResponse(w *httptest.ResponseRecorder, expectedError *custom_errors.CustomError) {
+	assert.Equal(suite.T(), expectedError.StatusCode, w.Code)
+
+	// Print response bodoy for debugging
+	// suite.T().Logf("Resonse body: %s", w.Body.String())
+	fmt.Printf("Response body: %s\n", w.Body.String())
+
+	var response map[string]interface{}
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	require.NoError(suite.T(), err, "failed to unmarshal response body")
+
+	assert.Equal(suite.T(), expectedError.Message, response["error"])
+	if expectedError.Context != nil {
+		assert.Equal(suite.T(), expectedError.Context, response["context"])
+	}
 }
 
 // Marshalling Tests
@@ -163,17 +185,32 @@ func (suite *ValidationTestSuite) SetupSuite() {
 	})
 }
 
-func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_InvalidData() {
-	invalidJSON := `{"invalidField": "invalidData"}`
-
-	req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON)))
+func (suite *WebIsoStandardControllerTestSuite) performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		suite.T().Fatalf("failed to create request: %v", err)
+	}
 	req.Header.Set("Content-Type", "application/json")
-	resp := httptest.NewRecorder()
-	suite.router.ServeHTTP(resp, req)
 
-	suite.Equal(http.StatusBadRequest, resp.Code)
-	suite.Contains(resp.Body.String(), "Invalid data")
-	suite.mockRepo.AssertExpectations(suite.T())
+	w := httptest.NewRecorder()
+	suite.router.ServeHTTP(w, req)
+	return w
+}
+
+func (suite *WebIsoStandardControllerTestSuite) TestCreateISOStandard_InvalidData() {
+	invalidJSON := `"invalidField": "invalidData"`
+
+	// req, _ := http.NewRequest(http.MethodPost, "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON)))
+	w := suite.performRequest("POST", "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON)))
+	// req.Header.Set("Content-Type", "application/json")
+	// resp := httptest.NewRecorder()
+	// suite.router.ServeHTTP(resp, req)
+
+	// suite.Equal(http.StatusBadRequest, resp.Code)
+	// suite.Contains(resp.Body.String(), "Invalid data")
+	// suite.Equal(resp.Body, custom_errors.ErrInvalidFormData)
+	suite.validateErrorResponse(w, custom_errors.ErrInvalidFormData)
+	// suite.mockRepo.AssertExpectareqtions(suite.T())
 }
 
 // Persistence Tests

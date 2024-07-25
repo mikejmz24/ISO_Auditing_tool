@@ -65,6 +65,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 
 	// // HTML routes group
 	html := r.Group("/web")
+	html.Use(middleware.ErrorHandler())
 	{
 		html.GET("/iso_standards", s.webIsoStandardController.GetAllISOStandards)
 		html.GET("/iso_standards/add", s.webIsoStandardController.RenderAddISOStandardForm)

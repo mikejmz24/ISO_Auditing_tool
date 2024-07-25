@@ -9,8 +9,10 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/templates"
+
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
 )
@@ -58,7 +60,8 @@ func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	formData := make(map[string]string)
 	if err := c.Bind(&formData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
+		// c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
+		_ = c.Error(custom_errors.ErrInvalidFormData)
 		return
 	}
 
@@ -88,8 +91,8 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 
 	apiStatus := response.StatusCode
 
-	fmt.Println("API Controller HTTP Status:", apiStatus)   // Debug Line
-	fmt.Println("API Response Body:", string(responseBody)) // Debug Line
+	// fmt.Println("API Controller HTTP Status:", apiStatus)   // Debug Line
+	// fmt.Println("API Response Body:", string(responseBody)) // Debug Line
 
 	if apiStatus == http.StatusCreated {
 		c.Redirect(http.StatusFound, "/web/iso_standards")
