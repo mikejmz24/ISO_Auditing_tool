@@ -3,7 +3,6 @@ package controllers
 import (
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"encoding/json"
-	"fmt"
 
 	"io"
 	"net/http"
@@ -58,7 +57,7 @@ func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 	// // Read the request body
 	body, err := readRequestBody(c)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Could ont read request body")
+		respondWithError(c, http.StatusBadRequest, "Could not read request body")
 		return
 	}
 
@@ -161,7 +160,8 @@ func validateFields(data map[string]interface{}) error {
 func validateField(data map[string]interface{}, field, entity string) error {
 	value, ok := data[field]
 	if !ok {
-		return fmt.Errorf("Missing required field: %s", field)
+		// return fmt.Errorf("Missing required field: %s", field)
+		return custom_errors.MissingField(field)
 	}
 
 	strVal, ok := value.(string)

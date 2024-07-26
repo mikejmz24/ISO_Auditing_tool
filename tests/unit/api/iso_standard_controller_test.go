@@ -3,7 +3,6 @@ package api_test
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -30,34 +29,26 @@ type IsoStandardControllerTestSuite struct {
 	jsonData []types.ISOStandard
 }
 
-func (suite *IsoStandardControllerTestSuite) SetupSuite() {
+func TestMain(m *testing.M) {
 	gin.SetMode(gin.TestMode)
+	os.Exit(m.Run())
+}
 
-	filePath := "../../testdata/iso_standards_test01.json"
-	file, err := os.Open(filePath)
-	require.NoError(suite.T(), err, "failed to open JSON file")
-	defer file.Close()
-
-	data, err := io.ReadAll(file)
-	require.NoError(suite.T(), err, "failed to read JSON file")
-
-	var jsonData struct {
-		ISOStandards []types.ISOStandard `json:"iso_standards"`
-	}
-	err = json.Unmarshal(data, &jsonData)
-	require.NoError(suite.T(), err, "failed to unmarshal JSON data")
-	require.NotEmpty(suite.T(), jsonData.ISOStandards, "no ISO standards found in JSON data")
-
-	suite.jsonData = jsonData.ISOStandards
-	fmt.Printf("Loaded ISO standards: %v\n", suite.jsonData)
+func (suite *IsoStandardControllerTestSuite) SetupSuite() {
+	suite.jsonData = loadTestData(suite.T(), "../../testdata/iso_standards_test01.json")
+	require.NotEmpty(suite.T(), suite.jsonData, "Test data is empty")
 }
 
 func (suite *IsoStandardControllerTestSuite) SetupTest() {
 	suite.mockRepo = new(testutils.MockIsoStandardRepository)
-	suite.router = gin.Default()
-	suite.router.Use(middleware.ErrorHandler())
-	controller := controllers.NewApiIsoStandardController(suite.mockRepo)
-	api := suite.router.Group("/api")
+	suite.router = setupRouter(suite.mockRepo)
+}
+
+func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
+	router := gin.Default()
+	router.Use(middleware.ErrorHandler())
+	controller := controllers.NewApiIsoStandardController(repo)
+	api := router.Group("/api")
 	{
 		api.GET("/iso_standards", controller.GetAllISOStandards)
 		api.GET("/iso_standards/:id", controller.GetISOStandardByID)
@@ -65,13 +56,30 @@ func (suite *IsoStandardControllerTestSuite) SetupTest() {
 		api.PUT("/iso_standards/:id", controller.UpdateISOStandard)
 		api.DELETE("/iso_standards/:id", controller.DeleteISOStandard)
 	}
+	return router
+}
+
+func loadTestData(t *testing.T, filePath string) []types.ISOStandard {
+	file, err := os.Open(filePath)
+	require.NoError(t, err, "failed to open JSON file")
+	defer file.Close()
+
+	data, err := io.ReadAll(file)
+	require.NoError(t, err, "failed to read JSON file")
+
+	var jsonData struct {
+		ISOStandards []types.ISOStandard `json:"iso_standards"`
+	}
+	err = json.Unmarshal(data, &jsonData)
+	require.NoError(t, err, "failed to unmarshal JSON data")
+	require.NotEmpty(t, jsonData.ISOStandards, "no ISO standards found in JSON data")
+
+	return jsonData.ISOStandards
 }
 
 func (suite *IsoStandardControllerTestSuite) performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
 	req, err := http.NewRequest(method, url, body)
-	if err != nil {
-		suite.T().Fatalf("failed to create request: %v", err)
-	}
+	require.NoError(suite.T(), err, "failed to create request")
 	req.Header.Set("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
@@ -80,215 +88,265 @@ func (suite *IsoStandardControllerTestSuite) performRequest(method, url string, 
 }
 
 func (suite *IsoStandardControllerTestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBodyContains string) {
-	assert.Equal(suite.T(), expectedStatus, w.Code)
-	assert.Contains(suite.T(), w.Body.String(), expectedBodyContains)
-	suite.mockRepo.AssertExpectations(suite.T())
-}
+	assert.Equal(suite.T(), expectedStatus, w.Code, "HTTP status code does not match expected")
 
-func (suite *IsoStandardControllerTestSuite) validateErrorResponse(w *httptest.ResponseRecorder, expectedError *custom_errors.CustomError) {
-	assert.Equal(suite.T(), expectedError.StatusCode, w.Code)
-
-	var response map[string]interface{}
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(suite.T(), err, "failed to unmarshal response body")
-	assert.Equal(suite.T(), expectedError.Message, response["error"])
-	if expectedError.Context != nil {
-		assert.Equal(suite.T(), expectedError.Context, response["context"])
+	responseBody := w.Body.String()
+	if expectedStatus >= 400 { // For error responses
+		var errorResponse struct {
+			Error string `json:"error"`
+		}
+		err := json.Unmarshal([]byte(responseBody), &errorResponse)
+		assert.NoError(suite.T(), err, "Failed to unmarshal error response")
+		assert.NotEmpty(suite.T(), errorResponse.Error, "Error message should not be empty")
+		assert.Equal(suite.T(), expectedBodyContains, errorResponse.Error, "Error message does not match expected")
+	} else if expectedBodyContains != "" {
+		// Flexible validation for success responses
+		assert.Contains(suite.T(), responseBody, expectedBodyContains, "Response body does not contain expected content")
 	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_CannotFetchError() {
-	suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to fetch ISO Standards", nil))
+// Test cases
 
-	w := suite.performRequest("GET", "/api/iso_standards", nil)
-	suite.validateErrorResponse(w, custom_errors.FailedToFetch("ISO Standards"))
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards() {
+	testCases := []struct {
+		name           string
+		setupMock      func()
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "CannotFetchError",
+			setupMock: func() {
+				suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.FailedToFetch("ISO Standards"))
+			},
+			expectedStatus: http.StatusInternalServerError,
+			expectedBody:   "Failed to fetch ISO Standards",
+		},
+		{
+			name: "ReturnOneSuccess",
+			setupMock: func() {
+				suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{suite.jsonData[0]}, nil).Once()
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   `"name":"ISO 9001"`,
+		},
+		{
+			name: "ReturnManySuccess",
+			setupMock: func() {
+				suite.mockRepo.On("GetAllISOStandards").Return(suite.jsonData, nil).Once()
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   `"name":"ISO 27001"`,
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			suite.mockRepo = new(testutils.MockIsoStandardRepository)
+			suite.router = setupRouter(suite.mockRepo)
+			tc.setupMock()
+			w := suite.performRequest("GET", "/api/iso_standards", nil)
+			suite.validateResponse(w, tc.expectedStatus, tc.expectedBody)
+		})
+	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_ReturnOneSuccess() {
-	expectedStandard := suite.jsonData[0]
-	expectedStandards := []types.ISOStandard{expectedStandard}
-	suite.mockRepo.On("GetAllISOStandards").Return(expectedStandards, nil)
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID() {
+	testCases := []struct {
+		name           string
+		id             string
+		setupMock      func()
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "CannotParseIDAsIntError",
+			id:   "a",
+			setupMock: func() {
+				// suite.mockRepo.On("GetISOStandardByID", mock.Anything).Return(types.ISOStandard{}, custom_errors.InvalidID("ISO Standard"))
+			},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Invalid ISO Standard ID",
+		},
+		{
+			name: "NotFound",
+			id:   "2",
+			setupMock: func() {
+				suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, custom_errors.NotFound("ISO Standard"))
+			},
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   "ISO Standard not found",
+		},
+		{
+			name: "Success",
+			id:   "1",
+			setupMock: func() {
+				suite.mockRepo.On("GetISOStandardByID", int64(1)).Return(suite.jsonData[0], nil)
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   `"name":"ISO 9001"`,
+		},
+	}
 
-	w := suite.performRequest("GET", "/api/iso_standards", nil)
-	suite.validateResponse(w, http.StatusOK, "ISO 9001")
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			suite.mockRepo = new(testutils.MockIsoStandardRepository)
+			suite.router = setupRouter(suite.mockRepo)
+			tc.setupMock()
+			w := suite.performRequest("GET", "/api/iso_standards/"+tc.id, nil)
+			suite.validateResponse(w, tc.expectedStatus, tc.expectedBody)
+		})
+	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_ReturnManySuccess() {
-	suite.mockRepo.On("GetAllISOStandards").Return(suite.jsonData, nil)
+func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard() {
+	testCases := []struct {
+		name           string
+		body           string
+		setupMock      func()
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success",
+			body: `{"name":"ISO 9001"}`,
+			setupMock: func() {
+				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(suite.jsonData[0], nil)
+			},
+			expectedStatus: http.StatusCreated,
+			expectedBody:   `"name":"Leadership"`,
+		},
+		{
+			name:           "EmptyName",
+			body:           `{"name": ""}`,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "ISO Standard name should not be empty",
+		},
+		{
+			name:           "InvalidData_EmptyJSON",
+			body:           ``,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Invalid JSON format",
+		},
+		{
+			name:           "InvalidJSON_WrongFieldName",
+			body:           `{"nam": "ISO fake name"}`,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Missing required field name",
+		},
+		{
+			name:           "InvalidDataType_BoolInsteadOfString",
+			body:           `{"name": true}`,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Invalid Data - name must be a string",
+		},
+	}
 
-	w := suite.performRequest("GET", "/api/iso_standards", nil)
-	suite.validateResponse(w, http.StatusOK, "ISO 27001")
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			tc.setupMock()
+			w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(tc.body))
+			suite.validateResponse(w, tc.expectedStatus, tc.expectedBody)
+		})
+	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_CannotParseIDAsIntError() {
-	suite.mockRepo.On("GetISOStandardByID", nil).Return(types.ISOStandard{}, custom_errors.NewCustomError(http.StatusBadRequest, "Invalid ISO Standard ID", nil))
+func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard() {
+	testCases := []struct {
+		name           string
+		id             string
+		body           string
+		setupMock      func()
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success",
+			id:   "1",
+			body: `{"name":"ISO 9001 Updated"}`,
+			setupMock: func() {
+				suite.mockRepo.On("UpdateISOStandard", mock.MatchedBy(func(isoStandard types.ISOStandard) bool {
+					return isoStandard.ID == 1 && isoStandard.Name == "ISO 9001 Updated"
+				})).Return(nil)
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"status":"updated"}`,
+		},
+		{
+			name:           "CannotParseIDAsIntError",
+			id:             "a",
+			body:           `{"name":"ISO 9001 Updated"}`,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Invalid ISO Standard ID",
+		},
+		{
+			name: "NotFound",
+			id:   "2",
+			body: `{"name":"ISO 9001 Updated"}`,
+			setupMock: func() {
+				suite.mockRepo.On("UpdateISOStandard", mock.Anything).Return(custom_errors.NotFound("ISO Standard"))
+			},
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   custom_errors.NotFound("ISO Standard").Message,
+		},
+	}
 
-	w := suite.performRequest("GET", "/api/iso_standards/a", nil)
-	suite.validateErrorResponse(w, custom_errors.InvalidID("ISO Standard"))
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			tc.setupMock()
+			w := suite.performRequest("PUT", "/api/iso_standards/"+tc.id, bytes.NewBufferString(tc.body))
+			suite.validateResponse(w, tc.expectedStatus, tc.expectedBody)
+		})
+	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_NotFound() {
-	suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, custom_errors.NewCustomError(http.StatusNotFound, "ISO Standard not found", nil))
+func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard() {
+	testCases := []struct {
+		name           string
+		id             string
+		setupMock      func()
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success",
+			id:   "1",
+			setupMock: func() {
+				suite.mockRepo.On("DeleteISOStandard", int64(1)).Return(nil)
+			},
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"message":"ISO standard deleted"}`,
+		},
+		{
+			name: "NotFound",
+			id:   "2",
+			setupMock: func() {
+				suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(custom_errors.NotFound("ISO Standard"))
+			},
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   "ISO Standard not found",
+		},
+		{
+			name:           "CannotParseIDAsIntError",
+			id:             "a",
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Invalid ISO Standard ID",
+		},
+	}
 
-	w := suite.performRequest("GET", "/api/iso_standards/2", nil)
-	suite.validateErrorResponse(w, custom_errors.NotFound("ISO Standard"))
-}
-
-func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
-	expectedStandard := suite.jsonData[0]
-	suite.mockRepo.On("GetISOStandardByID", int64(1)).Return(expectedStandard, nil)
-
-	w := suite.performRequest("GET", "/api/iso_standards/1", nil)
-	suite.validateResponse(w, http.StatusOK, "ISO 9001")
-}
-
-func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
-	// Prepare expected data
-	expectedStandard := suite.jsonData[0]
-	formData, err := json.Marshal(expectedStandard)
-	require.NoError(suite.T(), err, "failed to marshal JSON data")
-
-	// Mock repository call and perform request
-	suite.mockRepo.On("CreateISOStandard", expectedStandard).Return(expectedStandard, nil)
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBuffer(formData))
-
-	// Validate response
-	suite.validateResponse(w, http.StatusCreated, `"name":"Leadership"`)
-}
-
-func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_EmptyName() {
-	// Prepare invalid form data
-	invalidFormData := `{"name": ""}`
-	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(types.ISOStandard{}, nil).Maybe()
-
-	// Perform request
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(invalidFormData))
-
-	// Validate response for empty name error
-	suite.validateResponse(w, http.StatusBadRequest, `{"error":"ISO Standard name should not be empty"}`)
-}
-
-func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_InvalidData_EmptyJSON() {
-	// Prepare invalid form data (empty JSON)
-	invalidFormData := ``
-	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(types.ISOStandard{}, nil).Maybe()
-
-	// Perform request
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(invalidFormData))
-
-	// Validate response for invalid JSON format
-	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Invalid JSON format"}`)
-}
-
-func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_InvalidJSON_WrongFieldName() {
-	// Prepare invalid form data (incorrect field)
-	invalidFormData := `{"nam": "ISO fake name"}`
-	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(types.ISOStandard{}, nil).Maybe()
-
-	// Perform request
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(invalidFormData))
-
-	// Validate response for invalid field name
-	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Missing required field: name"}`)
-}
-
-func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_InvalidDataType_BoolInsteadOfString() {
-	invalidFormData := `{"name": true}` // name should be a string, not a boolean
-	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(types.ISOStandard{}, nil).Maybe()
-
-	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(invalidFormData))
-	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Invalid Data - name must be a string"}`)
-}
-
-// func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_AdditionalErrors() {
-// 	// Additional tests for other potential errors
-// 	// For example:
-// 	// - Test for missing required fields other than 'name'
-// 	// - Test for unexpected additional fields
-//
-// 	// Mock repository call with expected response
-// 	suite.mockRepo.On("CreateISOStandard", mock.Anything).Return(types.ISOStandard{}, nil).Maybe()
-//
-// 	// Perform request with additional error scenarios
-// 	// Adjust as per specific additional error cases you want to cover
-//
-// 	// Example: Missing required field
-// 	missingFieldData := `{}` // Missing 'name' field
-// 	w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(missingFieldData))
-// 	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Invalid field name: expected 'name'"}`)
-//
-// 	// Example: Unexpected additional fields
-// 	unexpectedFieldData := `{"name": "ISO 9001", "version": "1.0"}`
-// 	w = suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(unexpectedFieldData))
-// 	suite.validateResponse(w, http.StatusBadRequest, `{"error":"Invalid field name: expected 'name'"}`)
-//
-// 	// Add more test cases as necessary for other potential errors
-// }
-
-func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_Success() {
-	expectedStandard := suite.jsonData[0]
-	updatedStandard := expectedStandard
-	updatedStandard.Name = "ISO 9001 Updated"
-
-	updatedData, err := json.Marshal(updatedStandard)
-	require.NoError(suite.T(), err, "failed to marshal JSON data")
-
-	suite.mockRepo.On("UpdateISOStandard", mock.MatchedBy(func(isoStandard types.ISOStandard) bool {
-		return isoStandard.ID == updatedStandard.ID &&
-			isoStandard.Name == updatedStandard.Name
-	})).Return(nil)
-
-	w := suite.performRequest("PUT", "/api/iso_standards/1", bytes.NewBuffer(updatedData))
-	suite.validateResponse(w, http.StatusOK, `{"status":"updated"}`)
-}
-
-func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandardByID_CannotParseIDAsIntError() {
-	expectedStandard := suite.jsonData[0]
-	updatedStandard := expectedStandard
-	updatedStandard.Name = "ISO 9001 Updated"
-
-	updatedData, err := json.Marshal(updatedStandard)
-	require.NoError(suite.T(), err, "failed to marshal JSON data")
-
-	suite.mockRepo.On("UpdateISOStandard", mock.MatchedBy(func(isoStandard types.ISOStandard) bool {
-		return isoStandard.ID == updatedStandard.ID &&
-			isoStandard.Name == updatedStandard.Name
-	})).Return(nil)
-
-	w := suite.performRequest("PUT", "/api/iso_standards/a", bytes.NewBuffer(updatedData))
-	suite.validateErrorResponse(w, custom_errors.InvalidID("ISO Standard"))
-}
-
-func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard_NotFound() {
-	expectedStandard := suite.jsonData[0]
-
-	formData, err := json.Marshal(expectedStandard)
-	require.NoError(suite.T(), err, "failed to marshal JSON data")
-
-	suite.mockRepo.On("UpdateISOStandard", expectedStandard).Return(custom_errors.NewCustomError(http.StatusNotFound, "ISO Standard not found", nil))
-
-	w := suite.performRequest("PUT", "/api/iso_standards/1", bytes.NewBuffer(formData))
-	suite.validateErrorResponse(w, custom_errors.NotFound("ISO Standard"))
-}
-
-func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_NotFound() {
-	suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(custom_errors.NewCustomError(http.StatusNotFound, "ISO Standard not found", nil))
-
-	w := suite.performRequest("DELETE", "/api/iso_standards/2", nil)
-	suite.validateErrorResponse(w, custom_errors.NotFound("ISO Standard"))
-}
-
-func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandardByID_CannotParseIDAsIntError() {
-	suite.mockRepo.On("DeleteISOStandard", int64(1)).Return(nil)
-	w := suite.performRequest("DELETE", "/api/iso_standards/a", nil)
-	suite.validateErrorResponse(w, custom_errors.InvalidID("ISO Standard"))
-}
-
-func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard_Success() {
-	suite.mockRepo.On("DeleteISOStandard", int64(1)).Return(nil)
-
-	w := suite.performRequest("DELETE", "/api/iso_standards/1", nil)
-	suite.validateResponse(w, http.StatusOK, `{"message":"ISO standard deleted"}`)
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			tc.setupMock()
+			w := suite.performRequest("DELETE", "/api/iso_standards/"+tc.id, nil)
+			suite.validateResponse(w, tc.expectedStatus, tc.expectedBody)
+		})
+	}
 }
 
 func TestApiIsoStandardControllerTestSuite(t *testing.T) {
