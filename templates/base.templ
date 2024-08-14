@@ -2,13 +2,13 @@ package templates
 
 import "ISO_Auditing_Tool/templates/components"
 
-templ Base() {
+templ Base(content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@components.Header()
 		<body>
-			<main class="min-h-screen w-full">
-				<h3 class="text-base lg:text-lg font-medium text-center">ISO Auditing Tool</h3>
+			<main class="min-h-screen w-full ">
+				@content
 			</main>
 		</body>
 		@components.Footer()

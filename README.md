@@ -1,6 +1,6 @@
 # Project ISO_Auditing_Tool
 
-One Paragraph of project description goes here
+The ISO Auditing Tool helps ISO Auditors fill an audit questionnaire that automates loading data into Confluence and Jira.
 
 ## Getting Started
 
@@ -41,6 +41,11 @@ make watch
 run the test suite
 ```bash
 make test
+```
+
+run the test suite and return a short results
+```bash
+make test-short
 ```
 
 clean up binary from the last build

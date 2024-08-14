@@ -12,6 +12,7 @@ import (
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/templates"
+	"ISO_Auditing_Tool/templates/iso_standards"
 
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,7 @@ func (wc *WebIsoStandardController) GetAllISOStandards(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch ISO standards"})
 		return
 	}
-	templ.Handler(templates.ISOStandards(isoStandards)).ServeHTTP(c.Writer, c.Request)
+	templ.Handler(templates.Base(iso_standards.List(isoStandards))).ServeHTTP(c.Writer, c.Request)
 }
 
 func (wc *WebIsoStandardController) GetISOStandardByID(c *gin.Context) {
@@ -50,17 +51,15 @@ func (wc *WebIsoStandardController) GetISOStandardByID(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "ISO standard not found"})
 		return
 	}
-	templ.Handler(templates.ISOStandard(*isoStandard)).ServeHTTP(c.Writer, c.Request)
+	templ.Handler(templates.Base(iso_standards.Detail(*isoStandard))).ServeHTTP(c.Writer, c.Request)
 }
 
 func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
-	templ.Handler(templates.AddISOStandard()).ServeHTTP(c.Writer, c.Request)
+	templ.Handler(templates.Base(iso_standards.Add())).ServeHTTP(c.Writer, c.Request)
 }
-
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	formData := make(map[string]string)
 	if err := c.Bind(&formData); err != nil {
-		// c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
 		_ = c.Error(custom_errors.ErrInvalidFormData)
 		return
 	}
@@ -166,12 +165,13 @@ func (wc *WebIsoStandardController) fetchAllISOStandards() ([]types.ISOStandard,
 	return isoStandards, nil
 }
 
+// Helper function to fetch a single ISO standard
 func (wc *WebIsoStandardController) fetchISOStandardByID(id string) (*types.ISOStandard, error) {
-	requestURL := "/api/iso_standards/" + id
 	recorder := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, requestURL, nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/iso_standards/"+id, nil)
 	apiContext, _ := gin.CreateTestContext(recorder)
 	apiContext.Request = req
+	apiContext.Params = gin.Params{{Key: "id", Value: id}}
 
 	wc.ApiController.GetISOStandardByID(apiContext)
 
