@@ -22,10 +22,25 @@ run the application
 ```bash
 make run
 ```
+### Create Database Container
 
 Create DB container
 ```bash
 make docker-run
+```
+
+Run the docker container in your computer. Remember to log in with the following commands. Remember to use a .env file to safely manage your credentials.
+```bash
+mysql -u USER - p
+```
+
+Once you're connected to the database you can use MySQL commands to select a database and manage your data:
+
+```sql
+SHOW DATABASES;
+USE database;
+SHOW TABLES;
+SELECT * FROM table1;
 ```
 
 Shutdown DB container
@@ -33,11 +48,13 @@ Shutdown DB container
 make docker-down
 ```
 
+### Run the application
+
 live reload the application
 ```bash
 make watch
 ```
-
+### Run Tests
 run the test suite
 ```bash
 make test
