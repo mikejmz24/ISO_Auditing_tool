@@ -35,9 +35,16 @@ test:
 	@echo "Testing..."
 	@go test ./tests/... -v
 
-# Test short results
+# Testing complete project or individual file with formatted short text
 test-short:
-	@go test -v ./tests/... 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN" | \
+	@if [ "$(file)" = "." ]; then \
+		path="./..."; \
+	elif [ -n "$(file)" ]; then \
+		path="./tests/$(file)"; \
+	else \
+		path="./tests/..."; \
+	fi; \
+	go test -v $$path 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN" | \
 		sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
 		    -e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
 		    -e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' | \
