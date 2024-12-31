@@ -37,7 +37,11 @@ test:
 
 # Test short results
 test-short:
-	@go test -v ./tests/... 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN"
+	@go test -v ./tests/... 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN" | \
+		sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
+		    -e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
+		    -e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' | \
+				awk '{if(index($$0, "/") > 0) {split($$0, parts, "/"); split(parts[1], colin_sub, ": "); print colin_sub[1] ": " parts[length(parts)]} else {print $$0}}'
 
 # Run the database migrations
 migrate:
