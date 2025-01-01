@@ -45,11 +45,12 @@ test-short:
 					path="-run $(word 3, $(MAKECMDGOALS)) $$path"; \
 			fi; \
 	fi; \
-	go test -v $$path 2>&1 | grep -e "---" | \
+	go test -v $$path 2>&1 | grep -e "---\|warning" | \
 			sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
 					-e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
-					-e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' | \
-			awk ' \
+					-e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' \
+					-e 's/.*warning.*/\x1b[0;33m&\x1b[1;33m/' | \
+				awk ' \
 					{if (index($$0, "/") > 0) { \
 							split($$0, parts, "/"); \
 							split(parts[1], colin_sub, ": "); \
