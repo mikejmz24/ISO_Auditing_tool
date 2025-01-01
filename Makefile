@@ -37,18 +37,29 @@ test:
 
 # Testing complete project or individual file with formatted short text
 test-short:
-	@if [ "$(file)" = "." ]; then \
-		path="./..."; \
-	elif [ -n "$(file)" ]; then \
-		path="./tests/$(file)"; \
-	else \
-		path="./tests/..."; \
+	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+			path="./tests/..."; \
+	elif [ -n "$(word 2, $(MAKECMDGOALS))" ]; then \
+			path="./tests/$(word 2, $(MAKECMDGOALS))"; \
+			if [ -n "$(word 3, $(MAKECMDGOALS))" ]; then \
+					path="-run $(word 3, $(MAKECMDGOALS)) $$path"; \
+			fi; \
 	fi; \
-	go test -v $$path 2>&1 | grep -v "warning" | grep -E "=== RUN |--- (PASS|FAIL|SKIP)" | grep -v "=== RUN" | \
-		sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
-		    -e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
-		    -e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' | \
-				awk '{if(index($$0, "/") > 0) {split($$0, parts, "/"); split(parts[1], colin_sub, ": "); print colin_sub[1] ": " parts[length(parts)]} else {print $$0}}'
+	go test -v $$path 2>&1 | grep -e "---" | \
+			sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
+					-e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
+					-e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' | \
+			awk ' \
+					{if (index($$0, "/") > 0) { \
+							split($$0, parts, "/"); \
+							split(parts[1], colin_sub, ": "); \
+							print colin_sub[1] ": " parts[length(parts)] \
+					} else { \
+							print $$0 \
+					}}'
+
+%:
+	@:
 
 # Run the database migrations
 migrate:
