@@ -57,7 +57,7 @@ make migrate
 ```
 
 You can also seed the database which inserts data based on csv files that match the database tables.
-To seed the database you can execute the following makek command:
+To seed the database you can execute the following make command:
 
 ```bash
 make migrate
