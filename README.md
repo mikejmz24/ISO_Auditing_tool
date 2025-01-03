@@ -48,12 +48,35 @@ Shutdown DB container
 make docker-down
 ```
 
+### Database migrations
+The project has database migrations where you can create tables and their relationships.
+You can execute the following make command to run the migrations:
+
+```bash
+make migrate
+```
+
+You can also seed the database which inserts data based on csv files that match the database tables.
+To seed the database you can execute the following makek command:
+
+```bash
+make migrate
+```
+
+Finally, you can delete all the data in the database tables.
+To wipe out all the data of the database tables execute the following make command:
+
+```bash
+make truncate
+```
+
 ### Run the application
 
 live reload the application
 ```bash
 make watch
 ```
+
 ### Run Tests
 run the test suite
 ```bash
