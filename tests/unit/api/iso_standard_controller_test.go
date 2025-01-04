@@ -349,6 +349,6 @@ func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard() {
 	}
 }
 
-func TestApiIsoStandardControllerTestSuite(t *testing.T) {
+func TestApiISOStandardController(t *testing.T) {
 	suite.Run(t, new(IsoStandardControllerTestSuite))
 }

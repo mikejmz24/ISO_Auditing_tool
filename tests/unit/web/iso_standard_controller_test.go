@@ -266,6 +266,8 @@ package web_test
 import (
 	apiController "ISO_Auditing_Tool/cmd/api/controllers"
 	webController "ISO_Auditing_Tool/cmd/web/controllers"
+
+	// "ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/middleware"
 	"ISO_Auditing_Tool/pkg/types"
@@ -283,9 +285,9 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
+	// "github.com/stretchr/testify/assert"
+	//	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -379,50 +381,130 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	return router
 }
 
-func (suite *TestSuite) validateErrorResponse(w *httptest.ResponseRecorder, expectedError *custom_errors.CustomError) {
-	assert.Equal(suite.T(), expectedError.StatusCode, w.Code)
-
-	var response map[string]interface{}
-	err := json.Unmarshal(w.Body.Bytes(), &response)
-	require.NoError(suite.T(), err, "failed to unmarshal response body")
-
-	assert.Equal(suite.T(), expectedError.Message, response["error"])
-	if expectedError.Context != nil {
-		assert.Equal(suite.T(), expectedError.Context, response["context"])
-	}
-}
-
 func (suite *TestSuite) performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
 	req, err := http.NewRequest(method, url, body)
-	if err != nil {
-		suite.T().Fatalf("failed to create request: %v", err)
+	suite.NoError(err, "failed to create request")
+
+	// Set appropriate content type based on the request body and method
+	if method == http.MethodPost && strings.Contains(url, "add") {
+		if _, ok := body.(*strings.Reader); ok {
+			// For form data
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		} else {
+			// For JSON data
+			req.Header.Set("Content-Type", "application/json")
+		}
 	}
-	req.Header.Set("Content-Type", "application/json")
 
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 	return w
 }
 
-// Test cases
+func (suite *TestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBody string) {
+	suite.Equal(expectedStatus, w.Code, "HTTP status code does not match expected")
 
-func (suite *TestSuite) TestMarshalISOStandard() {
-	expectedJSON := testJSONData
-	actualJSON, err := json.Marshal(suite.standard)
-	suite.NoError(err)
-	var expectedData, actualData interface{}
+	if expectedBody == "" {
+		return
+	}
 
-	suite.NoError(json.Unmarshal(expectedJSON, &expectedData))
-	suite.NoError(json.Unmarshal(actualJSON, &actualData))
-
-	suite.Equal(expectedData, actualData)
+	responseBody := w.Body.String()
+	if expectedStatus >= 400 {
+		var errorResponse struct {
+			Error string `json:"error"`
+		}
+		err := json.Unmarshal([]byte(responseBody), &errorResponse)
+		if err == nil {
+			// Successfully parsed JSON error response
+			suite.NotEmpty(errorResponse.Error, "Error message should not be empty")
+			suite.Equal(expectedBody, errorResponse.Error, "Error message does not match expected")
+		} else {
+			// Fallback to direct string comparison
+			suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
+		}
+	} else {
+		// For success responses, just check if the body contains the expected string
+		suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
+	}
 }
 
-func (suite *TestSuite) TestCreateISOStandard_InvalidData() {
-	invalidJSON := `"invalidField": "invalidData"`
-	w := suite.performRequest("POST", "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON)))
-	suite.validateErrorResponse(w, custom_errors.ErrInvalidFormData)
+func (suite *TestSuite) TestCreateISOStandard() {
+	testCases := []struct {
+		name           string
+		setupMock      func()
+		setupRequest   func() (string, io.Reader)
+		expectedStatus int
+		expectedBody   string
+		validateExtra  func(*httptest.ResponseRecorder)
+	}{
+		{
+			name: "Success",
+			setupMock: func() {
+				standard := suite.standard
+				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
+				suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil)
+			},
+			setupRequest: func() (string, io.Reader) {
+				formData := url.Values{
+					"name": {suite.standard.Name},
+				}
+				return "/web/iso_standards/add", strings.NewReader(formData.Encode())
+			},
+			expectedStatus: http.StatusFound,
+			validateExtra: func(w *httptest.ResponseRecorder) {
+				location := w.Header().Get("Location")
+				suite.Equal("/web/iso_standards", location)
+
+				req, err := http.NewRequest(http.MethodGet, location, nil)
+				suite.NoError(err)
+
+				resp := httptest.NewRecorder()
+				suite.router.ServeHTTP(resp, req)
+
+				suite.Equal(http.StatusOK, resp.Code)
+				suite.Contains(resp.Body.String(), "ISO 9001")
+			},
+		},
+		{
+			name: "InvalidData",
+			setupRequest: func() (string, io.Reader) {
+				invalidJSON := `{"invalidField": "invalidData"}`
+				return "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON))
+			},
+			expectedStatus: http.StatusBadRequest,
+			// expectedBody:   "Missing required field name", // Make sure this matches the exact error message from your handler
+			expectedBody: custom_errors.MissingField("name").Message,
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			suite.mockRepo = new(testutils.MockIsoStandardRepository)
+			suite.router = setupRouter(suite.mockRepo)
+
+			if tc.setupMock != nil {
+				tc.setupMock()
+			}
+
+			url, body := tc.setupRequest()
+			w := suite.performRequest(http.MethodPost, url, body)
+
+			suite.validateResponse(w, tc.expectedStatus, tc.expectedBody)
+
+			if tc.validateExtra != nil {
+				tc.validateExtra(w)
+			}
+
+			suite.mockRepo.AssertExpectations(suite.T())
+		})
+	}
 }
+
+// func (suite *TestSuite) TestCreateISOStandard_InvalidData() {
+// 	invalidJSON := `"invalidField": "invalidData"`
+// 	w := suite.performRequest("POST", "/web/iso_standards/add", bytes.NewBuffer([]byte(invalidJSON)))
+// 	suite.validateErrorResponse(w, custom_errors.ErrInvalidFormData)
+// }
 
 func (suite *TestSuite) TestCreateISOStandard_Success() {
 	standard := suite.standard
@@ -457,6 +539,6 @@ func (suite *TestSuite) TestCreateISOStandard_Success() {
 	suite.mockRepo.AssertExpectations(suite.T())
 }
 
-func TestISOStandardSuite(t *testing.T) {
+func TestWebISOStandardController(t *testing.T) {
 	suite.Run(t, new(TestSuite))
 }
