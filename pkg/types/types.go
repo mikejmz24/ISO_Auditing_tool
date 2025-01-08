@@ -41,6 +41,12 @@ type ISOStandard struct {
 	Clauses []*Clause `json:"clauses,omitempty"`
 }
 
+type ISOStandardForm struct {
+	ID      int       `json:"id" form:"id"`
+	Name    string    `json:"name" form:"name" binding:"required"`
+	Clauses []*Clause `json:"clauses" form:"clauses"`
+}
+
 type Clause struct {
 	ID            int        `json:"id"`
 	ISOStandardID int        `json:"iso_standard_id"`
@@ -48,11 +54,25 @@ type Clause struct {
 	Sections      []*Section `json:"sections,omitempty"`
 }
 
+type ClauseForm struct {
+	ID            int        `json:"id" form:"id"`
+	ISOStandardID int        `json:"iso_standard_id" form:"iso_standard_id"`
+	Name          string     `json:"name" form:"name" binding:"required"`
+	Sections      []*Section `json:"sections" form:"sections"`
+}
+
 type Section struct {
 	ID        int         `json:"id"`
 	ClauseID  int         `json:"clause_id"`
 	Name      string      `json:"name"`
 	Questions []*Question `json:"questions,omitempty"`
+}
+
+type SectionForm struct {
+	ID        int         `json:"id" form:"id"`
+	ClauseID  int         `json:"clause_id" form:"clause_id"`
+	Name      string      `json:"name" form:"name" binding:"required"`
+	Questions []*Question `json:"questions" form:"questions"`
 }
 
 type Subsection struct {
@@ -93,4 +113,18 @@ type Comment struct {
 type User struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+func (f *ISOStandardForm) ToISOStandard() *ISOStandard {
+	return &ISOStandard{
+		ID:      f.ID,
+		Name:    f.Name,
+		Clauses: f.Clauses,
+	}
+}
+
+func (f *ISOStandardForm) FromISOStandard(iso *ISOStandard) {
+	f.ID = iso.ID
+	f.Name = iso.Name
+	f.Clauses = iso.Clauses
 }

@@ -57,49 +57,139 @@ func (wc *WebIsoStandardController) GetISOStandardByID(c *gin.Context) {
 func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
 	templ.Handler(templates.Base(iso_standards.Add())).ServeHTTP(c.Writer, c.Request)
 }
+
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
-	formData := make(map[string]string)
-	if err := c.Bind(&formData); err != nil {
-		_ = c.Error(custom_errors.ErrInvalidFormData)
-		return
+	// Check content type to determine how to handle the input
+	contentType := c.GetHeader("Content-Type")
+
+	var formData types.ISOStandardForm
+	var err error
+
+	if strings.Contains(contentType, "application/json") {
+		// Handle JSON input
+		if err = c.ShouldBindJSON(&formData); err != nil {
+			// Check for specific validation errors
+			if strings.Contains(err.Error(), "Name") {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": custom_errors.MissingField("name").Message,
+				})
+				return
+			}
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "bad JSON error at the beginning",
+			})
+			return
+		}
+	} else {
+		// Handle form input
+		// if err = c.ShouldBind(&formData); err != nil {
+		// 	// For form submissions, render the form with errors
+		// 	templ.Handler(templates.Base(iso_standards.Add())).ServeHTTP(c.Writer, c.Request)
+		// 	return
+		// }
+		// TODO: Ensure formData includes the "Name" field and is correctly bound
+		if err = c.ShouldBind(&formData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": custom_errors.ErrInvalidFormData.Error(),
+			})
+			return
+		}
 	}
 
-	jsonData, err := json.Marshal(formData)
+	// Convert form data to ISOStandard type
+	isoStandard := formData.ToISOStandard()
+
+	// Marshal to JSON for API call
+	jsonData, err := json.Marshal(isoStandard)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal form data"})
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to process form data",
+		})
 		return
 	}
 
-	// Debug: Print the JSON data
-	fmt.Println("Marshalled JSON:", string(jsonData))
-
-	// Initialize httptest.ResponseRecorder to capture the response
+	// Create test context for API call
 	recorder := httptest.NewRecorder()
 	apiContext, _ := gin.CreateTestContext(recorder)
-	apiContext.Request = c.Request
+	apiContext.Request = c.Request.Clone(c.Request.Context())
 	apiContext.Request.Header.Set("Content-Type", "application/json")
 	apiContext.Request.Body = io.NopCloser(strings.NewReader(string(jsonData)))
 
-	// Call the API controller to create the ISO standard
 	wc.ApiController.CreateISOStandard(apiContext)
 
-	// Read the response from recorder
 	response := recorder.Result()
 	defer response.Body.Close()
-	responseBody, _ := io.ReadAll(response.Body)
 
-	apiStatus := response.StatusCode
-
-	// fmt.Println("API Controller HTTP Status:", apiStatus)   // Debug Line
-	// fmt.Println("API Response Body:", string(responseBody)) // Debug Line
-
-	if apiStatus == http.StatusCreated {
+	switch response.StatusCode {
+	case http.StatusCreated:
+		// For JSON requests, return status created
+		if strings.Contains(contentType, "application/json") {
+			c.JSON(http.StatusCreated, gin.H{"status": "created"})
+			return
+		}
+		// For form submissions, redirect
 		c.Redirect(http.StatusFound, "/web/iso_standards")
-	} else {
-		// c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to create ISO standard"})
-		c.JSON(apiContext.Writer.Status(), string(responseBody))
+	case http.StatusBadRequest:
+		if strings.Contains(contentType, "application/json") {
+			responseBody, _ := io.ReadAll(response.Body)
+			c.JSON(http.StatusBadRequest, string(responseBody))
+		} else {
+			// templ.Handler(templates.Base(iso_standards.Add())).ServeHTTP(c.Writer, c.Request)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": custom_errors.ErrInvalidFormData.Error(),
+			})
+		}
+	default:
+		responseBody, _ := io.ReadAll(response.Body)
+		c.JSON(response.StatusCode, string(responseBody))
 	}
 }
+
+// formData := make(map[string]string)
+//
+//	if err := c.Bind(&formData); err != nil {
+//		_ = c.Error(custom_errors.ErrInvalidFormData)
+//		return
+//	}
+//
+// jsonData, err := json.Marshal(formData)
+//
+//	if err != nil {
+//		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal form data"})
+//		return
+//	}
+//
+// // Debug: Print the JSON data
+// fmt.Println("Marshalled JSON:", string(jsonData))
+//
+// // Initialize httptest.ResponseRecorder to capture the response
+// recorder := httptest.NewRecorder()
+// apiContext, _ := gin.CreateTestContext(recorder)
+// apiContext.Request = c.Request
+// apiContext.Request.Header.Set("Content-Type", "application/json")
+// apiContext.Request.Body = io.NopCloser(strings.NewReader(string(jsonData)))
+//
+// // Call the API controller to create the ISO standard
+// wc.ApiController.CreateISOStandard(apiContext)
+//
+// // Read the response from recorder
+// response := recorder.Result()
+// defer response.Body.Close()
+// responseBody, _ := io.ReadAll(response.Body)
+//
+// apiStatus := response.StatusCode
+//
+// // fmt.Println("API Controller HTTP Status:", apiStatus)   // Debug Line
+// // fmt.Println("API Response Body:", string(responseBody)) // Debug Line
+//
+//	if apiStatus == http.StatusCreated {
+//		c.Redirect(http.StatusFound, "/web/iso_standards")
+//	} else {
+//
+//		// c.JSON(apiContext.Writer.Status(), gin.H{"error": "Failed to create ISO standard"})
+//		c.JSON(apiContext.Writer.Status(), string(responseBody))
+// }
+// }
 
 func (wc *WebIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	var formData map[string]string

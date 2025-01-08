@@ -62,6 +62,25 @@ test-short:
 %:
 	@:
 
+testing:
+	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
+			path="./tests/..."; \
+	elif [ -n "$(word 2, $(MAKECMDGOALS))" ]; then \
+			path="./tests/$(word 2, $(MAKECMDGOALS))"; \
+			if [ -n "$(word 3, $(MAKECMDGOALS))" ]; then \
+					path="-run $(word 3, $(MAKECMDGOALS)) $$path"; \
+			fi; \
+	fi; \
+	go test -v $$path 2>&1 | \
+	awk ' \
+    /Error: / {printing_error = 1} \
+    printing_error && !/===/ {print} \
+    /Test: / {printing_error = 0} \
+    /Messages: / {printing_messages = 1} \
+    printing_messages && !/===/ {print} \
+    /===/ {printing_messages = 0} \
+    /---/ {print}' 
+
 # Run the database migrations
 migrate:
 	@go run cmd/api/main.go migrate

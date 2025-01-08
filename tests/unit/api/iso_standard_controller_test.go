@@ -120,7 +120,8 @@ func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards() {
 				suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.FailedToFetch("ISO Standards"))
 			},
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   "Failed to fetch ISO Standards",
+			// expectedBody:   "Failed to fetch ISO Standards",
+			expectedBody: "I'm a nasty error",
 		},
 		{
 			name: "ReturnOneSuccess",
