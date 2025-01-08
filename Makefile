@@ -30,10 +30,6 @@ docker-down:
 		docker-compose down; \
 	fi
 
-# Test the application
-test:
-	@echo "Testing..."
-	@go test ./tests/... -v
 
 # Testing complete project or individual file with formatted short text
 test-short:
@@ -62,7 +58,8 @@ test-short:
 %:
 	@:
 
-testing:
+# Test the application
+test:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
 			path="./tests/..."; \
 	elif [ -n "$(word 2, $(MAKECMDGOALS))" ]; then \
@@ -73,13 +70,76 @@ testing:
 	fi; \
 	go test -v $$path 2>&1 | \
 	awk ' \
+    /--- (F|P)/ {print} \
     /Error: / {printing_error = 1} \
     printing_error && !/===/ {print} \
     /Test: / {printing_error = 0} \
     /Messages: / {printing_messages = 1} \
     printing_messages && !/===/ {print} \
-    /===/ {printing_messages = 0} \
-    /---/ {print}' 
+    /===/ {printing_messages = 0}' | \
+	awk '\
+		BEGIN {\
+			test_count = 0;\
+			in_error = 0;\
+			in_messages = 0;\
+		}\
+		/---/ {\
+			print $$0;\
+		}\
+		/Error:/ {\
+			current_error = $$0;\
+			test_count++;\
+			errors[test_count] = current_error;\
+			in_error = 1;\
+			in_messages = 0;\
+			next;\
+		}\
+		/Test:/ {\
+			in_error = 0;\
+			in_messages = 0;\
+			test_text = substr($$0, 23);\
+			tests[test_count] = test_text;\
+			next;\
+		}\
+		/Messages:/ {\
+			in_error = 0;\
+			in_messages = 1;\
+			messages[test_count] = $$0;\
+			next;\
+		}\
+		{\
+			if (in_error) {\
+				errors[test_count] = errors[test_count] "\n" $$0;\
+			}\
+			if (in_messages && !/---/) {\
+				messages[test_count] = messages[test_count] "\n" $$0;\
+			}\
+		}\
+		/--- FAIL:/ {\
+			start = index($$0, ": ") + 2;\
+			end = index($$0, " (");\
+			failed_test = substr($$0, start, end - start); \
+			for (i = 1; i <= test_count; i++) {\
+				if (tests[i] == failed_test) {\
+					if (errors[i]) print errors[i];\
+					if (messages[i]) print messages[i];\
+				}\
+			}\
+		}' | \
+	awk ' \
+		{if (index($$0, "/") > 0) { \
+				split($$0, parts, "/"); \
+				split(parts[1], colin_sub, ": "); \
+				print colin_sub[1] ": " parts[length(parts)] \
+		} else { \
+				print $$0 \
+		}}' | \
+	sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
+			-e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
+			-e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' \
+			-e 's/.*warning.*/\x1b[0;33m&\x1b[1;33m/' \
+			-e '/actual  :/s/.*/\x1b[38;5;9m&\x1b[0m/' \
+			-e '/expected:/s/.*/\x1b[38;5;10m&\x1b[0m/'
 
 # Run the database migrations
 migrate:
