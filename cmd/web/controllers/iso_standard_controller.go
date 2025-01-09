@@ -65,37 +65,43 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	var formData types.ISOStandardForm
 	var err error
 
-	if strings.Contains(contentType, "application/json") {
-		// Handle JSON input
-		if err = c.ShouldBindJSON(&formData); err != nil {
-			// Check for specific validation errors
-			if strings.Contains(err.Error(), "Name") {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"error": custom_errors.MissingField("name").Message,
-				})
-				return
-			}
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "bad JSON error at the beginning",
-			})
-			return
-		}
-	} else {
-		// Handle form input
-		// if err = c.ShouldBind(&formData); err != nil {
-		// 	// For form submissions, render the form with errors
-		// 	templ.Handler(templates.Base(iso_standards.Add())).ServeHTTP(c.Writer, c.Request)
-		// 	return
-		// }
-		// TODO: Ensure formData includes the "Name" field and is correctly bound
-		if err = c.ShouldBind(&formData); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": custom_errors.ErrInvalidFormData.Error(),
-			})
-			return
-		}
-	}
+	// if strings.Contains(contentType, "application/json") {
+	// 	// Handle JSON input
+	// 	if err = c.ShouldBindJSON(&formData); err != nil {
+	// 		// Check for specific validation errors
+	// 		if strings.Contains(err.Error(), "Name") {
+	// 			c.JSON(http.StatusBadRequest, gin.H{
+	// 				"error": custom_errors.MissingField("name").Message,
+	// 			})
+	// 			return
+	// 		}
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"error": "bad JSON error at the beginning",
+	// 		})
+	// 		return
+	// 	}
+	// } else {
+	// 	// Handle form input
+	// 	// if err = c.ShouldBind(&formData); err != nil {
+	// 	// 	// For form submissions, render the form with errors
+	// 	// 	templ.Handler(templates.Base(iso_standards.Add())).ServeHTTP(c.Writer, c.Request)
+	// 	// 	return
+	// 	// }
+	// 	// TODO: Ensure formData includes the "Name" field and is correctly bound
+	// 	if err = c.ShouldBind(&formData); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"error": custom_errors.ErrInvalidFormData.Error(),
+	// 		})
+	// 		return
+	// 	}
+	// }
 
+	if err = c.ShouldBind(&formData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": custom_errors.ErrInvalidFormData.Error(),
+		})
+		return
+	}
 	// Convert form data to ISOStandard type
 	isoStandard := formData.ToISOStandard()
 
@@ -123,10 +129,10 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	switch response.StatusCode {
 	case http.StatusCreated:
 		// For JSON requests, return status created
-		if strings.Contains(contentType, "application/json") {
-			c.JSON(http.StatusCreated, gin.H{"status": "created"})
-			return
-		}
+		// if strings.Contains(contentType, "application/json") {
+		// 	c.JSON(http.StatusCreated, gin.H{"status": "created"})
+		// 	return
+		// }
 		// For form submissions, redirect
 		c.Redirect(http.StatusFound, "/web/iso_standards")
 	case http.StatusBadRequest:

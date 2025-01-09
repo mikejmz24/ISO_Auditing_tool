@@ -72,11 +72,8 @@ test:
 	awk ' \
     /--- (F|P)/ {print} \
     /Error: / {printing_error = 1} \
-    printing_error && !/===/ {print} \
-    /Test: / {printing_error = 0} \
-    /Messages: / {printing_messages = 1} \
-    printing_messages && !/===/ {print} \
-    /===/ {printing_messages = 0}' | \
+		/===|---/ { printing_error = 0} \
+		printing_error {print $$0}' | \
 	awk '\
 		BEGIN {\
 			test_count = 0;\
@@ -123,6 +120,9 @@ test:
 				if (tests[i] == failed_test) {\
 					if (errors[i]) print errors[i];\
 					if (messages[i]) print messages[i];\
+					delete tests[i];\
+					delete errors[i];\
+					delete messages[i];\
 				}\
 			}\
 		}' | \
