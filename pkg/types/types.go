@@ -43,7 +43,7 @@ type ISOStandard struct {
 
 type ISOStandardForm struct {
 	ID      int       `json:"id" form:"id"`
-	Name    string    `json:"name" form:"name" binding:"required"`
+	Name    string    `json:"name" form:"name"`
 	Clauses []*Clause `json:"clauses" form:"clauses"`
 }
 

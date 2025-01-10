@@ -26,6 +26,10 @@ func FailedToFetch(objectType string) *CustomError {
 	return NewCustomError(http.StatusInternalServerError, failedToFetchMessage(objectType), nil)
 }
 
+func EmptyData(objectType string) *CustomError {
+	return NewCustomError(http.StatusBadRequest, emptyDataMessage(objectType), nil)
+}
+
 func InvalidDataType(field string, fieldType string) *CustomError {
 	return NewCustomError(http.StatusBadRequest, invalidDataTypeMessage(field, fieldType), nil)
 }
@@ -53,6 +57,10 @@ func NewCustomError(statusCode int, message string, context map[string]interface
 
 func failedToFetchMessage(objectType string) string {
 	return fmt.Sprintf("Failed to fetch %v", objectType)
+}
+
+func emptyDataMessage(objectType string) string {
+	return fmt.Sprintf("Invalida data - %v cannot be empty", objectType)
 }
 
 func invalidDataTypeMessage(field string, fieldType string) string {

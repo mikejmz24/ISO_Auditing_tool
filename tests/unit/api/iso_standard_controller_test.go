@@ -208,13 +208,18 @@ func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard() {
 		expectedBody   string
 	}{
 		{
-			name: "Success",
-			body: `{"name":"ISO 9001"}`,
-			setupMock: func() {
-				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(suite.jsonData[0], nil)
-			},
-			expectedStatus: http.StatusCreated,
-			expectedBody:   `"name":"Leadership"`,
+			name:           "EmptyJSON",
+			body:           ``,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Invalid JSON format",
+		},
+		{
+			name:           "FieldNameMisspelled",
+			body:           `{"nam": "ISO fake name"}`,
+			setupMock:      func() {},
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "Missing required field name",
 		},
 		{
 			name:           "EmptyName",
@@ -224,25 +229,20 @@ func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard() {
 			expectedBody:   "ISO Standard name should not be empty",
 		},
 		{
-			name:           "InvalidData_EmptyJSON",
-			body:           ``,
-			setupMock:      func() {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Invalid JSON format",
-		},
-		{
-			name:           "InvalidJSON_WrongFieldName",
-			body:           `{"nam": "ISO fake name"}`,
-			setupMock:      func() {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Missing required field name",
-		},
-		{
-			name:           "InvalidDataType_BoolInsteadOfString",
+			name:           "BoolInsteadOfString",
 			body:           `{"name": true}`,
 			setupMock:      func() {},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   "Invalid Data - name must be a string",
+		},
+		{
+			name: "Success",
+			body: `{"name":"ISO 9001"}`,
+			setupMock: func() {
+				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(suite.jsonData[0], nil)
+			},
+			expectedStatus: http.StatusCreated,
+			expectedBody:   `"name":"Leadership"`,
 		},
 	}
 
