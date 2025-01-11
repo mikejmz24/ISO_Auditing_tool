@@ -31,7 +31,7 @@ make docker-run
 
 Run the docker container in your computer. Remember to log in with the following commands. Remember to use a .env file to safely manage your credentials.
 ```bash
-mysql -u USER - p
+mysql -u USER -p
 ```
 
 Once you're connected to the database you can use MySQL commands to select a database and manage your data:
@@ -60,7 +60,7 @@ You can also seed the database which inserts data based on csv files that match 
 To seed the database you can execute the following make command:
 
 ```bash
-make migrate
+make seed
 ```
 
 Finally, you can delete all the data in the database tables.

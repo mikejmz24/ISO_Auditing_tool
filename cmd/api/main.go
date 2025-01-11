@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
@@ -29,6 +30,7 @@ func loadEnv() {
 func main() {
 	// Load environment variables
 	loadEnv()
+	gin.SetMode(gin.DebugMode)
 
 	// Check for command line arguments for migration and seeding
 	if len(os.Args) > 1 {

@@ -61,6 +61,7 @@ func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
 
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	var formData types.ISOStandardForm
+	// var formData types.ISOStandard
 	var customErr custom_errors.CustomError
 
 	if c.ContentType() != "application/x-www-form-urlencoded" {
@@ -75,6 +76,12 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 		return
 	}
 
+	if len(c.Request.PostForm) == 0 {
+		customErr = *custom_errors.EmptyData("Form")
+		c.JSON(customErr.StatusCode, customErr)
+		return
+	}
+
 	if len(c.Request.PostForm) == 1 {
 		for key, values := range c.Request.PostForm {
 			if key == "" || len(values) == 0 || len(values) == 1 && values[0] == "" && key != "name" {
@@ -83,12 +90,6 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 				return
 			}
 		}
-	}
-
-	if len(c.Request.PostForm) == 0 {
-		customErr = *custom_errors.EmptyData("Form")
-		c.JSON(customErr.StatusCode, customErr)
-		return
 	}
 
 	if err := c.ShouldBind(&formData); err != nil {
@@ -120,9 +121,11 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 
 	// Marshal to JSON for API call
 	jsonData, err := json.Marshal(isoStandard)
+	// jsonData, err := json.Marshal(formData)
 	if err != nil {
 		customErr = *custom_errors.NewCustomError(http.StatusBadRequest, "Failed to process data", nil)
 		c.JSON(customErr.StatusCode, customErr)
+		// c.JSON(201, jsonData)
 		return
 	}
 
@@ -145,8 +148,6 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 		c.JSON(customErr.StatusCode, customErr)
 		return
 	}
-
-	// c.Redirect(http.StatusFound, "/web/isoStandards")
 
 	switch response.StatusCode {
 	case http.StatusCreated, http.StatusOK:

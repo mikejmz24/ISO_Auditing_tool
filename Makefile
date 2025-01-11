@@ -139,7 +139,9 @@ test:
 			-e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' \
 			-e 's/.*warning.*/\x1b[0;33m&\x1b[1;33m/' \
 			-e '/actual  :/s/.*/\x1b[38;5;9m&\x1b[0m/' \
-			-e '/expected:/s/.*/\x1b[38;5;10m&\x1b[0m/'
+			-e '/expected:/s/.*/\x1b[38;5;10m&\x1b[0m/' \
+			-e 's/\(Expected: \)\([^,]*\)\(, Got\)/\x1b[38;5;10m\1\2\x1b[0m\3/' \
+			-e 's/\(Got: \)\(.*\)$$/\x1b[38;5;9m\1\2\x1b[0m/'
 
 # Run the database migrations
 migrate:
