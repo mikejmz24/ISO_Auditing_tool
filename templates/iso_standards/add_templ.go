@@ -25,7 +25,7 @@ func Add() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container mx-auto px-4 py-8\"><h2 class=\"text-2xl font-semibold mb-4\">Add New ISO Standard</h2><form hx-post=\"/web/iso_standards\" hx-target=\"body\"><div class=\"mb-4\"><label for=\"name\" class=\"block text-sm font-medium text-gray-700\">Standard Name</label> <input type=\"text\" id=\"name\" name=\"name\" required class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50\"></div><button type=\"submit\" class=\"bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200\">Add Standard</button></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container mx-auto px-4 py-8\"><h2 class=\"text-2xl font-semibold mb-4\">Add New ISO Standard</h2><form hx-post=\"/web/iso_standards\" hx-target=\"body\" enctype=\"application/x-www-form-urlencoded\"><div class=\"mb-4\"><label for=\"name\" class=\"block text-sm font-medium text-gray-700\">Standard Name</label> <input type=\"text\" id=\"name\" name=\"name\" required class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50\"></div><button type=\"submit\" class=\"bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200\">Add Standard</button></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

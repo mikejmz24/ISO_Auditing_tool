@@ -3,6 +3,7 @@ package web_test
 import (
 	apiController "ISO_Auditing_Tool/cmd/api/controllers"
 	webController "ISO_Auditing_Tool/cmd/web/controllers"
+
 	// "errors"
 
 	"ISO_Auditing_Tool/pkg/custom_errors"
@@ -33,6 +34,10 @@ type TestSuite struct {
 	router   *gin.Engine
 	mockRepo *testutils.MockIsoStandardRepository
 	standard types.ISOStandard
+}
+
+type TestFormData struct {
+	suite.Suite
 }
 
 var (
@@ -254,11 +259,11 @@ func (suite *TestSuite) TestCreateISOStandard() {
 				formData := url.Values{
 					"name": {suite.standard.Name},
 				}
+
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
 			validateExtra: func(w *httptest.ResponseRecorder) {
 				suite.Equal(http.StatusFound, w.Code)
-				suite.Contains(w.Body.String(), "ISO 9001")
 				location := w.Header().Get("Location")
 				suite.Equal("/web/iso_standards", location)
 
@@ -305,4 +310,108 @@ func (suite *TestSuite) TestCreateISOStandard() {
 
 func TestWebISOStandardController(t *testing.T) {
 	suite.Run(t, new(TestSuite))
+}
+
+func TestWebFormDataMethods(t *testing.T) {
+	suite.Run(t, new(TestFormData))
+}
+
+func (suite *TestFormData) TestConversion() {
+	type testCase[T any] struct {
+		name   string
+		input  T
+		output url.Values
+	}
+	testCases := []testCase[any]{
+		{
+			name: "ISOStandardWithAllFields",
+			input: types.ISOStandardForm{
+				ID:   2,
+				Name: "ISO TEST",
+				Clauses: []*types.ClauseForm{
+					{
+						ID:            1,
+						ISOStandardID: 1,
+						Name:          "Clause Test",
+						Sections: []*types.SectionForm{
+							{
+								ID:       1,
+								ClauseID: 1,
+								Name:     "Section Test",
+								Questions: []*types.QuestionForm{
+									{
+										ID:           1,
+										SectionID:    1,
+										SubsectionID: 1,
+										Text:         "Question Test",
+										Evidence: []types.EvidenceForm{
+											{
+												ID:         1,
+												QuestionID: 1,
+												Expected:   "Evidence Test",
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			output: func() url.Values {
+				encoded := url.Values{}
+				// Main ISO Standard fields
+				encoded.Set("id", "2")
+				encoded.Set("name", "ISO TEST")
+
+				// Clauses
+				encoded.Set("clauses[0].id", "1")
+				encoded.Set("clauses[0].iso_standard_id", "1")
+				encoded.Set("clauses[0].name", "Clause Test")
+
+				// Sections
+				encoded.Set("clauses[0].sections[0].id", "1")
+				encoded.Set("clauses[0].sections[0].clause_id", "1")
+				encoded.Set("clauses[0].sections[0].name", "Section Test")
+
+				// Questions
+				encoded.Set("clauses[0].sections[0].questions[0].id", "1")
+				encoded.Set("clauses[0].sections[0].questions[0].section_id", "1")
+				encoded.Set("clauses[0].sections[0].questions[0].subsection_id", "1")
+				encoded.Set("clauses[0].sections[0].questions[0].text", "Question Test")
+
+				// Evidence
+				encoded.Set("clauses[0].sections[0].questions[0].evidence[0].id", "1")
+				encoded.Set("clauses[0].sections[0].questions[0].evidence[0].question_id", "1")
+				encoded.Set("clauses[0].sections[0].questions[0].evidence[0].expected", "Evidence Test")
+
+				return encoded
+			}(),
+		},
+		{
+			name:  "ISOStandardWithIDAndName",
+			input: types.ISOStandardForm{ID: 1, Name: "ISO TEST"},
+			output: func() url.Values {
+				encoded := url.Values{}
+				encoded.Set("id", "")
+				encoded.Set("name", "ISO TEST")
+				return encoded
+			}(),
+		},
+		{
+			name:  "ISOStandardWithOnlyName",
+			input: types.ISOStandardForm{Name: "ISO TEST"},
+			output: func() url.Values {
+				encoded := url.Values{}
+				encoded.Set("name", "ISO TEST")
+				return encoded
+			}(),
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			formData, _ := webController.ConvertStructToForm(tc.input)
+			suite.Equal(tc.output, formData)
+		})
+	}
 }

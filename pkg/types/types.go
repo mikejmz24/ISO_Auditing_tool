@@ -126,12 +126,9 @@ type ISOStandard struct {
 }
 
 type ISOStandardForm struct {
-	// ID      int       `json:"id" form:"id"`
-	// Name    string    `json:"name" form:"name"`
-	// Clauses []*Clause `json:"clauses" form:"clauses"`
-	ID      int       `form:"id"`
-	Name    string    `form:"name"`
-	Clauses []*Clause `form:"clauses,omitempty"`
+	ID      int           `form:"id"`
+	Name    string        `form:"name"`
+	Clauses []*ClauseForm `form:"clauses,omitempty"`
 }
 
 type Clause struct {
@@ -142,10 +139,10 @@ type Clause struct {
 }
 
 type ClauseForm struct {
-	ID            int        `json:"id" form:"id"`
-	ISOStandardID int        `json:"iso_standard_id" form:"iso_standard_id"`
-	Name          string     `json:"name" form:"name" binding:"required"`
-	Sections      []*Section `json:"sections" form:"sections"`
+	ID            int            `json:"id" form:"id"`
+	ISOStandardID int            `json:"iso_standard_id" form:"iso_standard_id"`
+	Name          string         `json:"name" form:"name" binding:"required"`
+	Sections      []*SectionForm `json:"sections" form:"sections"`
 }
 
 type Section struct {
@@ -156,10 +153,10 @@ type Section struct {
 }
 
 type SectionForm struct {
-	ID        int         `json:"id" form:"id"`
-	ClauseID  int         `json:"clause_id" form:"clause_id"`
-	Name      string      `json:"name" form:"name" binding:"required"`
-	Questions []*Question `json:"questions" form:"questions"`
+	ID        int             `json:"id" form:"id"`
+	ClauseID  int             `json:"clause_id" form:"clause_id"`
+	Name      string          `json:"name" form:"name" binding:"required"`
+	Questions []*QuestionForm `json:"questions" form:"questions"`
 }
 
 type Subsection struct {
@@ -177,10 +174,24 @@ type Question struct {
 	Evidence     []Evidence `json:"evidence,omitempty"`
 }
 
+type QuestionForm struct {
+	ID           int            `form:"id"`
+	SectionID    int            `form:"section_id,omitempty"`
+	SubsectionID int            `form:"subsection_id,omitempty"`
+	Text         string         `form:"text"`
+	Evidence     []EvidenceForm `form:"evidence,omitempty"`
+}
+
 type Evidence struct {
 	ID         int    `json:"id"`
 	QuestionID int    `json:"question_id"`
 	Expected   string `json:"expected"`
+}
+
+type EvidenceForm struct {
+	ID         int    `form:"id"`
+	QuestionID int    `form:"question_id"`
+	Expected   string `form:"expected"`
 }
 
 type EvidenceProvided struct {
@@ -203,15 +214,213 @@ type User struct {
 }
 
 func (f *ISOStandardForm) ToISOStandard() *ISOStandard {
+	var clauses []*Clause
+	for _, clauseForm := range f.Clauses {
+		clauses = append(clauses, clauseForm.ToClause())
+	}
+
 	return &ISOStandard{
 		ID:      f.ID,
 		Name:    f.Name,
-		Clauses: f.Clauses,
+		Clauses: clauses,
 	}
 }
 
 func (f *ISOStandardForm) FromISOStandard(iso *ISOStandard) {
 	f.ID = iso.ID
 	f.Name = iso.Name
-	f.Clauses = iso.Clauses
+
+	var clauses []*ClauseForm
+	for _, clause := range iso.Clauses {
+		clauses = append(clauses, clause.ToClauseForm())
+	}
+	f.Clauses = clauses
+}
+
+func (c *Clause) ToClauseForm() *ClauseForm {
+	var items []*SectionForm
+	for _, item := range c.Sections {
+		items = append(items, item.ToSectionForm())
+	}
+
+	return &ClauseForm{
+		ID:            c.ID,
+		ISOStandardID: c.ISOStandardID,
+		Name:          c.Name,
+		Sections:      items,
+	}
+}
+
+func (c *Clause) FromClauseForm(iso *ClauseForm) {
+	c.ID = iso.ID
+	c.ISOStandardID = iso.ISOStandardID
+	c.Name = iso.Name
+
+	var items []*Section
+	for _, item := range iso.Sections {
+		items = append(items, item.ToSection())
+	}
+	c.Sections = items
+}
+
+func (c *ClauseForm) ToClause() *Clause {
+	var items []*Section
+	for _, item := range c.Sections {
+		items = append(items, item.ToSection())
+	}
+
+	return &Clause{
+		ID:            c.ID,
+		ISOStandardID: c.ISOStandardID,
+		Name:          c.Name,
+		Sections:      items,
+	}
+}
+
+func (f *ClauseForm) FromClause(iso *Clause) {
+	f.ID = iso.ID
+	f.ISOStandardID = iso.ISOStandardID
+	f.Name = iso.Name
+
+	var items []*SectionForm
+	for _, item := range iso.Sections {
+		items = append(items, item.ToSectionForm())
+	}
+	f.Sections = items
+}
+
+func (s *Section) ToSectionForm() *SectionForm {
+	var items []*QuestionForm
+	for _, item := range s.Questions {
+		items = append(items, item.ToQuestionForm())
+	}
+
+	return &SectionForm{
+		ID:        s.ID,
+		ClauseID:  s.ClauseID,
+		Name:      s.Name,
+		Questions: items,
+	}
+}
+
+func (c *Section) FromSectionForm(iso *SectionForm) {
+	c.ID = iso.ID
+	c.ClauseID = iso.ClauseID
+	c.Name = iso.Name
+
+	var items []*Question
+	for _, item := range iso.Questions {
+		items = append(items, item.ToQuestion())
+	}
+	c.Questions = items
+}
+
+func (c *SectionForm) ToSection() *Section {
+	var items []*Question
+	for _, item := range c.Questions {
+		items = append(items, item.ToQuestion())
+	}
+
+	return &Section{
+		ID:        c.ID,
+		ClauseID:  c.ClauseID,
+		Name:      c.Name,
+		Questions: items,
+	}
+}
+
+func (f *SectionForm) FromSection(iso *Section) {
+	f.ID = iso.ID
+	f.ClauseID = iso.ClauseID
+	f.Name = iso.Name
+
+	var items []*QuestionForm
+	for _, item := range iso.Questions {
+		items = append(items, item.ToQuestionForm())
+	}
+	f.Questions = items
+}
+
+func (i *Question) ToQuestionForm() *QuestionForm {
+	var items []EvidenceForm
+	for _, item := range i.Evidence {
+		items = append(items, item.ToEvidenceForm())
+	}
+
+	return &QuestionForm{
+		ID:           i.ID,
+		SectionID:    i.SectionID,
+		SubsectionID: i.SubsectionID,
+		Text:         i.Text,
+		Evidence:     items,
+	}
+}
+
+func (i *Question) FromQuestionForm(iso *QuestionForm) {
+	i.ID = iso.ID
+	i.SectionID = iso.SectionID
+	i.SubsectionID = iso.SubsectionID
+	i.Text = iso.Text
+
+	var items []Evidence
+	for _, item := range iso.Evidence {
+		items = append(items, item.ToEvidence())
+	}
+	i.Evidence = items
+}
+
+func (i *QuestionForm) ToQuestion() *Question {
+	var items []Evidence
+	for _, item := range i.Evidence {
+		items = append(items, item.ToEvidence())
+	}
+
+	return &Question{
+		ID:           i.ID,
+		SectionID:    i.SectionID,
+		SubsectionID: i.SubsectionID,
+		Text:         i.Text,
+		Evidence:     items,
+	}
+}
+
+func (i *QuestionForm) FromQuestion(iso *Question) {
+	i.ID = iso.ID
+	i.SectionID = iso.SectionID
+	i.SubsectionID = iso.SubsectionID
+	i.Text = iso.Text
+
+	var items []EvidenceForm
+	for _, item := range iso.Evidence {
+		items = append(items, item.ToEvidenceForm())
+	}
+	i.Evidence = items
+}
+
+func (i *Evidence) ToEvidenceForm() EvidenceForm {
+	return EvidenceForm{
+		ID:         i.ID,
+		QuestionID: i.QuestionID,
+		Expected:   i.Expected,
+	}
+}
+
+func (i *Evidence) FromEvidenceForm(iso EvidenceForm) {
+	i.ID = iso.ID
+	i.QuestionID = iso.QuestionID
+	i.Expected = iso.Expected
+}
+
+func (i *EvidenceForm) ToEvidence() Evidence {
+	return Evidence{
+		ID:         i.ID,
+		QuestionID: i.QuestionID,
+		Expected:   i.Expected,
+	}
+}
+
+func (i *EvidenceForm) FromEvidence(iso Evidence) {
+	i.ID = iso.ID
+	i.QuestionID = iso.QuestionID
+	i.Expected = iso.Expected
 }

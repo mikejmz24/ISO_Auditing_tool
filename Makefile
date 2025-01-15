@@ -30,34 +30,6 @@ docker-down:
 		docker-compose down; \
 	fi
 
-
-# Testing complete project or individual file with formatted short text
-test-short:
-	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
-			path="./tests/..."; \
-	elif [ -n "$(word 2, $(MAKECMDGOALS))" ]; then \
-			path="./tests/$(word 2, $(MAKECMDGOALS))"; \
-			if [ -n "$(word 3, $(MAKECMDGOALS))" ]; then \
-					path="-run $(word 3, $(MAKECMDGOALS)) $$path"; \
-			fi; \
-	fi; \
-	go test -v $$path 2>&1 | grep -e "---\|warning" | \
-			sed -e 's/--- PASS/\x1b[32m--- PASS\x1b[0m/' \
-					-e 's/--- FAIL/\x1b[31m--- FAIL\x1b[0m/' \
-					-e 's/--- SKIP/\x1b[33m--- SKIP\x1b[0m/' \
-					-e 's/.*warning.*/\x1b[0;33m&\x1b[1;33m/' | \
-				awk ' \
-					{if (index($$0, "/") > 0) { \
-							split($$0, parts, "/"); \
-							split(parts[1], colin_sub, ": "); \
-							print colin_sub[1] ": " parts[length(parts)] \
-					} else { \
-							print $$0 \
-					}}'
-
-%:
-	@:
-
 # Test the application
 test:
 	@if [ -z "$(filter-out $@,$(MAKECMDGOALS))" ]; then \
@@ -71,16 +43,16 @@ test:
 	go test -v $$path 2>&1 | \
 	awk ' \
     /--- (F|P)/ {print} \
-    /Error: / {printing_error = 1} \
-		/===|---/ { printing_error = 0} \
-		printing_error {print $$0}' | \
+    /Error: / {flag = 1} \
+		/Test: / {print; flag = 0} \
+		flag {print}' | \
 	awk '\
 		BEGIN {\
 			test_count = 0;\
 			in_error = 0;\
 			in_messages = 0;\
 		}\
-		/---/ {\
+		/--- (F|P)/ {\
 			print $$0;\
 		}\
 		/Error:/ {\
@@ -143,6 +115,9 @@ test:
 			-e 's/\(Expected: \)\([^,]*\)\(, Got\)/\x1b[38;5;10m\1\2\x1b[0m\3/' \
 			-e 's/\(Got: \)\(.*\)$$/\x1b[38;5;9m\1\2\x1b[0m/'
 
+%:
+	@:
+
 # Run the database migrations
 migrate:
 	@go run cmd/api/main.go migrate
@@ -176,5 +151,6 @@ watch:
 	        exit 1; \
 	    fi; \
 	fi
+
 
 .PHONY: all build run test clean

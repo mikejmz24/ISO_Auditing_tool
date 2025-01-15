@@ -16,7 +16,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
-	r.Static("/assets", "./cmd/web/assets")
+	r.Static("/assets", "../cmd/web/assets")
 
 	// API routes group
 	api := r.Group("/api")
@@ -53,7 +53,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	{
 		html.GET("/iso_standards", s.webIsoStandardController.GetAllISOStandards)
 		html.GET("/iso_standards/add", s.webIsoStandardController.RenderAddISOStandardForm)
-		html.POST("/iso_standards/add", s.webIsoStandardController.CreateISOStandard)
+		html.POST("/iso_standards", s.webIsoStandardController.CreateISOStandard)
 		html.GET("/iso_standards/:id", s.webIsoStandardController.GetISOStandardByID)
 
 		html.GET("/clauses", s.webClauseController.GetAllClauses)

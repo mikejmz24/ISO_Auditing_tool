@@ -1,14 +1,18 @@
 package controllers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"reflect"
 	"strconv"
 	"strings"
+	// "sync"
 
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/types"
@@ -17,6 +21,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
+	// "github.com/gin-gonic/gin/binding"
 )
 
 // Interface for the API controller to allow for easier testing and mocking
@@ -61,105 +66,60 @@ func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
 
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	var formData types.ISOStandardForm
-	// var formData types.ISOStandard
-	var customErr custom_errors.CustomError
 
-	if c.ContentType() != "application/x-www-form-urlencoded" {
-		customErr = *custom_errors.ErrInvalidFormData
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	}
-
-	if err := c.Request.ParseForm(); err != nil {
-		customErr = *custom_errors.ErrInvalidFormData
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	}
-
-	if len(c.Request.PostForm) == 0 {
-		customErr = *custom_errors.EmptyData("Form")
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	}
-
-	if len(c.Request.PostForm) == 1 {
-		for key, values := range c.Request.PostForm {
-			if key == "" || len(values) == 0 || len(values) == 1 && values[0] == "" && key != "name" {
-				customErr = *custom_errors.ErrInvalidFormData
-				c.JSON(customErr.StatusCode, customErr)
-				return
-			}
-		}
-	}
-
+	// Parse and bind form data
 	if err := c.ShouldBind(&formData); err != nil {
-		customErr = *custom_errors.ErrInvalidFormData
-		c.JSON(customErr.StatusCode, customErr)
+		log.Printf("Error binding form data: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
 		return
 	}
 
-	if _, exists := c.Request.PostForm["name"]; !exists {
-		customErr = *custom_errors.MissingField("name")
-		c.JSON(customErr.StatusCode, customErr)
+	// Validate form data
+	if err := validateFormData(c, &formData); err != nil {
+		c.JSON(err.StatusCode, err)
 		return
 	}
 
-	if formData.Name == "" {
-		customErr = *custom_errors.EmptyField("string", "name")
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	}
-
-	if isInvalidString(formData.Name) {
-		customErr = *custom_errors.InvalidDataType("name", "string")
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	}
-
-	// Convert form data to ISOStandard type
+	// Convert to JSON and forward to API
 	isoStandard := formData.ToISOStandard()
-
-	// Marshal to JSON for API call
 	jsonData, err := json.Marshal(isoStandard)
-	// jsonData, err := json.Marshal(formData)
 	if err != nil {
-		customErr = *custom_errors.NewCustomError(http.StatusBadRequest, "Failed to process data", nil)
-		c.JSON(customErr.StatusCode, customErr)
-		// c.JSON(201, jsonData)
+		log.Printf("Error marshalling form data: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process form data"})
 		return
 	}
 
-	// Create test context for API call
+	req, _ := http.NewRequest(http.MethodPost, "/api/iso_standards", bytes.NewReader(jsonData))
+	req.Header.Set("Content-Type", "application/json")
 	recorder := httptest.NewRecorder()
+
 	apiContext, _ := gin.CreateTestContext(recorder)
-	// apiContext.Request = c.Request.Clone(c.Request.Context())
-	apiContext.Request = c.Request
-	apiContext.Request.Header.Set("Content-Type", "application/json")
-	apiContext.Request.Body = io.NopCloser(strings.NewReader(string(jsonData)))
+	apiContext.Request = req
 
 	wc.ApiController.CreateISOStandard(apiContext)
 
-	response := recorder.Result()
-	defer response.Body.Close()
-	responseBody, _ := io.ReadAll(response.Body)
-
-	if strings.Contains(string(responseBody), "error") {
-		customErr = *custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to create ISO Standard", nil)
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	}
-
-	switch response.StatusCode {
-	case http.StatusCreated, http.StatusOK:
+	if recorder.Code == http.StatusCreated || recorder.Code == http.StatusOK {
 		c.Redirect(http.StatusFound, "/web/iso_standards")
-		return
-	case http.StatusBadRequest:
-		customErr = *custom_errors.ErrInvalidFormData
-		c.JSON(customErr.StatusCode, customErr)
-		return
-	default:
-		c.JSON(response.StatusCode, string(responseBody))
+	} else {
+		c.JSON(recorder.Code, gin.H{"error": "Failed to create ISO standard"})
 	}
+}
+
+// Separate validation function for better organization and reusability
+func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_errors.CustomError {
+	if formData.Name == "" {
+		return custom_errors.EmptyField("string", "name")
+	}
+
+	if _, exists := c.Request.PostForm["name"]; !exists {
+		return custom_errors.MissingField("name")
+	}
+
+	if isInvalidString(formData.Name) {
+		return custom_errors.InvalidDataType("name", "string")
+	}
+
+	return nil
 }
 
 func (wc *WebIsoStandardController) UpdateISOStandard(c *gin.Context) {
@@ -263,4 +223,99 @@ func isInvalidString(input string) bool {
 	}
 
 	return false
+}
+
+// ConvertStructToForm converts a struct into url.Values
+func ConvertStructToForm(data interface{}) (url.Values, error) {
+	values := url.Values{}
+	if err := convertField(values, "", reflect.ValueOf(data)); err != nil {
+		return nil, err
+	}
+	return values, nil
+}
+
+func convertField(values url.Values, prefix string, v reflect.Value) error {
+	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return nil
+		}
+		v = v.Elem()
+	}
+
+	t := v.Type()
+
+	switch v.Kind() {
+	case reflect.Struct:
+		for i := 0; i < t.NumField(); i++ {
+			field := t.Field(i)
+			fieldValue := v.Field(i)
+
+			tag := field.Tag.Get("form")
+			if tag == "" {
+				continue
+			}
+
+			tagParts := strings.Split(tag, ",")
+			formKey := tagParts[0]
+
+			// Construct the full key with prefix
+			fullKey := formKey
+			if prefix != "" {
+				fullKey = prefix + "." + formKey
+			}
+
+			// Special handling for top-level ID fields
+			if formKey == "id" && prefix == "" {
+				if fieldValue.Kind() == reflect.Int || fieldValue.Kind() == reflect.Int64 {
+					if fieldValue.Int() == 0 {
+						continue
+					} else if fieldValue.Int() == 1 {
+						values.Set(formKey, "")
+						continue
+					}
+				}
+			}
+
+			if err := convertField(values, fullKey, fieldValue); err != nil {
+				return err
+			}
+		}
+
+	case reflect.Slice:
+		if v.IsNil() || v.Len() == 0 {
+			return nil
+		}
+
+		for i := 0; i < v.Len(); i++ {
+			newPrefix := fmt.Sprintf("%s[%d]", prefix, i)
+			if err := convertField(values, newPrefix, v.Index(i)); err != nil {
+				return err
+			}
+		}
+
+	default:
+		if !v.IsValid() {
+			return nil
+		}
+
+		var value string
+		switch v.Kind() {
+		case reflect.String:
+			value = v.String()
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			value = fmt.Sprintf("%v", v.Int())
+		case reflect.Float32, reflect.Float64:
+			value = fmt.Sprintf("%g", v.Float())
+		default:
+			if stringer, ok := v.Interface().(fmt.Stringer); ok {
+				value = stringer.String()
+			} else {
+				value = fmt.Sprintf("%v", v.Interface())
+			}
+		}
+
+		values.Set(prefix, value)
+	}
+
+	return nil
 }
