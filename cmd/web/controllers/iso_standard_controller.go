@@ -65,12 +65,40 @@ func (wc *WebIsoStandardController) RenderAddISOStandardForm(c *gin.Context) {
 }
 
 func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
-	var formData types.ISOStandardForm
+	// Read the raw body first
+	rawBody, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
+		return
+	}
 
+	// Restore the body for later use
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+
+	if len(rawBody) == 0 {
+		err := custom_errors.EmptyData("Form")
+		c.JSON(err.StatusCode, err)
+		return
+	}
+
+	// Check if the body contains an equals sign (=) which is required for form encoding
+	if !bytes.Contains(rawBody, []byte("=")) {
+		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
+		return
+	}
+
+	// Try to parse as form values
+	_, err = url.ParseQuery(string(rawBody))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
+		return
+	}
+	var formData types.ISOStandardForm
 	// Parse and bind form data
-	if err := c.ShouldBind(&formData); err != nil {
+	// if err := c.ShouldBind(&formData); err != nil {
+	if err := c.Bind(&formData); err != nil {
 		log.Printf("Error binding form data: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form data"})
+		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
 		return
 	}
 
@@ -107,6 +135,14 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 
 // Separate validation function for better organization and reusability
 func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_errors.CustomError {
+	if _, exists := c.Request.PostForm["name"]; !exists {
+		return custom_errors.MissingField("name")
+	}
+
+	if formData == nil {
+		return custom_errors.EmptyData("Form")
+	}
+
 	if formData.Name == "" {
 		return custom_errors.EmptyField("string", "name")
 	}

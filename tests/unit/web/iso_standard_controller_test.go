@@ -3,6 +3,8 @@ package web_test
 import (
 	apiController "ISO_Auditing_Tool/cmd/api/controllers"
 	webController "ISO_Auditing_Tool/cmd/web/controllers"
+	"bytes"
+	"errors"
 
 	// "errors"
 
@@ -169,18 +171,153 @@ func (suite *TestSuite) validateResponse(w *httptest.ResponseRecorder, expectedS
 	}
 }
 
-func (suite *TestSuite) TestCreateISOStandard() {
-	testCases := []struct {
-		name           string
-		setupMock      func()
-		setupRequest   func() (string, io.Reader, string)
-		expectedError  custom_errors.CustomError
-		expectedStatus int
-		expectedBody   string
-		validateExtra  func(*httptest.ResponseRecorder)
+// func (suite *TestSuite) TestCreateISOStandard() {
+// 	testCases := []struct {
+// 		name           string
+// 		setupMock      func()
+// 		setupRequest   func() (string, io.Reader, string)
+// 		expectedError  custom_errors.CustomError
+// 		expectedStatus int
+// 		expectedBody   string
+// 		validateExtra  func(*httptest.ResponseRecorder)
+// 	}{
+// 		{
+// 			name: "EmptyFormData",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{}
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.EmptyData("Form"),
+// 		},
+// 		{
+// 			name: "InvalidFormData",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				invalidBody := "I'm not form-encoded!"
+// 				return "/web/iso_standards/add", strings.NewReader(invalidBody), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.ErrInvalidFormData,
+// 		},
+// 		{
+// 			name: "FormDoesNotContainName",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{"wrongField": {"ISO 9001"}}
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.MissingField("name"),
+// 		},
+// 		{
+// 			name: "EmptyName",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{"name": {""}}
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.EmptyField("string", "name"),
+// 		},
+// 		{
+// 			name: "BooleanDataInsteadOfString",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{"name": {"true"}}
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.InvalidDataType("name", "string"),
+// 		},
+// 		{
+// 			name: "NumericDataInsteadOfString",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{"name": {"123"}}
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.InvalidDataType("name", "string"),
+// 		},
+// 		{
+// 			name: "FloatDataInsteadOfString",
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{"name": {"123.45"}}
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			expectedError: *custom_errors.InvalidDataType("name", "string"),
+// 		},
+// 		// {
+// 		// 	name: "RepositoryError",
+// 		// 	setupMock: func() {
+// 		// 		suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(types.ISOStandard{}, errors.New("database error"))
+// 		// 	},
+// 		// 	setupRequest: func() (string, io.Reader, string) {
+// 		// 		formData := url.Values{
+// 		// 			"name": {suite.standard.Name},
+// 		// 		}
+// 		// 		return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 		// 	},
+// 		// 	expectedError: *custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to create ISO Standard", nil),
+// 		// },
+// 		{
+// 			name: "Success",
+// 			setupMock: func() {
+// 				standard := suite.standard
+// 				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
+// 				suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil)
+// 			},
+// 			setupRequest: func() (string, io.Reader, string) {
+// 				formData := url.Values{
+// 					"name": {suite.standard.Name},
+// 				}
+//
+// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+// 			},
+// 			validateExtra: func(w *httptest.ResponseRecorder) {
+// 				suite.Equal(http.StatusFound, w.Code)
+// 				location := w.Header().Get("Location")
+// 				suite.Equal("/web/iso_standards", location)
+//
+// 				req, err := http.NewRequest(http.MethodGet, location, nil)
+// 				suite.NoError(err)
+//
+// 				resp := httptest.NewRecorder()
+// 				suite.router.ServeHTTP(resp, req)
+//
+// 				suite.Equal(http.StatusOK, resp.Code)
+// 				suite.Contains(resp.Body.String(), "ISO 9001")
+// 			},
+// 		},
+// 	}
+//
+// 	for _, tc := range testCases {
+// 		suite.Run(tc.name, func() {
+// 			if tc.setupMock != nil {
+// 				tc.setupMock()
+// 			}
+//
+// 			path, body, contentType := tc.setupRequest()
+// 			req, _ := http.NewRequest(http.MethodPost, path, body)
+// 			req.Header.Set("Content-Type", contentType)
+//
+// 			w := httptest.NewRecorder()
+// 			suite.router.ServeHTTP(w, req)
+//
+// 			if tc.expectedError.StatusCode != 0 {
+// 				suite.Equal(tc.expectedError.StatusCode, w.Code)
+// 				suite.Contains(w.Body.String(), tc.expectedError.Message)
+// 			}
+//
+// 			if tc.validateExtra != nil {
+// 				tc.validateExtra(w)
+// 			}
+//
+// 			if tc.setupMock != nil {
+// 				suite.mockRepo.AssertExpectations(suite.T())
+// 			}
+// 		})
+// 	}
+// }
+
+func (suite *TestSuite) TestCreateISOStandard_Validation() {
+	validationTests := []struct {
+		name          string
+		setupRequest  func() (string, io.Reader, string)
+		expectedError custom_errors.CustomError
 	}{
 		{
-			name: "EmptyFormData",
+			name: "EmptyForm_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
@@ -188,15 +325,15 @@ func (suite *TestSuite) TestCreateISOStandard() {
 			expectedError: *custom_errors.EmptyData("Form"),
 		},
 		{
-			name: "InvalidFormData",
+			name: "InvalidFormEncoding_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
-				invalidBody := "I'm not form-encoded!"
-				return "/web/iso_standards/add", strings.NewReader(invalidBody), "application/x-www-form-urlencoded"
+				invalidBody := []byte("I'm not form-encoded!")
+				return "/web/iso_standards/add", bytes.NewReader(invalidBody), "application/x-www-form-urlencoded"
 			},
 			expectedError: *custom_errors.ErrInvalidFormData,
 		},
 		{
-			name: "FormDoesNotContainName",
+			name: "MissingNameField_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"wrongField": {"ISO 9001"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
@@ -204,7 +341,7 @@ func (suite *TestSuite) TestCreateISOStandard() {
 			expectedError: *custom_errors.MissingField("name"),
 		},
 		{
-			name: "EmptyName",
+			name: "EmptyNameField_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"name": {""}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
@@ -212,7 +349,7 @@ func (suite *TestSuite) TestCreateISOStandard() {
 			expectedError: *custom_errors.EmptyField("string", "name"),
 		},
 		{
-			name: "BooleanDataInsteadOfString",
+			name: "InvalidNameType_Boolean_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"name": {"true"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
@@ -220,7 +357,7 @@ func (suite *TestSuite) TestCreateISOStandard() {
 			expectedError: *custom_errors.InvalidDataType("name", "string"),
 		},
 		{
-			name: "NumericDataInsteadOfString",
+			name: "InvalidNameType_Number_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"name": {"123"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
@@ -228,28 +365,53 @@ func (suite *TestSuite) TestCreateISOStandard() {
 			expectedError: *custom_errors.InvalidDataType("name", "string"),
 		},
 		{
-			name: "FloatDataInsteadOfString",
+			name: "InvalidNameType_Float_ReturnsError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"name": {"123.45"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
 			expectedError: *custom_errors.InvalidDataType("name", "string"),
 		},
-		// {
-		// 	name: "RepositoryError",
-		// 	setupMock: func() {
-		// 		suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(types.ISOStandard{}, errors.New("database error"))
-		// 	},
-		// 	setupRequest: func() (string, io.Reader, string) {
-		// 		formData := url.Values{
-		// 			"name": {suite.standard.Name},
-		// 		}
-		// 		return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-		// 	},
-		// 	expectedError: *custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to create ISO Standard", nil),
-		// },
+	}
+
+	for _, tc := range validationTests {
+		suite.Run(tc.name, func() {
+			path, body, contentType := tc.setupRequest()
+			req, _ := http.NewRequest(http.MethodPost, path, body)
+			req.Header.Set("Content-Type", contentType)
+
+			w := httptest.NewRecorder()
+			suite.router.ServeHTTP(w, req)
+
+			suite.Equal(tc.expectedError.StatusCode, w.Code)
+			suite.Contains(w.Body.String(), tc.expectedError.Message)
+		})
+	}
+}
+
+func (suite *TestSuite) TestCreateISOStandard_Repository() {
+	repositoryTests := []struct {
+		name          string
+		setupMock     func()
+		setupRequest  func() (string, io.Reader, string)
+		expectedError *custom_errors.CustomError
+		validateExtra func(*httptest.ResponseRecorder)
+	}{
 		{
-			name: "Success",
+			name: "RepositoryError_ReturnsError",
+			setupMock: func() {
+				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(types.ISOStandard{}, errors.New("database error"))
+			},
+			setupRequest: func() (string, io.Reader, string) {
+				formData := url.Values{
+					"name": {suite.standard.Name},
+				}
+				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+			},
+			expectedError: custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to create ISO standard", nil),
+		},
+		{
+			name: "ValidData_CreatesAndRedirects",
 			setupMock: func() {
 				standard := suite.standard
 				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
@@ -259,7 +421,6 @@ func (suite *TestSuite) TestCreateISOStandard() {
 				formData := url.Values{
 					"name": {suite.standard.Name},
 				}
-
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
 			validateExtra: func(w *httptest.ResponseRecorder) {
@@ -279,20 +440,20 @@ func (suite *TestSuite) TestCreateISOStandard() {
 		},
 	}
 
-	for _, tc := range testCases {
+	for _, tc := range repositoryTests {
 		suite.Run(tc.name, func() {
 			if tc.setupMock != nil {
 				tc.setupMock()
 			}
 
-			path, body, contentType := tc.setupRequest()
+			path, body, contenType := tc.setupRequest()
 			req, _ := http.NewRequest(http.MethodPost, path, body)
-			req.Header.Set("Content-Type", contentType)
+			req.Header.Set("Content-Type", contenType)
 
 			w := httptest.NewRecorder()
 			suite.router.ServeHTTP(w, req)
 
-			if tc.expectedError.StatusCode != 0 {
+			if tc.expectedError != nil {
 				suite.Equal(tc.expectedError.StatusCode, w.Code)
 				suite.Contains(w.Body.String(), tc.expectedError.Message)
 			}
@@ -301,9 +462,7 @@ func (suite *TestSuite) TestCreateISOStandard() {
 				tc.validateExtra(w)
 			}
 
-			if tc.setupMock != nil {
-				suite.mockRepo.AssertExpectations(suite.T())
-			}
+			suite.mockRepo.AssertExpectations(suite.T())
 		})
 	}
 }
