@@ -124,52 +124,52 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	return router
 }
 
-func (suite *TestSuite) performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
-	req, err := http.NewRequest(method, url, body)
-	suite.NoError(err, "failed to create request")
+// func (suite *TestSuite) performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
+// 	req, err := http.NewRequest(method, url, body)
+// 	suite.NoError(err, "failed to create request")
+//
+// 	// Set appropriate content type based on the request body and method
+// 	if method == http.MethodPost && strings.Contains(url, "add") {
+// 		if _, ok := body.(*strings.Reader); ok {
+// 			// For form data
+// 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+// 		} else {
+// 			// For JSON data
+// 			req.Header.Set("Content-Type", "application/json")
+// 		}
+// 	}
+//
+// 	w := httptest.NewRecorder()
+// 	suite.router.ServeHTTP(w, req)
+// 	return w
+// }
 
-	// Set appropriate content type based on the request body and method
-	if method == http.MethodPost && strings.Contains(url, "add") {
-		if _, ok := body.(*strings.Reader); ok {
-			// For form data
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-		} else {
-			// For JSON data
-			req.Header.Set("Content-Type", "application/json")
-		}
-	}
-
-	w := httptest.NewRecorder()
-	suite.router.ServeHTTP(w, req)
-	return w
-}
-
-func (suite *TestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBody string) {
-	suite.Equal(expectedStatus, w.Code, "HTTP status code does not match expected")
-
-	if expectedBody == "" {
-		return
-	}
-
-	responseBody := w.Body.String()
-	if expectedStatus >= 400 {
-		var errorResponse struct {
-			Error string `json:"error"`
-		}
-		err := json.Unmarshal([]byte(responseBody), &errorResponse)
-		if err == nil {
-			// Successfully parsed JSON error response
-			suite.NotEmpty(errorResponse.Error, "Error message should not be empty")
-			suite.Equal(expectedBody, errorResponse.Error, "Error message does not match expected")
-		} else {
-			// Fallback to direct string comparison
-			suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
-		}
-	} else {
-		// For success responses, just check if the body contains the expected string
-		suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
-	}
-}
+// func (suite *TestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBody string) {
+// 	suite.Equal(expectedStatus, w.Code, "HTTP status code does not match expected")
+//
+// 	if expectedBody == "" {
+// 		return
+// 	}
+//
+// 	responseBody := w.Body.String()
+// 	if expectedStatus >= 400 {
+// 		var errorResponse struct {
+// 			Error string `json:"error"`
+// 		}
+// 		err := json.Unmarshal([]byte(responseBody), &errorResponse)
+// 		if err == nil {
+// 			// Successfully parsed JSON error response
+// 			suite.NotEmpty(errorResponse.Error, "Error message should not be empty")
+// 			suite.Equal(expectedBody, errorResponse.Error, "Error message does not match expected")
+// 		} else {
+// 			// Fallback to direct string comparison
+// 			suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
+// 		}
+// 	} else {
+// 		// For success responses, just check if the body contains the expected string
+// 		suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
+// 	}
+// }
 
 // func (suite *TestSuite) TestCreateISOStandard() {
 // 	testCases := []struct {
@@ -421,6 +421,7 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 				formData := url.Values{
 					"name": {suite.standard.Name},
 				}
+				// return "/web/iso_standards", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
 			validateExtra: func(w *httptest.ResponseRecorder) {

@@ -16,7 +16,8 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 
 	r.GET("/", s.HelloWorldHandler)
 	r.GET("/health", s.healthHandler)
-	r.Static("/assets", "../cmd/web/assets")
+	// r.Static("/assets", "../cmd/web/assets")
+	r.Static("/web/assets", "cmd/web/assets")
 
 	// API routes group
 	api := r.Group("/api")
