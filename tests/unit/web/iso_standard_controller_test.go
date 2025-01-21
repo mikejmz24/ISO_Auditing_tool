@@ -3,16 +3,13 @@ package web_test
 import (
 	apiController "ISO_Auditing_Tool/cmd/api/controllers"
 	webController "ISO_Auditing_Tool/cmd/web/controllers"
-	"bytes"
-	"errors"
-
-	// "errors"
-
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/middleware"
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/tests/testutils"
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -24,8 +21,6 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	// "github.com/stretchr/testify/assert"
-	//	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -36,20 +31,14 @@ type TestSuite struct {
 	router   *gin.Engine
 	mockRepo *testutils.MockIsoStandardRepository
 	standard types.ISOStandard
+	cleanup  []func()
 }
 
 type TestFormData struct {
 	suite.Suite
 }
 
-var (
-	testStandard types.ISOStandard
-	testJSONData []byte
-)
-
 func TestMain(m *testing.M) {
-	testStandard = loadTestData("../../testdata/iso_standards_test01.json")
-	testJSONData, _ = json.Marshal(testStandard)
 	os.Exit(m.Run())
 }
 
@@ -84,6 +73,8 @@ func getJSONData(filePath string) []byte {
 }
 
 func (suite *TestSuite) SetupTest() {
+	suite.cleanup = make([]func(), 0)
+	testStandard := loadTestData("../../testdata/iso_standards_test01.json")
 	suite.setupMockRepo()
 	suite.setupRouter()
 	suite.standard = testStandard
@@ -124,191 +115,29 @@ func setupRouter(repo *testutils.MockIsoStandardRepository) *gin.Engine {
 	return router
 }
 
-// func (suite *TestSuite) performRequest(method, url string, body io.Reader) *httptest.ResponseRecorder {
-// 	req, err := http.NewRequest(method, url, body)
-// 	suite.NoError(err, "failed to create request")
-//
-// 	// Set appropriate content type based on the request body and method
-// 	if method == http.MethodPost && strings.Contains(url, "add") {
-// 		if _, ok := body.(*strings.Reader); ok {
-// 			// For form data
-// 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-// 		} else {
-// 			// For JSON data
-// 			req.Header.Set("Content-Type", "application/json")
-// 		}
-// 	}
-//
-// 	w := httptest.NewRecorder()
-// 	suite.router.ServeHTTP(w, req)
-// 	return w
-// }
+func (suite *TestSuite) TearDownTest() {
+	suite.mockRepo.Reset()
 
-// func (suite *TestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBody string) {
-// 	suite.Equal(expectedStatus, w.Code, "HTTP status code does not match expected")
-//
-// 	if expectedBody == "" {
-// 		return
-// 	}
-//
-// 	responseBody := w.Body.String()
-// 	if expectedStatus >= 400 {
-// 		var errorResponse struct {
-// 			Error string `json:"error"`
-// 		}
-// 		err := json.Unmarshal([]byte(responseBody), &errorResponse)
-// 		if err == nil {
-// 			// Successfully parsed JSON error response
-// 			suite.NotEmpty(errorResponse.Error, "Error message should not be empty")
-// 			suite.Equal(expectedBody, errorResponse.Error, "Error message does not match expected")
-// 		} else {
-// 			// Fallback to direct string comparison
-// 			suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
-// 		}
-// 	} else {
-// 		// For success responses, just check if the body contains the expected string
-// 		suite.Contains(responseBody, expectedBody, "Response body does not contain expected content")
-// 	}
-// }
+	if len(suite.cleanup) > 0 {
+		// Execute all cleanup functions in reverse order
+		for i := len(suite.cleanup) - 1; 1 >= 0; i-- {
+			if suite.cleanup[i] != nil {
+				suite.cleanup[i]()
+			}
+		}
+		// Clear the cleanup slice
+		suite.cleanup = nil
+	}
 
-// func (suite *TestSuite) TestCreateISOStandard() {
-// 	testCases := []struct {
-// 		name           string
-// 		setupMock      func()
-// 		setupRequest   func() (string, io.Reader, string)
-// 		expectedError  custom_errors.CustomError
-// 		expectedStatus int
-// 		expectedBody   string
-// 		validateExtra  func(*httptest.ResponseRecorder)
-// 	}{
-// 		{
-// 			name: "EmptyFormData",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{}
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.EmptyData("Form"),
-// 		},
-// 		{
-// 			name: "InvalidFormData",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				invalidBody := "I'm not form-encoded!"
-// 				return "/web/iso_standards/add", strings.NewReader(invalidBody), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.ErrInvalidFormData,
-// 		},
-// 		{
-// 			name: "FormDoesNotContainName",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{"wrongField": {"ISO 9001"}}
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.MissingField("name"),
-// 		},
-// 		{
-// 			name: "EmptyName",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{"name": {""}}
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.EmptyField("string", "name"),
-// 		},
-// 		{
-// 			name: "BooleanDataInsteadOfString",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{"name": {"true"}}
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.InvalidDataType("name", "string"),
-// 		},
-// 		{
-// 			name: "NumericDataInsteadOfString",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{"name": {"123"}}
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.InvalidDataType("name", "string"),
-// 		},
-// 		{
-// 			name: "FloatDataInsteadOfString",
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{"name": {"123.45"}}
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			expectedError: *custom_errors.InvalidDataType("name", "string"),
-// 		},
-// 		// {
-// 		// 	name: "RepositoryError",
-// 		// 	setupMock: func() {
-// 		// 		suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(types.ISOStandard{}, errors.New("database error"))
-// 		// 	},
-// 		// 	setupRequest: func() (string, io.Reader, string) {
-// 		// 		formData := url.Values{
-// 		// 			"name": {suite.standard.Name},
-// 		// 		}
-// 		// 		return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 		// 	},
-// 		// 	expectedError: *custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to create ISO Standard", nil),
-// 		// },
-// 		{
-// 			name: "Success",
-// 			setupMock: func() {
-// 				standard := suite.standard
-// 				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
-// 				suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil)
-// 			},
-// 			setupRequest: func() (string, io.Reader, string) {
-// 				formData := url.Values{
-// 					"name": {suite.standard.Name},
-// 				}
-//
-// 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
-// 			},
-// 			validateExtra: func(w *httptest.ResponseRecorder) {
-// 				suite.Equal(http.StatusFound, w.Code)
-// 				location := w.Header().Get("Location")
-// 				suite.Equal("/web/iso_standards", location)
-//
-// 				req, err := http.NewRequest(http.MethodGet, location, nil)
-// 				suite.NoError(err)
-//
-// 				resp := httptest.NewRecorder()
-// 				suite.router.ServeHTTP(resp, req)
-//
-// 				suite.Equal(http.StatusOK, resp.Code)
-// 				suite.Contains(resp.Body.String(), "ISO 9001")
-// 			},
-// 		},
-// 	}
-//
-// 	for _, tc := range testCases {
-// 		suite.Run(tc.name, func() {
-// 			if tc.setupMock != nil {
-// 				tc.setupMock()
-// 			}
-//
-// 			path, body, contentType := tc.setupRequest()
-// 			req, _ := http.NewRequest(http.MethodPost, path, body)
-// 			req.Header.Set("Content-Type", contentType)
-//
-// 			w := httptest.NewRecorder()
-// 			suite.router.ServeHTTP(w, req)
-//
-// 			if tc.expectedError.StatusCode != 0 {
-// 				suite.Equal(tc.expectedError.StatusCode, w.Code)
-// 				suite.Contains(w.Body.String(), tc.expectedError.Message)
-// 			}
-//
-// 			if tc.validateExtra != nil {
-// 				tc.validateExtra(w)
-// 			}
-//
-// 			if tc.setupMock != nil {
-// 				suite.mockRepo.AssertExpectations(suite.T())
-// 			}
-// 		})
-// 	}
-// }
+	// Clear the mock if it exists
+	if suite.mockRepo != nil {
+		suite.mockRepo.ExpectedCalls = nil
+		suite.mockRepo.Calls = nil
+	}
+
+	// Clear the router
+	suite.router = nil
+}
 
 func (suite *TestSuite) TestCreateISOStandard_Validation() {
 	validationTests := []struct {
@@ -400,6 +229,9 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 		{
 			name: "RepositoryError_ReturnsError",
 			setupMock: func() {
+				// Clear any existing mock expectations first
+				suite.mockRepo.ExpectedCalls = nil
+				suite.mockRepo.Calls = nil
 				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(types.ISOStandard{}, errors.New("database error"))
 			},
 			setupRequest: func() (string, io.Reader, string) {
@@ -413,6 +245,10 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 		{
 			name: "ValidData_CreatesAndRedirects",
 			setupMock: func() {
+				// Clear any esisting mock expectations first
+				suite.mockRepo.ExpectedCalls = nil
+				suite.mockRepo.Calls = nil
+
 				standard := suite.standard
 				suite.mockRepo.On("CreateISOStandard", mock.AnythingOfType("types.ISOStandard")).Return(standard, nil)
 				suite.mockRepo.On("GetAllISOStandards").Return([]types.ISOStandard{standard}, nil)
@@ -421,7 +257,6 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 				formData := url.Values{
 					"name": {suite.standard.Name},
 				}
-				// return "/web/iso_standards", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
 			validateExtra: func(w *httptest.ResponseRecorder) {
@@ -443,6 +278,9 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 
 	for _, tc := range repositoryTests {
 		suite.Run(tc.name, func() {
+			// Reset mock and router for each test case
+			suite.SetupTest()
+
 			if tc.setupMock != nil {
 				tc.setupMock()
 			}

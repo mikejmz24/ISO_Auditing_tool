@@ -37,3 +37,8 @@ func (m *MockIsoStandardRepository) DeleteISOStandard(id int64) error {
 	args := m.Called(id)
 	return args.Error(0)
 }
+
+func (m *MockIsoStandardRepository) Reset() {
+	m.ExpectedCalls = nil
+	m.Calls = nil
+}
