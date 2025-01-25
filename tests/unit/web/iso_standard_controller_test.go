@@ -324,8 +324,7 @@ func (suite *TestFormData) TestConversion() {
 		{
 			name: "ISOStandardWithAllFields",
 			input: types.ISOStandardForm{
-				ID:   2,
-				Name: "ISO TEST",
+				Name: &[]string{"ISO TEST"}[0],
 				Clauses: []*types.ClauseForm{
 					{
 						ID:            1,
@@ -359,7 +358,7 @@ func (suite *TestFormData) TestConversion() {
 			output: func() url.Values {
 				encoded := url.Values{}
 				// Main ISO Standard fields
-				encoded.Set("id", "2")
+				// encoded.Set("id", "2")
 				encoded.Set("name", "ISO TEST")
 
 				// Clauses
@@ -388,17 +387,16 @@ func (suite *TestFormData) TestConversion() {
 		},
 		{
 			name:  "ISOStandardWithIDAndName",
-			input: types.ISOStandardForm{ID: 1, Name: "ISO TEST"},
+			input: types.ISOStandardForm{Name: &[]string{"ISO TEST"}[0]},
 			output: func() url.Values {
 				encoded := url.Values{}
-				encoded.Set("id", "")
 				encoded.Set("name", "ISO TEST")
 				return encoded
 			}(),
 		},
 		{
 			name:  "ISOStandardWithOnlyName",
-			input: types.ISOStandardForm{Name: "ISO TEST"},
+			input: types.ISOStandardForm{Name: &[]string{"ISO TEST"}[0]},
 			output: func() url.Values {
 				encoded := url.Values{}
 				encoded.Set("name", "ISO TEST")

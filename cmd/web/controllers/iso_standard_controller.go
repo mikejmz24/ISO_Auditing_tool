@@ -12,7 +12,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	// "sync"
 
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/types"
@@ -21,7 +20,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
-	// "github.com/gin-gonic/gin/binding"
+	// "github.com/go-playground/validator"
 )
 
 // Interface for the API controller to allow for easier testing and mocking
@@ -95,10 +94,21 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	}
 	var formData types.ISOStandardForm
 	// Parse and bind form data
-	// if err := c.ShouldBind(&formData); err != nil {
 	if err := c.Bind(&formData); err != nil {
 		log.Printf("Error binding form data: %v", err)
 		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
+		return
+	}
+
+	if validationErrors := formData.Validate(); len(validationErrors) > 0 {
+		// Create a structured validatoin error response
+		errorResponse := gin.H{"errors": map[string]string{}}
+
+		for _, err := range validationErrors {
+			errorResponse["errors"].(map[string]string)[err.Message] = err.Message
+		}
+
+		c.JSON(validationErrors[0].StatusCode, errorResponse)
 		return
 	}
 
@@ -143,7 +153,7 @@ func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_e
 		return custom_errors.EmptyData("Form")
 	}
 
-	if formData.Name == "" {
+	if *formData.Name == "" {
 		return custom_errors.EmptyField("string", "name")
 	}
 
@@ -151,7 +161,7 @@ func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_e
 		return custom_errors.MissingField("name")
 	}
 
-	if isInvalidString(formData.Name) {
+	if isInvalidString(*formData.Name) {
 		return custom_errors.InvalidDataType("name", "string")
 	}
 

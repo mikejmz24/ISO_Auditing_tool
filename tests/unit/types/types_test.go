@@ -75,7 +75,6 @@ func getFormTestCases() []formTestCase {
 		{
 			name: "ISOStandard",
 			formData: types.ISOStandardForm{
-				ID:   1,
 				Name: "ISO 9001",
 			},
 		},
@@ -126,13 +125,13 @@ func (suite *TestTypesToFormMethods) TestISOStandardFormConversion() {
 		{
 			name: "ISOStandardForm",
 			input: types.ISOStandardForm{
-				ID: 1, Name: "ISO 9001",
+				Name: "ISO 9001",
 			},
 			expectedFunc: func(input types.ISOStandardForm) *types.ISOStandard {
 				return input.ToISOStandard()
 			},
 			expectedData: &types.ISOStandard{
-				ID: 1, Name: "ISO 9001",
+				Name: "ISO 9001",
 			},
 		},
 	}

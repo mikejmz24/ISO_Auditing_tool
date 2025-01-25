@@ -1,6 +1,7 @@
 package types
 
 import (
+	"ISO_Auditing_Tool/pkg/custom_errors"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 	"reflect"
 	"strconv"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 )
 
 // FormValidator interface for form validation
@@ -126,8 +129,7 @@ type ISOStandard struct {
 }
 
 type ISOStandardForm struct {
-	ID      int           `form:"id"`
-	Name    string        `form:"name"`
+	Name    *string       `form:"name" validate:"required,min=3,max=100"`
 	Clauses []*ClauseForm `form:"clauses,omitempty"`
 }
 
@@ -220,15 +222,13 @@ func (f *ISOStandardForm) ToISOStandard() *ISOStandard {
 	}
 
 	return &ISOStandard{
-		ID:      f.ID,
-		Name:    f.Name,
+		Name:    *f.Name,
 		Clauses: clauses,
 	}
 }
 
 func (f *ISOStandardForm) FromISOStandard(iso *ISOStandard) {
-	f.ID = iso.ID
-	f.Name = iso.Name
+	f.Name = &iso.Name
 
 	var clauses []*ClauseForm
 	for _, clause := range iso.Clauses {
@@ -423,4 +423,40 @@ func (i *EvidenceForm) FromEvidence(iso Evidence) {
 	i.ID = iso.ID
 	i.QuestionID = iso.QuestionID
 	i.Expected = iso.Expected
+}
+
+func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
+	var errs []custom_errors.CustomError
+	// // Check if ithe field was actually present in the form
+	// v := reflect.ValueOf(f).Elem()
+	// field := v.FieldByName("Name")
+	//
+	// // If the field wasn't set at all (zero value and not explicitly set)
+	// if !field.IsValid() || (field.Kind() == reflect.String && field.String() == "") {
+	// 	errs = append(errs, *custom_errors.MissingField("name"))
+	// }
+
+	// Nil pointer indicated missing field
+	if f.Name == nil {
+		errs = append(errs, *custom_errors.MissingField("name"))
+	}
+	validate := validator.New()
+	if err := validate.Struct(f); err != nil {
+		// Process validation errors
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			for _, e := range validationErrors {
+				switch e.Tag() {
+				case "required":
+					errs = append(errs, *custom_errors.EmptyField("string", "name"))
+				case "min":
+					// This error catches the empty string which is not the expected behavior
+					errs = append(errs, *custom_errors.EmptyField("string", "name"))
+				case "max":
+					errs = append(errs, *custom_errors.ErrInvalidFormData)
+				}
+			}
+			return errs
+		}
+	}
+	return nil
 }

@@ -1,4 +1,4 @@
-# Simplç Makefile for a Go project
+# Simple Makefile for a Go project
 
 # Build the application
 all: build
