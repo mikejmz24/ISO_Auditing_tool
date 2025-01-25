@@ -129,7 +129,7 @@ type ISOStandard struct {
 }
 
 type ISOStandardForm struct {
-	Name    *string       `form:"name" validate:"required,min=3,max=100"`
+	Name    *string       `form:"name" validate:"min=3,max=100"`
 	Clauses []*ClauseForm `form:"clauses,omitempty"`
 }
 
@@ -427,18 +427,16 @@ func (i *EvidenceForm) FromEvidence(iso Evidence) {
 
 func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
 	var errs []custom_errors.CustomError
-	// // Check if ithe field was actually present in the form
-	// v := reflect.ValueOf(f).Elem()
-	// field := v.FieldByName("Name")
-	//
-	// // If the field wasn't set at all (zero value and not explicitly set)
-	// if !field.IsValid() || (field.Kind() == reflect.String && field.String() == "") {
-	// 	errs = append(errs, *custom_errors.MissingField("name"))
-	// }
-
 	// Nil pointer indicated missing field
 	if f.Name == nil {
 		errs = append(errs, *custom_errors.MissingField("name"))
+		return errs
+	}
+
+	// Empty string
+	if *f.Name == "" {
+		errs = append(errs, *custom_errors.EmptyField("string", "name"))
+		return errs
 	}
 	validate := validator.New()
 	if err := validate.Struct(f); err != nil {
@@ -446,10 +444,7 @@ func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range validationErrors {
 				switch e.Tag() {
-				case "required":
-					errs = append(errs, *custom_errors.EmptyField("string", "name"))
 				case "min":
-					// This error catches the empty string which is not the expected behavior
 					errs = append(errs, *custom_errors.EmptyField("string", "name"))
 				case "max":
 					errs = append(errs, *custom_errors.ErrInvalidFormData)
