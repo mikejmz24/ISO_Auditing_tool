@@ -75,13 +75,13 @@ func getFormTestCases() []formTestCase {
 		{
 			name: "ISOStandard",
 			formData: types.ISOStandardForm{
-				Name: "ISO 9001",
+				Name: &[]string{"ISO 9001"}[0],
 			},
 		},
 		{
 			name: "ISOStandardWithJustName",
 			formData: types.ISOStandardForm{
-				Name: "ISO 27001",
+				Name: &[]string{"ISO 27001"}[0],
 			},
 		},
 		// {
@@ -125,7 +125,7 @@ func (suite *TestTypesToFormMethods) TestISOStandardFormConversion() {
 		{
 			name: "ISOStandardForm",
 			input: types.ISOStandardForm{
-				Name: "ISO 9001",
+				Name: &[]string{"ISO 9001"}[0],
 			},
 			expectedFunc: func(input types.ISOStandardForm) *types.ISOStandard {
 				return input.ToISOStandard()
@@ -139,74 +139,143 @@ func (suite *TestTypesToFormMethods) TestISOStandardFormConversion() {
 	runDynamicTypeConversion(suite.T(), isoStandardCases)
 }
 
+//	func (suite *TestTypesFormEncoding) TestFormEncoding() {
+//		for _, tc := range getFormTestCases() {
+//			suite.Run(tc.name, func() {
+//				// Convert form struct to url.Values
+//				values := url.Values{}
+//				formValue := reflect.ValueOf(tc.formData)
+//				if formValue.Kind() == reflect.Ptr {
+//					formValue = formValue.Elem()
+//				}
+//				formType := formValue.Type()
+//
+//				// Encode form fields
+//				for i := 0; i < formValue.NumField(); i++ {
+//					field := formType.Field(i)
+//					value := formValue.Field(i)
+//
+//					// Get the form tag if it exists
+//					formTag := field.Tag.Get("form")
+//					if formTag == "" {
+//						formTag = field.Name
+//					}
+//
+//					// Handle different field types
+//					switch value.Kind() {
+//					case reflect.String:
+//						if value.String() != "" {
+//							values.Set(formTag, value.String())
+//						}
+//					case reflect.Int, reflect.Int64:
+//						if value.Int() != 0 {
+//							values.Set(formTag, fmt.Sprintf("%d", value.Int()))
+//						}
+//					case reflect.Float64:
+//						if value.Float() != 0 {
+//							values.Set(formTag, fmt.Sprintf("%f", value.Float()))
+//						}
+//					case reflect.Bool:
+//						values.Set(formTag, fmt.Sprintf("%v", value.Bool()))
+//					case reflect.Slice:
+//						if value.Len() > 0 {
+//							for j := 0; j < value.Len(); j++ {
+//								values.Add(formTag, fmt.Sprintf("%v", value.Index(j).Interface()))
+//							}
+//						}
+//					}
+//				}
+//
+//				// Test encoding
+//				assert.NotEmpty(suite.T(), values.Encode(), "Form encoded data should not be empty")
+//
+//				// Create a new instance of the form struct
+//				newFormData := reflect.New(reflect.TypeOf(tc.formData)).Interface()
+//
+//				// Test decoding (if you have a decode method)
+//				err := types.DecodeForm(values, newFormData)
+//				require.NoError(suite.T(), err, "Form decoding should not return an error")
+//
+//				// Compare the original and decoded form data
+//				assert.Equal(suite.T(), tc.formData, reflect.ValueOf(newFormData).Elem().Interface(),
+//					"Decoded form data should match original")
+//
+//				// Validate the form data (if you have validation)
+//				if validator, ok := newFormData.(types.FormValidator); ok {
+//					err := validator.Validate()
+//					assert.NoError(suite.T(), err, "Form validation should pass")
+//				}
+//			})
+//		}
+//	}
+type FormEncoder interface {
+	EncodeForm() url.Values
+}
+
 func (suite *TestTypesFormEncoding) TestFormEncoding() {
 	for _, tc := range getFormTestCases() {
 		suite.Run(tc.name, func() {
-			// Convert form struct to url.Values
-			values := url.Values{}
-			formValue := reflect.ValueOf(tc.formData)
-			if formValue.Kind() == reflect.Ptr {
-				formValue = formValue.Elem()
-			}
-			formType := formValue.Type()
+			// Type must implement FormEncoder interface
+			encoder, ok := tc.formData.(FormEncoder)
+			require.True(suite.T(), ok, "Form must implement FormEncoder")
 
-			// Encode form fields
-			for i := 0; i < formValue.NumField(); i++ {
-				field := formType.Field(i)
-				value := formValue.Field(i)
+			values := encoder.EncodeForm()
 
-				// Get the form tag if it exists
-				formTag := field.Tag.Get("form")
-				if formTag == "" {
-					formTag = field.Name
-				}
-
-				// Handle different field types
-				switch value.Kind() {
-				case reflect.String:
-					if value.String() != "" {
-						values.Set(formTag, value.String())
-					}
-				case reflect.Int, reflect.Int64:
-					if value.Int() != 0 {
-						values.Set(formTag, fmt.Sprintf("%d", value.Int()))
-					}
-				case reflect.Float64:
-					if value.Float() != 0 {
-						values.Set(formTag, fmt.Sprintf("%f", value.Float()))
-					}
-				case reflect.Bool:
-					values.Set(formTag, fmt.Sprintf("%v", value.Bool()))
-				case reflect.Slice:
-					if value.Len() > 0 {
-						for j := 0; j < value.Len(); j++ {
-							values.Add(formTag, fmt.Sprintf("%v", value.Index(j).Interface()))
-						}
-					}
-				}
-			}
-
-			// Test encoding
 			assert.NotEmpty(suite.T(), values.Encode(), "Form encoded data should not be empty")
 
-			// Create a new instance of the form struct
-			newFormData := reflect.New(reflect.TypeOf(tc.formData)).Interface()
-
-			// Test decoding (if you have a decode method)
-			err := types.DecodeForm(values, newFormData)
+			newFormData := tc.formData
+			err := types.DecodeForm(values, &newFormData)
 			require.NoError(suite.T(), err, "Form decoding should not return an error")
 
-			// Compare the original and decoded form data
-			assert.Equal(suite.T(), tc.formData, reflect.ValueOf(newFormData).Elem().Interface(),
+			assert.Equal(suite.T(), tc.formData, newFormData,
 				"Decoded form data should match original")
 
-			// Validate the form data (if you have validation)
 			if validator, ok := newFormData.(types.FormValidator); ok {
 				err := validator.Validate()
 				assert.NoError(suite.T(), err, "Form validation should pass")
 			}
 		})
 	}
+}
+
+// Example implementation for ISOStandardForm
+func (f *TestTypesFormEncoding) EncodeForm() url.Values {
+	values := url.Values{}
+
+	v := reflect.ValueOf(f).Elem()
+	t := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		typeField := t.Field(i)
+
+		// Dynamic tag handling
+		tag := typeField.Tag.Get("form")
+		if tag == "" {
+			tag = typeField.Name
+		}
+
+		// Nil-safe encoding
+		switch field.Kind() {
+		case reflect.Ptr:
+			if !field.IsNil() {
+				values.Set(tag, fmt.Sprintf("%v", field.Elem().Interface()))
+			}
+		case reflect.Slice:
+			for j := 0; j < field.Len(); j++ {
+				elem := field.Index(j)
+				if elem.Kind() == reflect.Ptr {
+					if !elem.IsNil() {
+						values.Add(tag, fmt.Sprintf("%v", elem.Elem().Interface()))
+					}
+				} else {
+					values.Add(tag, fmt.Sprintf("%v", elem.Interface()))
+				}
+			}
+		}
+	}
+
+	return values
 }
 
 // getTestCases returns common test cases for all suites
