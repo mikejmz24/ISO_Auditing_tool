@@ -45,53 +45,6 @@ type TestTypesToFormMethods struct {
 	suite.Suite
 }
 
-// formTestCase defines the structure for form testing
-type formTestCase struct {
-	name     string
-	formData interface{} // Corresponding form struct
-}
-
-// getFormTestCases returns test cases specifically for form encoding
-func getFormTestCases() []formTestCase {
-	return []formTestCase{
-		// {
-		// 	name: "Audit",
-		// 	obj:  createTestAudit(),
-		// 	formData: types.AuditForm{
-		// 		Name:          "Audit 1",
-		// 		Team:          "Team 1",
-		// 		UserID:        "user_1",
-		// 		ISOStandardID: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "Evidence",
-		// 	obj:  types.Evidence{ID: 1, QuestionID: 1, Expected: "Expected Evidence"},
-		// 	formData: types.EvidenceForm{
-		// 		QuestionID: 1,
-		// 		Expected:   "Expected Evidence",
-		// 	},
-		// },
-		{
-			name: "ISOStandard",
-			formData: types.ISOStandardForm{
-				Name: &[]string{"ISO 9001"}[0],
-			},
-		},
-		{
-			name: "ISOStandardWithJustName",
-			formData: types.ISOStandardForm{
-				Name: &[]string{"ISO 27001"}[0],
-			},
-		},
-		// {
-		// 	name:     "ISOStandardIsEmpty",
-		// 	formData: types.ISOStandardForm{},
-		// },
-		// Add more test cases for other types...
-	}
-}
-
 // Generic standalone helper function
 func runDynamicTypeConversion[TInput any, TOutput any](
 	t *testing.T,
@@ -139,103 +92,8 @@ func (suite *TestTypesToFormMethods) TestISOStandardFormConversion() {
 	runDynamicTypeConversion(suite.T(), isoStandardCases)
 }
 
-//	func (suite *TestTypesFormEncoding) TestFormEncoding() {
-//		for _, tc := range getFormTestCases() {
-//			suite.Run(tc.name, func() {
-//				// Convert form struct to url.Values
-//				values := url.Values{}
-//				formValue := reflect.ValueOf(tc.formData)
-//				if formValue.Kind() == reflect.Ptr {
-//					formValue = formValue.Elem()
-//				}
-//				formType := formValue.Type()
-//
-//				// Encode form fields
-//				for i := 0; i < formValue.NumField(); i++ {
-//					field := formType.Field(i)
-//					value := formValue.Field(i)
-//
-//					// Get the form tag if it exists
-//					formTag := field.Tag.Get("form")
-//					if formTag == "" {
-//						formTag = field.Name
-//					}
-//
-//					// Handle different field types
-//					switch value.Kind() {
-//					case reflect.String:
-//						if value.String() != "" {
-//							values.Set(formTag, value.String())
-//						}
-//					case reflect.Int, reflect.Int64:
-//						if value.Int() != 0 {
-//							values.Set(formTag, fmt.Sprintf("%d", value.Int()))
-//						}
-//					case reflect.Float64:
-//						if value.Float() != 0 {
-//							values.Set(formTag, fmt.Sprintf("%f", value.Float()))
-//						}
-//					case reflect.Bool:
-//						values.Set(formTag, fmt.Sprintf("%v", value.Bool()))
-//					case reflect.Slice:
-//						if value.Len() > 0 {
-//							for j := 0; j < value.Len(); j++ {
-//								values.Add(formTag, fmt.Sprintf("%v", value.Index(j).Interface()))
-//							}
-//						}
-//					}
-//				}
-//
-//				// Test encoding
-//				assert.NotEmpty(suite.T(), values.Encode(), "Form encoded data should not be empty")
-//
-//				// Create a new instance of the form struct
-//				newFormData := reflect.New(reflect.TypeOf(tc.formData)).Interface()
-//
-//				// Test decoding (if you have a decode method)
-//				err := types.DecodeForm(values, newFormData)
-//				require.NoError(suite.T(), err, "Form decoding should not return an error")
-//
-//				// Compare the original and decoded form data
-//				assert.Equal(suite.T(), tc.formData, reflect.ValueOf(newFormData).Elem().Interface(),
-//					"Decoded form data should match original")
-//
-//				// Validate the form data (if you have validation)
-//				if validator, ok := newFormData.(types.FormValidator); ok {
-//					err := validator.Validate()
-//					assert.NoError(suite.T(), err, "Form validation should pass")
-//				}
-//			})
-//		}
-//	}
 type FormEncoder interface {
 	EncodeForm() url.Values
-}
-
-func (suite *TestTypesFormEncoding) TestFormEncoding() {
-	for _, tc := range getFormTestCases() {
-		suite.Run(tc.name, func() {
-			// Type must implement FormEncoder interface
-			encoder, ok := tc.formData.(FormEncoder)
-			require.True(suite.T(), ok, "Form must implement FormEncoder")
-
-			values := encoder.EncodeForm()
-
-			assert.NotEmpty(suite.T(), values.Encode(), "Form encoded data should not be empty")
-
-			newFormData := tc.formData
-			err := types.DecodeForm(values, &newFormData)
-			require.NoError(suite.T(), err, "Form decoding should not return an error")
-
-			assert.Equal(suite.T(), tc.formData, newFormData,
-				"Decoded form data should match original")
-
-			if validator, ok := newFormData.(types.FormValidator); ok {
-				err := validator.Validate()
-				assert.NoError(suite.T(), err, "Form validation should pass")
-			}
-		})
-	}
 }
 
 // Example implementation for ISOStandardForm

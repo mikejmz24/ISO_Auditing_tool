@@ -444,6 +444,7 @@ func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range validationErrors {
 				switch e.Tag() {
+				// TODO:: Empty data and len 1 will return the same error
 				case "min":
 					errs = append(errs, *custom_errors.EmptyField("string", "name"))
 				case "max":
