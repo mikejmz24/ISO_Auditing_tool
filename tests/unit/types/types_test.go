@@ -78,7 +78,7 @@ func (suite *TestTypesToFormMethods) TestISOStandardFormConversion() {
 		{
 			name: "ISOStandardForm",
 			input: types.ISOStandardForm{
-				Name: &[]string{"ISO 9001"}[0],
+				Name: "ISO 9001",
 			},
 			expectedFunc: func(input types.ISOStandardForm) *types.ISOStandard {
 				return input.ToISOStandard()

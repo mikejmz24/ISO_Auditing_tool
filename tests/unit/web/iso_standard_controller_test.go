@@ -167,7 +167,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"wrongField": {"ISO 9001"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.MissingField("name"),
+			expectedError: *custom_errors.EmptyField("string", "name"),
 		},
 		{
 			name: "EmptyNameField_ReturnsError",
@@ -176,6 +176,22 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
 			expectedError: *custom_errors.EmptyField("string", "name"),
+		},
+		{
+			name: "NameFieldWithOneCharacter_ReturnsMinError",
+			setupRequest: func() (string, io.Reader, string) {
+				formData := url.Values{"name": {"a"}}
+				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+			},
+			expectedError: *custom_errors.MinFieldCharacters("Name", 2),
+		},
+		{
+			name: "NameFieldWithOnehundredoneCharacters_ReturnsMaxError",
+			setupRequest: func() (string, io.Reader, string) {
+				formData := url.Values{"name": {"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean ma"}}
+				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
+			},
+			expectedError: *custom_errors.MaxFieldCharacters("Name", 100),
 		},
 		{
 			name: "InvalidNameType_Boolean_ReturnsError",
@@ -213,7 +229,8 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 			suite.router.ServeHTTP(w, req)
 
 			suite.Equal(tc.expectedError.StatusCode, w.Code)
-			suite.Contains(w.Body.String(), tc.expectedError.Message)
+			// suite.Contains(w.Body.String(), tc.expectedError.Message)
+			suite.Contains(w.Body.String(), tc.expectedError.Error())
 		})
 	}
 }
@@ -294,7 +311,7 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 
 			if tc.expectedError != nil {
 				suite.Equal(tc.expectedError.StatusCode, w.Code)
-				suite.Contains(w.Body.String(), tc.expectedError.Message)
+				suite.Contains(w.Body.String(), tc.expectedError.Error())
 			}
 
 			if tc.validateExtra != nil {
@@ -324,7 +341,7 @@ func (suite *TestFormData) TestConversion() {
 		{
 			name: "ISOStandardWithAllFields",
 			input: types.ISOStandardForm{
-				Name: &[]string{"ISO TEST"}[0],
+				Name: "ISO TEST",
 				Clauses: []*types.ClauseForm{
 					{
 						ID:            1,
@@ -387,7 +404,7 @@ func (suite *TestFormData) TestConversion() {
 		},
 		{
 			name:  "ISOStandardWithIDAndName",
-			input: types.ISOStandardForm{Name: &[]string{"ISO TEST"}[0]},
+			input: types.ISOStandardForm{Name: "ISO TEST"},
 			output: func() url.Values {
 				encoded := url.Values{}
 				encoded.Set("name", "ISO TEST")
@@ -396,7 +413,7 @@ func (suite *TestFormData) TestConversion() {
 		},
 		{
 			name:  "ISOStandardWithOnlyName",
-			input: types.ISOStandardForm{Name: &[]string{"ISO TEST"}[0]},
+			input: types.ISOStandardForm{Name: "ISO TEST"},
 			output: func() url.Values {
 				encoded := url.Values{}
 				encoded.Set("name", "ISO TEST")
@@ -404,6 +421,7 @@ func (suite *TestFormData) TestConversion() {
 			}(),
 		},
 	}
+
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			formData, _ := webController.ConvertStructToForm(tc.input)

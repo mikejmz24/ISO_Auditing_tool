@@ -23,9 +23,9 @@ func ErrorHandler() gin.HandlerFunc {
 }
 
 func respondWithError(c *gin.Context, customErr *custom_errors.CustomError) {
-	response := gin.H{"error": customErr.Message}
-	if customErr.Context != nil {
-		response["Context"] = customErr.Context
-	}
+	response := gin.H{"error": customErr.Error()}
+	// if customErr.Context != nil {
+	// 	response["Context"] = customErr.Context
+	// }
 	c.JSON(customErr.StatusCode, response)
 }

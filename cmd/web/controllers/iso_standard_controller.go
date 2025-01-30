@@ -105,7 +105,7 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 		errorResponse := gin.H{"errors": map[string]string{}}
 
 		for _, err := range validationErrors {
-			errorResponse["errors"].(map[string]string)[err.Message] = err.Message
+			errorResponse["errors"].(map[string]string)[err.Error()] = err.Error()
 		}
 
 		c.JSON(validationErrors[0].StatusCode, errorResponse)
@@ -153,7 +153,7 @@ func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_e
 		return custom_errors.EmptyData("Form")
 	}
 
-	if *formData.Name == "" {
+	if formData.Name == "" {
 		return custom_errors.EmptyField("string", "name")
 	}
 
@@ -161,7 +161,7 @@ func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_e
 		return custom_errors.MissingField("name")
 	}
 
-	if isInvalidString(*formData.Name) {
+	if isInvalidString(formData.Name) {
 		return custom_errors.InvalidDataType("name", "string")
 	}
 

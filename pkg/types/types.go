@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -129,7 +130,7 @@ type ISOStandard struct {
 }
 
 type ISOStandardForm struct {
-	Name    *string       `form:"name" validate:"min=3,max=100"`
+	Name    string        `form:"name" validate:"required,min=3,max=100"`
 	Clauses []*ClauseForm `form:"clauses,omitempty"`
 }
 
@@ -222,13 +223,13 @@ func (f *ISOStandardForm) ToISOStandard() *ISOStandard {
 	}
 
 	return &ISOStandard{
-		Name:    *f.Name,
+		Name:    f.Name,
 		Clauses: clauses,
 	}
 }
 
 func (f *ISOStandardForm) FromISOStandard(iso *ISOStandard) {
-	f.Name = &iso.Name
+	f.Name = iso.Name
 
 	var clauses []*ClauseForm
 	for _, clause := range iso.Clauses {
@@ -428,13 +429,9 @@ func (i *EvidenceForm) FromEvidence(iso Evidence) {
 func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
 	var errs []custom_errors.CustomError
 	// Nil pointer indicated missing field
-	if f.Name == nil {
-		errs = append(errs, *custom_errors.MissingField("name"))
-		return errs
-	}
 
 	// Empty string
-	if *f.Name == "" {
+	if f.Name == "" {
 		errs = append(errs, *custom_errors.EmptyField("string", "name"))
 		return errs
 	}
@@ -444,11 +441,12 @@ func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			for _, e := range validationErrors {
 				switch e.Tag() {
-				// TODO:: Empty data and len 1 will return the same error
-				case "min":
+				case "required":
 					errs = append(errs, *custom_errors.EmptyField("string", "name"))
+				case "min":
+					errs = append(errs, *custom_errors.NewCustomError(http.StatusBadRequest, "Name has to contain at least 2 characters", nil))
 				case "max":
-					errs = append(errs, *custom_errors.ErrInvalidFormData)
+					errs = append(errs, *custom_errors.NewCustomError(http.StatusBadRequest, "Name cannot be longer than 100 characters", nil))
 				}
 			}
 			return errs

@@ -13,13 +13,18 @@ var (
 
 // CustomError struct
 type CustomError struct {
-	StatusCode int                    `json:"status"`
-	Message    string                 `json:"message"`
-	Context    map[string]interface{} `json:"-"`
+	StatusCode int               `json:"status"`
+	Errors     map[string]string `json:"errors"`
 }
 
 func (e *CustomError) Error() string {
-	return e.Message
+	// Return the first error message we find
+	for _, v := range e.Errors {
+		return v
+	}
+
+	// Return an empty string or some default message if no message is found
+	return ""
 }
 
 func FailedToFetch(objectType string) *CustomError {
@@ -50,9 +55,27 @@ func MissingField(fieldName string) *CustomError {
 	return NewCustomError(http.StatusBadRequest, missingFieldMessage(fieldName), nil)
 }
 
+func MinFieldCharacters(fieldName string, chars int) *CustomError {
+	return NewCustomError(http.StatusBadRequest, minFieldCharactersMessage(fieldName, chars), nil)
+}
+
+func MaxFieldCharacters(fieldName string, chars int) *CustomError {
+	return NewCustomError(http.StatusBadRequest, maxFieldCharactersMessage(fieldName, chars), nil)
+}
+
 // func NewCustomError(code int, message string, ctx context.Context) *CustomError {
 func NewCustomError(statusCode int, message string, context map[string]interface{}) *CustomError {
-	return &CustomError{StatusCode: statusCode, Message: message, Context: context}
+	return &CustomError{StatusCode: statusCode, Errors: map[string]string{
+		"validation": message, // Use ca fixed key "validation" instead of the message itself
+	}}
+}
+
+func minFieldCharactersMessage(field string, chars int) string {
+	return fmt.Sprintf("%v has to be at least %v characters", field, chars)
+}
+
+func maxFieldCharactersMessage(field string, chars int) string {
+	return fmt.Sprintf("%v cannot be longer than %v characters", field, chars)
 }
 
 func failedToFetchMessage(objectType string) string {
