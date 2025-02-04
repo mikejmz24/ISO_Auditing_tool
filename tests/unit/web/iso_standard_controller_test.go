@@ -6,12 +6,14 @@ import (
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/middleware"
 	"ISO_Auditing_Tool/pkg/types"
+	"ISO_Auditing_Tool/pkg/validators"
 	"ISO_Auditing_Tool/tests/testutils"
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	// "log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -21,6 +23,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	// "github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -78,6 +81,12 @@ func (suite *TestSuite) SetupTest() {
 	suite.setupMockRepo()
 	suite.setupRouter()
 	suite.standard = testStandard
+
+	validators.GetValidator()
+
+	//	if err := validators.InitValidator(); err != nil {
+	//		suite.T().Fatalf("Failed to initailize validator: %v", err)
+	//	}
 }
 
 func (suite *TestSuite) setupMockRepo() {
@@ -140,6 +149,12 @@ func (suite *TestSuite) TearDownTest() {
 }
 
 func (suite *TestSuite) TestCreateISOStandard_Validation() {
+	// Setup common test resources
+	// validate := validator.New()
+	// if err := types.RegisterCustomValidators(validate); err != nil {
+	// 	log.Fatalf("Failed to register custom validators: %v", err)
+	// }
+	//
 	validationTests := []struct {
 		name          string
 		setupRequest  func() (string, io.Reader, string)
@@ -167,7 +182,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"wrongField": {"ISO 9001"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.EmptyField("string", "name"),
+			expectedError: *custom_errors.EmptyField("string", "Name"),
 		},
 		{
 			name: "EmptyNameField_ReturnsError",
@@ -175,7 +190,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"name": {""}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.EmptyField("string", "name"),
+			expectedError: *custom_errors.EmptyField("string", "Name"),
 		},
 		{
 			name: "NameFieldWithOneCharacter_ReturnsMinError",
@@ -194,47 +209,64 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 			expectedError: *custom_errors.MaxFieldCharacters("Name", 100),
 		},
 		{
-			name: "InvalidNameType_Boolean_ReturnsError",
+			name: "NameFieldWithTrue_ReturnsIsABoolError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"name": {"true"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.InvalidDataType("name", "string"),
-		},
+			expectedError: *custom_errors.IsABool("Name")},
 		{
-			name: "InvalidNameType_Number_ReturnsError",
+			name: "NameFieldWithFalse_ReturnsIsABoolError",
 			setupRequest: func() (string, io.Reader, string) {
-				formData := url.Values{"name": {"123"}}
+				formData := url.Values{"name": {"false"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.InvalidDataType("name", "string"),
+			expectedError: *custom_errors.IsABool("Name"),
 		},
 		{
-			name: "InvalidNameType_Float_ReturnsError",
+			name: "NameFieldWithOff_ReturnsIsABoolError",
 			setupRequest: func() (string, io.Reader, string) {
-				formData := url.Values{"name": {"123.45"}}
+				formData := url.Values{"name": {"off"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.InvalidDataType("name", "string"),
+			expectedError: *custom_errors.IsABool("Name"),
 		},
 	}
 
 	for _, tc := range validationTests {
 		suite.Run(tc.name, func() {
+			// Createa a fresh router for each test
+			suite.SetupTest()
+
+			// Setup
 			path, body, contentType := tc.setupRequest()
 			req, _ := http.NewRequest(http.MethodPost, path, body)
 			req.Header.Set("Content-Type", contentType)
 
+			// Create a new recorder for each test
 			w := httptest.NewRecorder()
+
+			// Execute the request
 			suite.router.ServeHTTP(w, req)
 
+			// Verify response
+			expectedErr, _ := json.Marshal(tc.expectedError)
+
+			fmt.Print("--- PRINT", string(expectedErr), "\n")
+			fmt.Print("--- PRINT Body: ", w.Body.String(), "\n")
+
 			suite.Equal(tc.expectedError.StatusCode, w.Code)
+			suite.Equal(w.Body.String(), string(expectedErr))
+
+			// Global cleanup after each test
+			w.Flush()
 			// suite.Contains(w.Body.String(), tc.expectedError.Message)
-			suite.Contains(w.Body.String(), tc.expectedError.Error())
+			// suite.Contains(w.Body.String(), tc.expectedError.Error())
 		})
 	}
 }
 
+// TODO : Remember to clear all resources to avoid 500 http server errors
 func (suite *TestSuite) TestCreateISOStandard_Repository() {
 	repositoryTests := []struct {
 		name          string

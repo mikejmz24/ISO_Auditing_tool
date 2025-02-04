@@ -199,11 +199,13 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID() {
 	}
 }
 
+// TODO: Update expectedStatus and ExpectedBody to be a *custom_error
 func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard() {
 	testCases := []struct {
 		name           string
 		body           string
 		setupMock      func()
+		expectedError  *custom_errors.CustomError
 		expectedStatus int
 		expectedBody   string
 	}{
@@ -292,7 +294,7 @@ func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard() {
 				suite.mockRepo.On("UpdateISOStandard", mock.Anything).Return(custom_errors.NotFound("ISO Standard"))
 			},
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   custom_errors.NotFound("ISO Standard").Message,
+			expectedBody:   custom_errors.NotFound("ISO Standard").Error(),
 		},
 	}
 

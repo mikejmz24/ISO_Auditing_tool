@@ -27,6 +27,10 @@ func (e *CustomError) Error() string {
 	return ""
 }
 
+func IsABool(field string) *CustomError {
+	return NewCustomError(http.StatusBadRequest, isABoolMessage(field), nil)
+}
+
 func FailedToFetch(objectType string) *CustomError {
 	return NewCustomError(http.StatusInternalServerError, failedToFetchMessage(objectType), nil)
 }
@@ -66,8 +70,12 @@ func MaxFieldCharacters(fieldName string, chars int) *CustomError {
 // func NewCustomError(code int, message string, ctx context.Context) *CustomError {
 func NewCustomError(statusCode int, message string, context map[string]interface{}) *CustomError {
 	return &CustomError{StatusCode: statusCode, Errors: map[string]string{
-		"validation": message, // Use ca fixed key "validation" instead of the message itself
+		"message": message, // Use ca fixed key "validation" instead of the message itself
 	}}
+}
+
+func isABoolMessage(field string) string {
+	return fmt.Sprintf("%v should not be a bool", field)
 }
 
 func minFieldCharactersMessage(field string, chars int) string {
@@ -83,7 +91,7 @@ func failedToFetchMessage(objectType string) string {
 }
 
 func emptyDataMessage(objectType string) string {
-	return fmt.Sprintf("Invalida data - %v cannot be empty", objectType)
+	return fmt.Sprintf("Invalid data - %v cannot be empty", objectType)
 }
 
 func invalidDataTypeMessage(field string, fieldType string) string {

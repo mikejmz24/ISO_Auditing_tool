@@ -1,17 +1,17 @@
 package types
 
 import (
-	"ISO_Auditing_Tool/pkg/custom_errors"
+	// "ISO_Auditing_Tool/pkg/custom_errors"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
+	// "net/http"
 	"net/url"
 	"reflect"
 	"strconv"
+	// "strings"
 	"time"
-
-	"github.com/go-playground/validator/v10"
+	// "github.com/go-playground/validator/v10"
 )
 
 // FormValidator interface for form validation
@@ -130,7 +130,8 @@ type ISOStandard struct {
 }
 
 type ISOStandardForm struct {
-	Name    string        `form:"name" validate:"required,min=3,max=100"`
+	// Name    string        `form:"name" validate:"required,min=3,max=100,not_boolean"`
+	Name    string        `form:"name" validate:"required,min=3,max=100,not_boolean"`
 	Clauses []*ClauseForm `form:"clauses,omitempty"`
 }
 
@@ -426,31 +427,51 @@ func (i *EvidenceForm) FromEvidence(iso Evidence) {
 	i.Expected = iso.Expected
 }
 
-func (f *ISOStandardForm) Validate() []custom_errors.CustomError {
-	var errs []custom_errors.CustomError
-	// Nil pointer indicated missing field
+// Create a package-level validator instance
+// var validate *validator.Validate
 
-	// Empty string
-	if f.Name == "" {
-		errs = append(errs, *custom_errors.EmptyField("string", "name"))
-		return errs
-	}
-	validate := validator.New()
-	if err := validate.Struct(f); err != nil {
-		// Process validation errors
-		if validationErrors, ok := err.(validator.ValidationErrors); ok {
-			for _, e := range validationErrors {
-				switch e.Tag() {
-				case "required":
-					errs = append(errs, *custom_errors.EmptyField("string", "name"))
-				case "min":
-					errs = append(errs, *custom_errors.NewCustomError(http.StatusBadRequest, "Name has to contain at least 2 characters", nil))
-				case "max":
-					errs = append(errs, *custom_errors.NewCustomError(http.StatusBadRequest, "Name cannot be longer than 100 characters", nil))
-				}
-			}
-			return errs
-		}
-	}
-	return nil
-}
+// Initialize validator withi custom validations
+// func InitValidator() error {
+// 	validate = validator.New()
+//
+// 	if err := RegisterCustomValidators(validate); err != nil {
+// 		return fmt.Errorf("Failed to register custom validators, %w", err)
+// 	}
+// 	// return RegisterCustomValidators(validate)
+// 	return nil
+// }
+//
+// func RegisterCustomValidators(v *validator.Validate) error {
+// 	err := v.RegisterValidation("not_boolean", validateNotBoolean)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to register not_boolean validator: %w", err)
+// 	}
+// 	return nil
+// }
+
+// func (f *ISOStandardForm) Validate() *custom_errors.CustomError {
+// 	// Empty string
+// 	if f.Name == "" {
+// 		return custom_errors.EmptyField("string", "name")
+// 	}
+//
+// 	if err := validate.Struct(f); err != nil {
+// 		// Process validation errors
+// 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+// 			for _, e := range validationErrors {
+// 				switch e.Tag() {
+// 				case "required":
+// 					return custom_errors.EmptyField("string", "name")
+// 				case "min":
+// 					return custom_errors.MinFieldCharacters("name", 2)
+// 				case "max":
+// 					return custom_errors.MaxFieldCharacters("name", 100)
+// 				case "not_boolean":
+// 					return custom_errors.NewCustomError(201, "NOT Boolean error", nil)
+// 				}
+// 			}
+// 		}
+// 		return custom_errors.NewCustomError(http.StatusInternalServerError, "Unexpected validation error", nil)
+// 	}
+// 	return nil
+// }

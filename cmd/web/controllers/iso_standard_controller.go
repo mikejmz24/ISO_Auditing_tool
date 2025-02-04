@@ -10,17 +10,17 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
-	"strconv"
+	// "strconv"
 	"strings"
 
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/types"
+	"ISO_Auditing_Tool/pkg/validators"
 	"ISO_Auditing_Tool/templates"
 	"ISO_Auditing_Tool/templates/iso_standards"
 
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
-	// "github.com/go-playground/validator"
 )
 
 // Interface for the API controller to allow for easier testing and mocking
@@ -100,20 +100,9 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 		return
 	}
 
-	if validationErrors := formData.Validate(); len(validationErrors) > 0 {
-		// Create a structured validatoin error response
-		errorResponse := gin.H{"errors": map[string]string{}}
-
-		for _, err := range validationErrors {
-			errorResponse["errors"].(map[string]string)[err.Error()] = err.Error()
-		}
-
-		c.JSON(validationErrors[0].StatusCode, errorResponse)
-		return
-	}
-
 	// Validate form data
-	if err := validateFormData(c, &formData); err != nil {
+	// if err := validateFormData(c, &formData); err != nil {
+	if err := validateFormData(&formData); err != nil {
 		c.JSON(err.StatusCode, err)
 		return
 	}
@@ -143,30 +132,63 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	}
 }
 
-// Separate validation function for better organization and reusability
-func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_errors.CustomError {
-	if _, exists := c.Request.PostForm["name"]; !exists {
-		return custom_errors.MissingField("name")
-	}
-
-	if formData == nil {
-		return custom_errors.EmptyData("Form")
-	}
-
-	if formData.Name == "" {
-		return custom_errors.EmptyField("string", "name")
-	}
-
-	if _, exists := c.Request.PostForm["name"]; !exists {
-		return custom_errors.MissingField("name")
-	}
-
-	if isInvalidString(formData.Name) {
-		return custom_errors.InvalidDataType("name", "string")
-	}
-
-	return nil
+func validateFormData(formData interface{}) *custom_errors.CustomError {
+	return validators.ValidateStruct(formData)
 }
+
+// Separate validation function for better organization and reusability
+// func validateFormData(c *gin.Context, formData *types.ISOStandardForm) *custom_errors.CustomError {
+// 	if _, exists := c.Request.PostForm["name"]; !exists {
+// 		return custom_errors.MissingField("name")
+// 	}
+//
+// 	if formData == nil {
+// 		return custom_errors.EmptyData("Form")
+// 	}
+//
+// 	if formData.Name == "" {
+// 		return custom_errors.EmptyField("string", "name")
+// 	}
+//
+// 	if _, exists := c.Request.PostForm["name"]; !exists {
+// 		// return custom_errors.MissingField("name")
+// 		return custom_errors.EmptyField("string", "name")
+// 	}
+//
+// 	if isInvalidString(formData.Name) {
+// 		return custom_errors.InvalidDataType("name", "string")
+// 	}
+//
+// 	return nil
+
+// if err := c.Bind(formData); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Form was not binded :("})
+// 	}
+//
+// 	// Empty string
+// 	if formData.Name == "" {
+// 		return custom_errors.EmptyField("string", "name")
+// 	}
+// 	validate := validator.New()
+// 	if err := validate.Struct(formData); err != nil {
+// 		// Process validation errors
+// 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+// 			for _, e := range validationErrors {
+// 				switch e.Tag() {
+// 				case "required":
+// 					return custom_errors.EmptyField("string", "name")
+// 				case "min":
+// 					return custom_errors.MinFieldCharacters("name", 2)
+// 				case "max":
+// 					return custom_errors.MaxFieldCharacters("name", 100)
+// 				case "not_boolean":
+// 					return custom_errors.NewCustomError(201, "I was not a boolean", nil)
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return nil
+// }
 
 func (wc *WebIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	var formData map[string]string
@@ -255,21 +277,21 @@ func (wc *WebIsoStandardController) fetchISOStandardByID(id string) (*types.ISOS
 	return &isoStandard, nil
 }
 
-func isInvalidString(input string) bool {
-	if input == "true" || input == "false" {
-		return true
-	}
-
-	if _, err := strconv.Atoi(input); err == nil {
-		return true
-	}
-
-	if _, err := strconv.ParseFloat(input, 64); err == nil {
-		return true
-	}
-
-	return false
-}
+// func isInvalidString(input string) bool {
+// 	if input == "true" || input == "false" {
+// 		return true
+// 	}
+//
+// 	if _, err := strconv.Atoi(input); err == nil {
+// 		return true
+// 	}
+//
+// 	if _, err := strconv.ParseFloat(input, 64); err == nil {
+// 		return true
+// 	}
+//
+// 	return false
+// }
 
 // ConvertStructToForm converts a struct into url.Values
 func ConvertStructToForm(data interface{}) (url.Values, error) {
