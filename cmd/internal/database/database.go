@@ -13,6 +13,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
+	"path/filepath"
 )
 
 type Service interface {
@@ -119,8 +120,16 @@ func (s *service) DB() *sql.DB {
 }
 
 func (s *service) Migrate() error {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Failed to get working directory: %v", err)
+	}
+
+	// Construct the absolute path to the SQL file
+	sqlFilePath := filepath.Join(wd, "cmd", "internal", "migrations", "sql", "001_create_base_tables.sql")
+
 	log.Println("Running migrations...")
-	if err := migrations.Migrate(s.db); err != nil {
+	if err := migrations.Migrate(s.db, sqlFilePath); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 	log.Println("Migrations completed successfully")
