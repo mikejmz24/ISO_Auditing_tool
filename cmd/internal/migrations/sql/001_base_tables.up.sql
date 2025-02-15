@@ -188,6 +188,7 @@ CREATE TABLE IF NOT EXISTS evidence_provided (
     , INDEX idx_evidence_provided_status (status_id)
     , INDEX idx_evidence_provided_retention (retention_days)
     , INDEX idx_evidence_provided_active (deleted_at)
+    , INDEX idx_evidence_composite_search (evidence_id, type_id, status_id, deleted_at)
 ) ENGINE = InnoDB COMMENT = 'Stores actual evidence provided';
 
 -- Create finding_corrective_actions table
@@ -232,6 +233,7 @@ CREATE TABLE IF NOT EXISTS findings (
     , INDEX idx_findings_created_by (created_by)
     , INDEX idx_findings_due_date (due_date)
     , INDEX idx_findings_active (deleted_at)
+    , INDEX idx_composite_search (audit_id, finding_type_id, severity_id, status_id, deleted_at)
 ) ENGINE = InnoDB COMMENT = 'Stores audit findings';
 
 -- Create audit_question_findings table
@@ -299,34 +301,3 @@ CREATE TABLE IF NOT EXISTS materialized_queries (
     , UNIQUE KEY uk_materialized_query_name (query_name)
     , INDEX idx_materialized_queries_refresh (is_refreshing, next_refresh_at)
 ) ENGINE = InnoDB COMMENT = 'Stores materialized query results for complex joins simplyfying interface to consume data';
-
--- Check if index exists in the database schema. If not create it 
-SELECT IF(
-    NOT EXISTS (
-        SELECT 1 FROM information_schema.statistics
-        WHERE
-            table_schema = DATABASE()
-            AND table_name = 'findings'
-            AND index_name = 'idx_findings_composite_search'
-    )
-    , 'CREATE INDEX idx_findings_composite_search ON findings (audit_id, finding_type_id, severity_id, status_id, deleted_at)'
-    , 'SELECT 1'
-) INTO @sql;
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
-
-SELECT IF(
-    NOT EXISTS (
-        SELECT 1 FROM information_schema.statistics
-        WHERE
-            table_schema = DATABASE()
-            AND table_name = 'evidence_provided'
-            AND index_name = 'idx_evidence_composite_search'
-    )
-    , 'CREATE INDEX idx_evidence_composite_search ON evidence_provided (evidence_id, type_id, status_id, deleted_at)'
-    , 'SELECT 1'
-) INTO @sql;
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;

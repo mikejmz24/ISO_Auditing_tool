@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -27,9 +26,8 @@ func FindFilesInDir(file string, direction string) ([]string, error) {
 		files = []string{filePath}
 	} else {
 		// Get all migration files for the specified direction
-		log.Printf("Direction received: %s", direction)
 		pattern := filepath.Join(migrationsPath, fmt.Sprintf("*.%s.sql", direction))
-		log.Printf("Searching for migrations with pattern: %s", pattern)
+		// log.Printf("Searching for migrations with pattern: %s", pattern)
 
 		files, err = filepath.Glob(pattern)
 		if err != nil {
