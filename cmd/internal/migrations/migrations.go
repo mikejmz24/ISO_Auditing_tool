@@ -107,7 +107,7 @@ import (
 	"bufio"
 	"database/sql"
 	"fmt"
-	"log"
+	// "log"
 	"os"
 	"strings"
 )
@@ -131,7 +131,7 @@ func Migrate(db *sql.DB, filename string) error {
 		}
 	}
 
-	log.Println("Database tables created successfully")
+	// log.Println("Database tables created successfully")
 	return nil
 }
 

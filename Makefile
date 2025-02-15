@@ -119,8 +119,47 @@ test:
 	@:
 
 # Run the database migrations
+# migrate:
+# 	@go run cmd/api/main.go migrate
+
+.PHONY: migrate %
+
+# Catch any unknown targets so make doesn't error on extra arguments
+%:
+    @:
+
+# Handle migrations with optional file and direction arguments
 migrate:
-	@go run cmd/api/main.go migrate
+	@direction="up"; \
+	file=""; \
+	if [ -n "$(word 2, $(MAKECMDGOALS))" ]; then \
+		if [ -n "$(word 3, $(MAKECMDGOALS))" ]; then \
+			if [ "$(word 3, $(MAKECMDGOALS))" = "up" ] || [ "$(word 3, $(MAKECMDGOALS))" = "down" ]; then \
+				file="$(word 2, $(MAKECMDGOALS))"; \
+				direction="$(word 3, $(MAKECMDGOALS))"; \
+			else \
+				file="$(word 2, $(MAKECMDGOALS))"; \
+				direction="up"; \
+			fi; \
+		else \
+			if [ "$(word 2, $(MAKECMDGOALS))" = "up" ] || [ "$(word 2, $(MAKECMDGOALS))" = "down" ]; then \
+				direction="$(word 2, $(MAKECMDGOALS))"; \
+			else \
+				file="$(word 2, $(MAKECMDGOALS))"; \
+			fi; \
+		fi; \
+	fi; \
+	if [ -n "$$file" ]; then \
+		echo "Running $$file migration $$direction..."; \
+		go run cmd/api/main.go migrate "$$direction" "$$file"; \
+	else \
+		echo "Running all migrations $$direction..."; \
+		go run cmd/api/main.go migrate "$$direction" ""; \
+	fi
+
+# Handle arguments passed to migrate
+%:
+	@:
 
 # Seed the database
 seed:

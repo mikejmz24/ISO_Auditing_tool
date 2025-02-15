@@ -3,6 +3,7 @@ package database
 import (
 	"ISO_Auditing_Tool/cmd/internal/migrations"
 	"ISO_Auditing_Tool/cmd/internal/seeds"
+	"ISO_Auditing_Tool/pkg/utils"
 	"context"
 	"database/sql"
 	"fmt"
@@ -20,7 +21,7 @@ type Service interface {
 	Health() map[string]string
 	Close() error
 	DB() *sql.DB
-	Migrate() error
+	Migrate(file string, direction string) error
 	Seed() error
 	Truncate() error
 }
@@ -119,20 +120,21 @@ func (s *service) DB() *sql.DB {
 	return s.db
 }
 
-func (s *service) Migrate() error {
-	wd, err := os.Getwd()
+func (s *service) Migrate(file string, direction string) error {
+	files, err := utils.FindFilesInDir(file, direction)
 	if err != nil {
-		log.Fatalf("Failed to get working directory: %v", err)
+		return nil
 	}
 
-	// Construct the absolute path to the SQL file
-	sqlFilePath := filepath.Join(wd, "cmd", "internal", "migrations", "sql", "001_create_base_tables.sql")
-
-	log.Println("Running migrations...")
-	if err := migrations.Migrate(s.db, sqlFilePath); err != nil {
-		log.Fatalf("Failed to run migrations: %v", err)
+	if s.db != nil {
+		log.Printf("Running %s migrations...", direction)
+		for _, sqlFile := range files {
+			log.Printf("Executing migration: %s", filepath.Base(sqlFile))
+			if err := migrations.Migrate(s.db, sqlFile); err != nil {
+				return fmt.Errorf("failed to run migration %s: %w", filepath.Base(sqlFile), err)
+			}
+		}
 	}
-	log.Println("Migrations completed successfully")
 	return nil
 }
 
