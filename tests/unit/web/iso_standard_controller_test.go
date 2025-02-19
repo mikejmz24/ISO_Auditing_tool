@@ -9,10 +9,12 @@ import (
 	"ISO_Auditing_Tool/pkg/validators"
 	"ISO_Auditing_Tool/tests/testutils"
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+
 	// "log"
 	"net/http"
 	"net/http/httptest"
@@ -166,7 +168,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.EmptyData("Form"),
+			expectedError: *custom_errors.EmptyData(context.TODO(), "Form"),
 		},
 		{
 			name: "InvalidFormEncoding_ReturnsError",
@@ -182,7 +184,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"wrongField": {"ISO 9001"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.EmptyField("string", "Name"),
+			expectedError: *custom_errors.EmptyField(context.TODO(), "string", "Name"),
 		},
 		{
 			name: "EmptyNameField_ReturnsError",
@@ -190,7 +192,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"name": {""}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.EmptyField("string", "Name"),
+			expectedError: *custom_errors.EmptyField(context.TODO(), "string", "Name"),
 		},
 		{
 			name: "NameFieldWithOneCharacter_ReturnsMinError",
@@ -198,7 +200,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"name": {"a"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.MinFieldCharacters("Name", 2),
+			expectedError: *custom_errors.MinFieldCharacters(context.TODO(), "Name", 2),
 		},
 		{
 			name: "NameFieldWithOnehundredoneCharacters_ReturnsMaxError",
@@ -206,7 +208,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"name": {"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean ma"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.MaxFieldCharacters("Name", 100),
+			expectedError: *custom_errors.MaxFieldCharacters(context.TODO(), "Name", 100),
 		},
 		{
 			name: "NameFieldWithTrue_ReturnsIsABoolError",
@@ -214,14 +216,14 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"name": {"true"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.IsABool("Name")},
+			expectedError: *custom_errors.IsABool(context.TODO(), "Name")},
 		{
 			name: "NameFieldWithFalse_ReturnsIsABoolError",
 			setupRequest: func() (string, io.Reader, string) {
 				formData := url.Values{"name": {"false"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.IsABool("Name"),
+			expectedError: *custom_errors.IsABool(context.TODO(), "Name"),
 		},
 		{
 			name: "NameFieldWithOff_ReturnsIsABoolError",
@@ -229,7 +231,7 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 				formData := url.Values{"name": {"off"}}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: *custom_errors.IsABool("Name"),
+			expectedError: *custom_errors.IsABool(context.TODO(), "Name"),
 		},
 	}
 
@@ -252,21 +254,18 @@ func (suite *TestSuite) TestCreateISOStandard_Validation() {
 			// Verify response
 			expectedErr, _ := json.Marshal(tc.expectedError)
 
-			fmt.Print("--- PRINT", string(expectedErr), "\n")
-			fmt.Print("--- PRINT Body: ", w.Body.String(), "\n")
+			// fmt.Print("--- PRINT", string(expectedErr), "\n")
+			// fmt.Print("--- PRINT Body: ", w.Body.String(), "\n")
 
 			suite.Equal(tc.expectedError.StatusCode, w.Code)
 			suite.Equal(w.Body.String(), string(expectedErr))
 
 			// Global cleanup after each test
 			w.Flush()
-			// suite.Contains(w.Body.String(), tc.expectedError.Message)
-			// suite.Contains(w.Body.String(), tc.expectedError.Error())
 		})
 	}
 }
 
-// TODO : Remember to clear all resources to avoid 500 http server errors
 func (suite *TestSuite) TestCreateISOStandard_Repository() {
 	repositoryTests := []struct {
 		name          string
@@ -289,7 +288,7 @@ func (suite *TestSuite) TestCreateISOStandard_Repository() {
 				}
 				return "/web/iso_standards/add", strings.NewReader(formData.Encode()), "application/x-www-form-urlencoded"
 			},
-			expectedError: custom_errors.NewCustomError(http.StatusInternalServerError, "Failed to create ISO standard", nil),
+			expectedError: custom_errors.NewError(context.TODO(), custom_errors.ErrCodeInvalidData, "Failed to create ISO Standard", http.StatusBadRequest, nil),
 		},
 		{
 			name: "ValidData_CreatesAndRedirects",

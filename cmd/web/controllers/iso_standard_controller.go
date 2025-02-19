@@ -10,7 +10,6 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"reflect"
-	// "strconv"
 	"strings"
 
 	"ISO_Auditing_Tool/pkg/custom_errors"
@@ -75,7 +74,7 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(rawBody))
 
 	if len(rawBody) == 0 {
-		err := custom_errors.EmptyData("Form")
+		err := custom_errors.EmptyData(c.Request.Context(), "Form")
 		c.JSON(err.StatusCode, err)
 		return
 	}
@@ -89,19 +88,18 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	// Try to parse as form values
 	_, err = url.ParseQuery(string(rawBody))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
+		c.JSON(http.StatusBadRequest, custom_errors.ErrCodeInvalidFormData)
 		return
 	}
 	var formData types.ISOStandardForm
 	// Parse and bind form data
 	if err := c.Bind(&formData); err != nil {
 		log.Printf("Error binding form data: %v", err)
-		c.JSON(http.StatusBadRequest, custom_errors.ErrInvalidFormData)
+		c.JSON(http.StatusBadRequest, custom_errors.ErrCodeInvalidFormData)
 		return
 	}
 
 	// Validate form data
-	// if err := validateFormData(c, &formData); err != nil {
 	if err := validateFormData(&formData); err != nil {
 		c.JSON(err.StatusCode, err)
 		return
@@ -128,7 +126,8 @@ func (wc *WebIsoStandardController) CreateISOStandard(c *gin.Context) {
 	if recorder.Code == http.StatusCreated || recorder.Code == http.StatusOK {
 		c.Redirect(http.StatusFound, "/web/iso_standards")
 	} else {
-		c.JSON(recorder.Code, gin.H{"error": "Failed to create ISO standard"})
+		// c.JSON(recorder.Code, gin.H{"error": "Failed to create ISO standard"})
+		c.JSON(recorder.Code, custom_errors.NewError(c.Request.Context(), custom_errors.ErrCodeInvalidData, "Failed to create ISO Standard", http.StatusInternalServerError, nil))
 	}
 }
 

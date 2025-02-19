@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -87,6 +88,20 @@ func (suite *IsoStandardControllerTestSuite) performRequest(method, url string, 
 	return w
 }
 
+func (suite *IsoStandardControllerTestSuite) validateErrorResponse(w *httptest.ResponseRecorder, expectedError custom_errors.CustomError) {
+	// Compare HTTP status codes
+	assert.Equal(suite.T(), expectedError.StatusCode, w.Code, "HTTP status code does not match expected")
+
+	responseBody := w.Body.String()
+	var errorResponse custom_errors.ErrorResponse
+	err := json.Unmarshal([]byte(responseBody), &errorResponse)
+	assert.NoError(suite.T(), err, "Failed to unmarshal error response")
+
+	// Compare error code and message
+	assert.Equal(suite.T(), expectedError.Code, errorResponse.Code, "Error code does not match expected")
+	assert.Equal(suite.T(), expectedError.Message, errorResponse.Message, "Error message does not match expected")
+}
+
 func (suite *IsoStandardControllerTestSuite) validateResponse(w *httptest.ResponseRecorder, expectedStatus int, expectedBodyContains string) {
 	assert.Equal(suite.T(), expectedStatus, w.Code, "HTTP status code does not match expected")
 
@@ -107,21 +122,13 @@ func (suite *IsoStandardControllerTestSuite) validateResponse(w *httptest.Respon
 
 // Test cases
 
-func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards() {
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Success() {
 	testCases := []struct {
 		name           string
 		setupMock      func()
 		expectedStatus int
 		expectedBody   string
 	}{
-		{
-			name: "CannotFetchError",
-			setupMock: func() {
-				suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.FailedToFetch("ISO Standards"))
-			},
-			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   "Failed to fetch ISO Standards",
-		},
 		{
 			name: "ReturnOneSuccess",
 			setupMock: func() {
@@ -151,7 +158,33 @@ func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards() {
 	}
 }
 
-func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID() {
+func (suite *IsoStandardControllerTestSuite) TestGetAllISOStandards_Validation() {
+	testCases := []struct {
+		name          string
+		setupMock     func()
+		expectedError custom_errors.CustomError
+	}{
+		{
+			name: "CannotFetchError",
+			setupMock: func() {
+				suite.mockRepo.On("GetAllISOStandards").Return(nil, custom_errors.FailedToFetch(context.TODO(), "ISO Standards"))
+			},
+			expectedError: *custom_errors.FailedToFetch(context.TODO(), "ISO Standards"),
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			suite.mockRepo = new(testutils.MockIsoStandardRepository)
+			suite.router = setupRouter(suite.mockRepo)
+			tc.setupMock()
+			w := suite.performRequest("GET", "/api/iso_standards", nil)
+			suite.validateErrorResponse(w, tc.expectedError)
+		})
+	}
+}
+
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Success() {
 	testCases := []struct {
 		name           string
 		id             string
@@ -159,24 +192,6 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID() {
 		expectedStatus int
 		expectedBody   string
 	}{
-		{
-			name: "CannotParseIDAsIntError",
-			id:   "a",
-			setupMock: func() {
-				// suite.mockRepo.On("GetISOStandardByID", mock.Anything).Return(types.ISOStandard{}, custom_errors.InvalidID("ISO Standard"))
-			},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Invalid ISO Standard ID",
-		},
-		{
-			name: "NotFound",
-			id:   "2",
-			setupMock: func() {
-				suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, custom_errors.NotFound("ISO Standard"))
-			},
-			expectedStatus: http.StatusNotFound,
-			expectedBody:   "ISO Standard not found",
-		},
 		{
 			name: "Success",
 			id:   "1",
@@ -199,44 +214,93 @@ func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID() {
 	}
 }
 
+func (suite *IsoStandardControllerTestSuite) TestGetISOStandardByID_Validation() {
+	testCases := []struct {
+		name          string
+		id            string
+		setupMock     func()
+		expectedError custom_errors.CustomError
+	}{
+		{
+			name: "CannotParseIDAsIntError",
+			id:   "a",
+			setupMock: func() {
+				// suite.mockRepo.On("GetISOStandardByID", mock.Anything).Return(types.ISOStandard{}, custom_errors.InvalidID("ISO Standard"))
+			},
+			expectedError: *custom_errors.InvalidID(context.TODO(), "ISO Standard"),
+		},
+		{
+			name: "NotFound",
+			id:   "2",
+			setupMock: func() {
+				suite.mockRepo.On("GetISOStandardByID", int64(2)).Return(types.ISOStandard{}, custom_errors.NotFound(context.TODO(), "ISO Standard"))
+			},
+			expectedError: *custom_errors.NotFound(context.TODO(), "ISO Standard"),
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			suite.mockRepo = new(testutils.MockIsoStandardRepository)
+			suite.router = setupRouter(suite.mockRepo)
+			tc.setupMock()
+			w := suite.performRequest("GET", "/api/iso_standards/"+tc.id, nil)
+			suite.validateErrorResponse(w, tc.expectedError)
+		})
+	}
+}
+
 // TODO: Update expectedStatus and ExpectedBody to be a *custom_error
-func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard() {
+func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_Validation() {
+	testCases := []struct {
+		name          string
+		body          string
+		setupMock     func()
+		expectedError custom_errors.CustomError
+	}{
+		{
+			name:          "EmptyJSON",
+			body:          ``,
+			setupMock:     func() {},
+			expectedError: *custom_errors.EmptyData(context.TODO(), "JSON"),
+		},
+		{
+			name:          "FieldNameMisspelled",
+			body:          `{"nam": "ISO fake name"}`,
+			setupMock:     func() {},
+			expectedError: *custom_errors.MissingField(context.TODO(), "name"),
+		},
+		{
+			name:          "EmptyName",
+			body:          `{"name": ""}`,
+			setupMock:     func() {},
+			expectedError: *custom_errors.EmptyField(context.TODO(), "string", "name"),
+		},
+		{
+			name:          "BoolInsteadOfString",
+			body:          `{"name": true}`,
+			setupMock:     func() {},
+			expectedError: *custom_errors.InvalidDataType(context.TODO(), "name", "string"),
+		},
+	}
+
+	for _, tc := range testCases {
+		suite.Run(tc.name, func() {
+			tc.setupMock()
+			w := suite.performRequest("POST", "/api/iso_standards", bytes.NewBufferString(tc.body))
+			suite.validateErrorResponse(w, tc.expectedError)
+		})
+	}
+}
+
+func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard_Success() {
 	testCases := []struct {
 		name           string
 		body           string
 		setupMock      func()
-		expectedError  *custom_errors.CustomError
 		expectedStatus int
 		expectedBody   string
 	}{
-		{
-			name:           "EmptyJSON",
-			body:           ``,
-			setupMock:      func() {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Invalid JSON format",
-		},
-		{
-			name:           "FieldNameMisspelled",
-			body:           `{"nam": "ISO fake name"}`,
-			setupMock:      func() {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Missing required field name",
-		},
-		{
-			name:           "EmptyName",
-			body:           `{"name": ""}`,
-			setupMock:      func() {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "ISO Standard name should not be empty",
-		},
-		{
-			name:           "BoolInsteadOfString",
-			body:           `{"name": true}`,
-			setupMock:      func() {},
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Invalid Data - name must be a string",
-		},
 		{
 			name: "Success",
 			body: `{"name":"ISO 9001"}`,
@@ -256,7 +320,6 @@ func (suite *IsoStandardControllerTestSuite) TestCreateISOStandard() {
 		})
 	}
 }
-
 func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard() {
 	testCases := []struct {
 		name           string
@@ -291,10 +354,10 @@ func (suite *IsoStandardControllerTestSuite) TestUpdateISOStandard() {
 			id:   "2",
 			body: `{"name":"ISO 9001 Updated"}`,
 			setupMock: func() {
-				suite.mockRepo.On("UpdateISOStandard", mock.Anything).Return(custom_errors.NotFound("ISO Standard"))
+				suite.mockRepo.On("UpdateISOStandard", mock.Anything).Return(custom_errors.NotFound(context.TODO(), "ISO Standard"))
 			},
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   custom_errors.NotFound("ISO Standard").Error(),
+			expectedBody:   custom_errors.NotFound(context.TODO(), "ISO Standard").Error(),
 		},
 	}
 
@@ -328,7 +391,7 @@ func (suite *IsoStandardControllerTestSuite) TestDeleteISOStandard() {
 			name: "NotFound",
 			id:   "2",
 			setupMock: func() {
-				suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(custom_errors.NotFound("ISO Standard"))
+				suite.mockRepo.On("DeleteISOStandard", int64(2)).Return(custom_errors.NotFound(context.TODO(), "ISO Standard"))
 			},
 			expectedStatus: http.StatusNotFound,
 			expectedBody:   "ISO Standard not found",

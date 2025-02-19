@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"ISO_Auditing_Tool/pkg/custom_errors"
+	"bytes"
 	"encoding/json"
 
 	"io"
@@ -12,6 +13,7 @@ import (
 	"ISO_Auditing_Tool/pkg/types"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/context"
 )
 
 type ApiIsoStandardController struct {
@@ -31,7 +33,8 @@ func respondWithError(c *gin.Context, code int, message string) {
 func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 	isoStandards, err := cc.Repo.GetAllISOStandards()
 	if err != nil {
-		_ = c.Error(custom_errors.FailedToFetch("ISO Standards"))
+		errResp := custom_errors.FailedToFetch(c.Request.Context(), "ISO Standards")
+		c.JSON(errResp.StatusCode, errResp)
 		return
 	}
 	c.JSON(http.StatusOK, isoStandards)
@@ -41,12 +44,14 @@ func (cc *ApiIsoStandardController) GetAllISOStandards(c *gin.Context) {
 func (cc *ApiIsoStandardController) GetISOStandardByID(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		_ = c.Error(custom_errors.InvalidID("ISO Standard"))
+		errResp := custom_errors.InvalidID(c.Request.Context(), "ISO Standard")
+		c.JSON(errResp.StatusCode, errResp)
 		return
 	}
 	isoStandard, err := cc.Repo.GetISOStandardByID(id)
 	if err != nil {
-		_ = c.Error(custom_errors.NotFound("ISO Standard"))
+		errResp := custom_errors.NotFound(context.TODO(), "ISO Standard")
+		c.JSON(errResp.StatusCode, errResp)
 		return
 	}
 	c.JSON(http.StatusOK, isoStandard)
@@ -57,31 +62,62 @@ func (cc *ApiIsoStandardController) CreateISOStandard(c *gin.Context) {
 	// // Read the request body
 	body, err := readRequestBody(c)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Could not read request body")
+		// respondWithError(c, http.StatusBadRequest, "Could not read request body")
+		errResp := custom_errors.ErrInvalidJSON.ToResponse()
+		c.JSON(custom_errors.ErrInvalidData.StatusCode, errResp)
+		return
+	}
+
+	// Restore the body for later use
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+
+	if len(body) == 0 {
+		customErr := custom_errors.EmptyData(c.Request.Context(), "JSON")
+		c.JSON(customErr.StatusCode, customErr.ToResponse())
 		return
 	}
 
 	rawData, err := parseJSONToMap(body)
 	if err != nil {
-		_ = c.Error(custom_errors.ErrInvalidJSON)
+		if customErr, ok := err.(*custom_errors.CustomError); ok {
+			c.JSON(customErr.StatusCode, customErr.ToResponse())
+			return
+		}
+		// Fallback for other types of errors
+		errResp := custom_errors.ErrInvalidJSON.ToResponse()
+		c.JSON(custom_errors.ErrInvalidJSON.StatusCode, errResp)
 		return
 	}
 
-	if err := validateFields(rawData); err != nil {
-		respondWithError(c, http.StatusBadRequest, err.Error())
+	if err := validateFields(c.Request.Context(), rawData); err != nil {
+		if customErr, ok := err.(*custom_errors.CustomError); ok {
+			c.JSON(customErr.StatusCode, customErr.ToResponse())
+			return
+		}
+		// Fallback for non-custom errors
+		errResp := custom_errors.ErrInvalidJSON.ToResponse()
+		c.JSON(custom_errors.ErrInvalidJSON.StatusCode, errResp)
 		return
 	}
 
 	isoStandard, err := parseISOStandard(body)
 	if err != nil {
-		respondWithError(c, http.StatusBadRequest, "Could not decode JSON data")
+		// respondWithError(c, http.StatusBadRequest, "Could not decode JSON data")
+		errResp := custom_errors.ErrInvalidJSON.ToResponse()
+		c.JSON(custom_errors.ErrInvalidJSON.StatusCode, errResp)
 		return
 	}
 
 	// Attempt to create ISO standard in the repository
 	createdISOStandard, err := cc.Repo.CreateISOStandard(isoStandard)
 	if err != nil {
-		respondWithError(c, http.StatusInternalServerError, err.Error())
+		if customErr, ok := err.(*custom_errors.CustomError); ok {
+			c.JSON(customErr.StatusCode, customErr.ToResponse())
+			return
+		}
+		// Fallback for non-custom errors
+		errResp := custom_errors.ErrInvalidJSON.ToResponse()
+		c.JSON(custom_errors.ErrInvalidJSON.StatusCode, errResp)
 		return
 	}
 
@@ -104,13 +140,14 @@ func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		_ = c.Error(custom_errors.InvalidID("ISO Standard"))
+		// _ = c.Error(custom_errors.InvalidID("ISO Standard"))
+		_ = c.Error(custom_errors.InvalidID(c.Request.Context(), "ISO Standard"))
 		return
 	}
 
 	isoStandard.ID = id
 	if err := cc.Repo.UpdateISOStandard(isoStandard); err != nil {
-		_ = c.Error(custom_errors.NotFound("ISO Standard"))
+		_ = c.Error(custom_errors.NotFound(c.Request.Context(), "ISO Standard"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "updated"})
@@ -120,11 +157,11 @@ func (cc *ApiIsoStandardController) UpdateISOStandard(c *gin.Context) {
 func (cc *ApiIsoStandardController) DeleteISOStandard(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
-		_ = c.Error(custom_errors.InvalidID("ISO Standard"))
+		_ = c.Error(custom_errors.InvalidID(c.Request.Context(), "ISO Standard"))
 		return
 	}
 	if err := cc.Repo.DeleteISOStandard(id); err != nil {
-		_ = c.Error(custom_errors.NotFound("ISO Standard"))
+		_ = c.Error(custom_errors.NotFound(c.Request.Context(), "ISO Standard"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ISO standard deleted"})
@@ -141,36 +178,36 @@ func readRequestBody(c *gin.Context) ([]byte, error) {
 func parseJSONToMap(data []byte) (map[string]interface{}, error) {
 	var result map[string]interface{}
 	if err := json.Unmarshal(data, &result); err != nil {
-		return nil, err
+		return nil, custom_errors.ErrInvalidJSON
 	}
 	return result, nil
 }
 
-func validateFields(data map[string]interface{}) error {
+func validateFields(ctx context.Context, data map[string]interface{}) error {
 	requiredFields := []string{"name"}
 
 	for _, field := range requiredFields {
-		if err := validateField(data, field, "ISO Standard"); err != nil {
+		if err := validateField(ctx, data, field, "string"); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func validateField(data map[string]interface{}, field, entity string) error {
+func validateField(ctx context.Context, data map[string]interface{}, field, entity string) error {
 	value, ok := data[field]
 	if !ok {
 		// return fmt.Errorf("Missing required field: %s", field)
-		return custom_errors.MissingField(field)
+		return custom_errors.MissingField(ctx, field)
 	}
 
 	strVal, ok := value.(string)
 	if !ok {
-		return custom_errors.InvalidDataType(field, "string")
+		return custom_errors.InvalidDataType(ctx, field, "string")
 	}
 
 	if strVal == "" {
-		return custom_errors.EmptyField(entity, field)
+		return custom_errors.EmptyField(ctx, entity, field)
 	}
 
 	return nil

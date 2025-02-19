@@ -118,15 +118,11 @@ test:
 %:
 	@:
 
-# Run the database migrations
-# migrate:
-# 	@go run cmd/api/main.go migrate
-
-.PHONY: migrate %
-
-# Catch any unknown targets so make doesn't error on extra arguments
-%:
-    @:
+# .PHONY: migrate %
+#
+# # Catch any unknown targets so make doesn't error on extra arguments
+# %:
+#     @:
 
 # Handle migrations with optional file and direction arguments
 migrate:

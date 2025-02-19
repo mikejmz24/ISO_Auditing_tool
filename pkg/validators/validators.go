@@ -2,8 +2,8 @@ package validators
 
 import (
 	"ISO_Auditing_Tool/pkg/custom_errors"
+	"context"
 	"fmt"
-	"net/http"
 	"sync"
 
 	"github.com/go-playground/validator/v10"
@@ -55,15 +55,16 @@ func ValidateStruct(data interface{}) *custom_errors.CustomError {
 
 			switch e.Tag() {
 			case "required":
-				return custom_errors.EmptyField("string", fieldName)
+				return custom_errors.EmptyField(context.TODO(), "string", fieldName)
 			case "min":
-				return custom_errors.MinFieldCharacters(fieldName, 2)
+				return custom_errors.MinFieldCharacters(context.TODO(), fieldName, 2)
 			case "max":
-				return custom_errors.MaxFieldCharacters(fieldName, 100)
+				return custom_errors.MaxFieldCharacters(context.TODO(), fieldName, 100)
 			case "not_boolean":
-				return custom_errors.IsABool(fieldName)
+				return custom_errors.IsABool(context.TODO(), fieldName)
 			}
 		}
 	}
-	return custom_errors.NewCustomError(http.StatusInternalServerError, "Unexpected validation error", nil)
+	// return custom_errors.NewError(context.TODO(), custom_errors.ErrInvalidData, "Unexpected validation error", http.StatusInternalServerError, err)
+	return custom_errors.ErrInvalidFormData
 }
