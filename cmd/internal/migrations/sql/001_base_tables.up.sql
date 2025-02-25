@@ -125,10 +125,10 @@ CREATE TABLE IF NOT EXISTS requirement (
     id INT AUTO_INCREMENT PRIMARY KEY
     , standard_id INT NOT NULL
     , level_id INT NOT NULL COMMENT 'The level of the item. Nested location'
-    , parent_id INT NULL COMMENT 'The parent id. Can be null'
+    , parent_id INT NULL COMMENT 'The parent id of the requirement for self joining. Can be null'
     , reference_code VARCHAR(50) NOT NULL COMMENT 'The number of the standard item. e.g., 4.1, 2.3.4, etc'
     , `name` VARCHAR(255) NOT NULL COMMENT 'The given name. e.g., Planning'
-    , `description` VARCHAR(255) NULL
+    , `description` TEXT NULL
     , CONSTRAINT fk_requirement_standard FOREIGN KEY (standard_id) REFERENCES standards (id)
     , INDEX idx_requirements_level_standard (standard_id)
 ) ENGINE = InnoDB COMMENT = 'Stores the requirement level for standards allowing different schemas';
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS questions (
     id INT AUTO_INCREMENT PRIMARY KEY
     , requirement_id INT NOT NULL
     , question VARCHAR(255) NOT NULL
-    , guidance VARCHAR(255)
+    , guidance TEXT
     , created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     , CONSTRAINT fk_questions_requirement FOREIGN KEY (requirement_id) REFERENCES requirement (id)

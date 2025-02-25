@@ -1,53 +1,60 @@
-1,3,,What is the scope of the QMS?
-2,7,,What roles and responsibilities are part of your team?
-3,7,,"When the team is unable to agree on a decision, who has the authority to make the final decision?"
-4,7,,What happens when a role is absent? Do you have a proces in place to determine who assumes the role responsibilities in the mean time?
-5,9,,Define the objectives and how you apply those actions in your planning.
-6,10,,How do you handle changes in your planning? Do you have any supporting methodology for this?
-7,,5,Proces of TA with the manager - recruitment process and document repository
-8,,6,How are the competences for each job determined?
-9,,6,Determine the necessary competence for personnel performing work affecting product quality.
-10,,6,How are you going to make sure that the training provides the missing competences?
-11,,6,"How do you handle a situation of having a new employee with a knowledge gap? For example,  the colleague was hired with a certian level of knowledge but the job requires a higher level."
-12,12,,On-boarding plans.
-13,12,,Off-boarding plans.
-14,12,,On-boarding for the manager.
-15,12,,Knowledge transfer.
-16,12,,Skill Matrix Plan?
-17,12,,There must be evidence of removal of acceses when an employee changed teams. Check for the last change on the team and review the access removal evidence.
-18,,16,How is communication facilitated with customers?
-19,,18,How do you review requirements for your product or service?
-20,,19,How do you manage changes in requirements for your product or service?
-21,18,,What development framework does the team follow?
-22,18,,Is there an SDP describing the team\'s development process?
-23,,22,What is your process for gathering requirements?
-24,,22,Where do your requirements come from?
-25,,22,How fo you ensusre that a requirement is ready to be taken?
-26,,22,How are Non-Functional Requirements (NFR) handled?
-27,,22,What is you feature architecture design process?
-28,,22,How do you handle architectural decisions?
-29,,22,How are project risks managed?
-30,,24,How do you ensure that deliverables meet the original requirement?
-31,,24,What happens when deliverables don't meet the original requirement?
-32,,25,How do you handle requirements and/or scope change once development has started?
-33,,25,How do you handle design changes once development has started?
-34,19,,"Outsourcing? Performance agreement with vendors providing services and tracking resources' performance inline with agreements. (Only apply for teams located in BLR, but ask to TJ teams to validate)"
-35,,26,What proces do you follow with this supplier?
-36,,28,How you manage information and security?
-37,20,,What activities are performed after software is released?
-38,,32,Any post delivery activities?
-39,21,,Do you carry out any activities once you have released?
-40,22,,How are bugs/defects identified?
-41,22,,How are bugs/defects classified?
-42,22,,What are the SLAs for bugs/defects resolution?
-43,22,,How do you  ensure that a defect won't happen again?
-44,23,,What are your goals for?
-45,23,,Completion (80%)
-46,23,,External Bugs (0)
-47,23,,CAS score (>70%)
-48,23,,What happens if one of the goals is not accomplished in the sprint?
-49,,36,How do you measure customer satisfaction?
-50,,36,How is customer feedback provided?
-51,,36,How do you address customer feedback?
-52,,36,How do you address customer complaints?
-53,28,,How do you ensure that continual improvement is applied?
+12,What is the scope of the Quality Management System (QMS)?
+13,What are the team roles and responsibilities?
+13,Who makes the final decision when the team disagrees?
+13,What happens if a role is vacant? How is the responsibility assigned?
+25,"What are the objectives, and how do you implement them in planning?"
+26,How do you manage planning changes? What methodology supports this?
+29,What is the talent acquisition process with the manager?
+30,How are job competencies defined?
+30,Determine necessary competencies for those affecting product quality.
+30,How will training cover any competency gaps?
+30,How do you support a new hire with insufficient knowledge?
+37,What are the onboarding and offboarding plans?
+37,What is the onboarding process for managers?
+37,How is knowledge transferred within the team?
+37,What is your Skill Matrix Plan?
+37,Ensure access is removed when an employee changes teams. Verify access removal evidence.
+47,How do you communicate with customers?
+49,How do you review product or service requirements?
+50,How do you manage requirement changes?
+51,What development framework does the team use?
+51,Is there a Software Development Plan (SDP) in place?
+53,How do you organize your planning?
+54,What is the process for gathering requirements?
+54,Where do your requirements originate?
+54,How do you assess if a requirement is ready for implementation?
+54,How are Non-Functional Requirements (NFR) handled?
+54,What is your feature architecture design process?
+54,How do you make architectural decisions?
+54,How are project risks handled?
+55,What is your estimation process?
+55,What if there is a deviation in estimates?
+55,How does the team know the tasks for each requirement?
+55,How do you ensure feature or story quality?
+55,"Define ""done."""
+55,What is your code review process?
+55,"What testing methods are used, including unit testing?"
+55,How do you validate acceptance criteria before handover to the Product Owner (PO)?
+55,How do you ensure quality during code promotion across environments?
+55,How do you check for vulnerabilities in your code?
+55,What is the process for releasing code to production?
+56,What happens if deliverables don't meet the requirements?
+57,How are requirement and scope changes managed after development starts?
+57,How are design changes handled once development has begun?
+58,What approach do you take to outsourcing? How are performance agreements established with vendors and tracked for compliance?
+59,What process do you follow with suppliers?
+61,How is information security managed?
+64,What activities occur post-software release?
+66,How is traceability maintained?
+69,What are the post-delivery activities?
+71,What actions occur after a product is released?
+72,How are bugs and defects identified and classified?
+72,What are the SLAs for bug resolution?
+72,How do you prevent defect recurrence?
+74,How is team performance measured?
+74,"What are your performance goals regarding completion, external bugs, and CAS score?"
+74,What happens if sprint goals are unmet?
+75,What is your Health Monitor?
+76,How do you measure customer satisfaction and gather feedback?
+76,How is customer feedback and complaints addressed?
+88,How do you ensure continual improvement?

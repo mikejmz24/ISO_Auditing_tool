@@ -118,12 +118,7 @@ test:
 %:
 	@:
 
-# .PHONY: migrate %
-#
-# # Catch any unknown targets so make doesn't error on extra arguments
-# %:
-#     @:
-
+.PHONY: migrate %
 # Handle migrations with optional file and direction arguments
 migrate:
 	@direction="up"; \
