@@ -1,0 +1,64 @@
+1,ADMIN,Admin,System administrator with full access to all features and settings.
+1,LEAD,Lead Auditor,Responsible for planning and executing audits and managing the audit team.
+1,SUPPORT,Support Auditor,Assists lead auditors with evidence collection and assessment.
+1,VIEWER,Viewer,Read-only access to audit results and reports.
+1,CLIENT,Client Representative,Representative from the audited organization with limited access.
+2,DRAFT,Draft,Initial planning stage; audit details are being defined.
+2,SCHEDULED,Scheduled,Audit dates confirmed and resources allocated.
+2,IN_PROGRESS,In Progress,Audit has started and is currently underway.
+2,REVIEW,Under Review,Audit findings are being reviewed before finalization.
+2,COMPLETED,Completed,Audit has been completed and results finalized.
+2,CANCELLED,Cancelled,Audit has been cancelled before completion.
+3,GAP_ANALYSIS,Gap Analysis,First interview with a team to assess their staudard compliance.
+3,ASSESSMENT,Assessment,Focused sesion on a particular topic related to a standard or practice.
+3,INTERNAL,Internal Audit,Conducted by the organization's own staff to assess internal controls.
+3,EXTERNAL,External Audit,Conducted by independent third parties for regulatory compliance.
+3,COMPLIANCE,Compliance Audit,Specifically focused on regulatory or standards compliance.
+3,OPERATIONAL,Operational Audit,Focused on operational efficiency and effectiveness.
+3,FOLLOW_UP,Follow-up Audit,Verifies implementation of recommendations from previous audits.
+3,SURPRISE,Surprise Audit,Unannounced audit to verify standard operations.A
+4,NON_COMPLIANCE,Non-Compliance,Failure to meet a specific requirement or standard.
+4,OBSERVATION,Observation,A noted issue that doesn't constitute non-compliance but requires attention.
+4,IMPROVEMENT,Improvement Opportunity,Areas where processes could be enhanced beyond requirements.
+4,SYSTEMIC,Systemic Issue,Recurring issues indicating system-wide problems.
+4,BEST_PRACTICE,Best Practice Deviation,Deviation from industry best practices.
+5,CRITICAL,Critical,Severe impact requiring immediate attention; potential for significant harm.
+5,MAJOR,Major,Significant impact on compliance or operations; high priority for resolution.
+5,MODERATE,Moderate,Moderate impact requiring attention within standard timeframes.
+5,MINOR,Minor,Limited impact with minimal risk; can be addressed within extended timeframes.
+5,NEGLIGIBLE,Negligible,Minimal impact with virtually no risk; consideration optional.
+6,OPEN,Open,Finding has been identified but not yet addressed.
+6,IN_PROGRESS,In Progress,Corrective actions are currently being implemented.
+6,PENDING_REVIEW,Pending Review,Corrective actions implemented and awaiting verification.
+6,CLOSED,Closed,Finding has been successfully addressed and verified.
+6,WAIVED,Waived,Finding has been exempted from correction with documented justification.
+6,TRANSFERRED,Transferred,Responsibility transferred to another department or process.
+7,DOCUMENT,Document,"Formal documentation such as policies, procedures, or specifications."
+7,RECORD,Record,Historical data or completed forms demonstrating control implementation.
+7,INTERVIEW,Interview,Information gathered through formal discussions with personnel.
+7,OBSERVATION,Observation,"Direct observation of processes, activities, or conditions."
+7,DEMONSTRATION,Demonstration,Live demonstration of system functionality or process execution.
+7,ANALYSIS,Analysis,"Detailed examination of data, trends, or metrics."
+8,REQUESTED,Requested,Evidence has been requested but not yet provided.
+8,SUBMITTED,Submitted,Evidence has been provided and awaiting review.
+8,ACCEPTED,Accepted,Evidence has been reviewed and accepted as satisfactory.
+8,REJECTED,Rejected,Evidence has been reviewed and deemed insufficient.
+8,PENDING,Pending Additional,Partially accepted but requires additional information.
+8,EXPIRED,Expired,Previously valid evidence that has now expired.
+9,FILE,File Attachment,Digital file uploaded as evidence.
+9,URL,URL Link,Web link to online evidence.
+9,REFERENCE,Reference,Reference to physical document or other non-digital evidence.
+9,TEXT,Text Description,Textual description of evidence.
+9,IMAGE,Image,Photographic evidence.
+9,VIDEO,Video,Video recording provided as evidence.
+10,PUBLIC,Public,Can be shared without restrictions.
+10,INTERNAL,Internal Only,For internal distribution within the audit team.
+10,CONFIDENTIAL,Confidential,Sensitive information with restricted access.
+10,RESTRICTED,Restricted,Highly sensitive with very limited access.
+10,CLASSIFIED,Classified,Requires special clearance and handling procedures.
+11,PENDING,Pending Review,Evidence provided but not yet reviewed.
+11,ACCEPTED,Accepted,Evidence has been reviewed and accepted.
+11,REJECTED,Rejected,Evidence has been reviewed and rejected.
+11,PARTIALLY_ACCEPTED,Partially Accepted,Evidence partially meets requirements but needs supplementation.
+11,EXPIRED,Expired,Evidence was valid but has now expired and requires updating.
+11,SUPERSEDED,Superseded,Evidence has been replaced by newer submission.

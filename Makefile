@@ -160,6 +160,10 @@ seed:
 truncate:
 	@go run cmd/api/main.go truncate
 
+# Refresh truncates and seeds the database
+refresh:
+	@go run cmd/api/main.go refresh
+
 # Clean the binary
 clean:
 	@echo "Cleaning..."

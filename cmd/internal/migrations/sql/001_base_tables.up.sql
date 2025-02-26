@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS questions (
     , INDEX idx_questions_requirement (requirement_id)
 ) ENGINE = InnoDB COMMENT = 'Stores audit questions';
 
--- Create evidence tablj
+-- Create evidence table
 CREATE TABLE IF NOT EXISTS evidence (
     id INT AUTO_INCREMENT PRIMARY KEY
     , question_id INT NOT NULL

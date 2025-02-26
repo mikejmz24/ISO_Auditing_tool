@@ -24,6 +24,7 @@ type Service interface {
 	Migrate(file string, direction string) error
 	Seed() error
 	Truncate() error
+	RefreshDatabase() error
 }
 
 type service struct {
@@ -178,6 +179,13 @@ func (s *service) Truncate() error {
 	// 	return nil
 	if err := seeds.Truncate(s.db, seeds.DefaultTruncateOptions()); err != nil {
 		log.Fatalf("Failed to truncate database: %v", err)
+	}
+	return nil
+}
+
+func (s *service) RefreshDatabase() error {
+	if err := seeds.RefreshDatabase(s.db); err != nil {
+		log.Fatalf("Failed to refresh database: %v", err)
 	}
 	return nil
 }

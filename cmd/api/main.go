@@ -129,6 +129,12 @@ func main() {
 			}
 			log.Println("Seeded data truncated successfully")
 
+		case "refresh":
+			if err := dbService.RefreshDatabase(); err != nil {
+				log.Fatalf("Failed to refresh database: %v", err)
+			}
+			log.Println("Refreshed database successfully")
+
 		default:
 			log.Fatalf("Unknown command: %s", os.Args[1])
 		}

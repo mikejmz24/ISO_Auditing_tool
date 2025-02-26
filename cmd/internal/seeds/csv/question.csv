@@ -1,60 +1,60 @@
-12,What is the scope of the Quality Management System (QMS)?
-13,What are the team roles and responsibilities?
-13,Who makes the final decision when the team disagrees?
-13,What happens if a role is vacant? How is the responsibility assigned?
-25,"What are the objectives, and how do you implement them in planning?"
-26,How do you manage planning changes? What methodology supports this?
-29,What is the talent acquisition process with the manager?
-30,How are job competencies defined?
-30,Determine necessary competencies for those affecting product quality.
-30,How will training cover any competency gaps?
-30,How do you support a new hire with insufficient knowledge?
-37,What are the onboarding and offboarding plans?
-37,What is the onboarding process for managers?
-37,How is knowledge transferred within the team?
-37,What is your Skill Matrix Plan?
-37,Ensure access is removed when an employee changes teams. Verify access removal evidence.
-47,How do you communicate with customers?
-49,How do you review product or service requirements?
-50,How do you manage requirement changes?
-51,What development framework does the team use?
-51,Is there a Software Development Plan (SDP) in place?
-53,How do you organize your planning?
-54,What is the process for gathering requirements?
-54,Where do your requirements originate?
-54,How do you assess if a requirement is ready for implementation?
-54,How are Non-Functional Requirements (NFR) handled?
-54,What is your feature architecture design process?
-54,How do you make architectural decisions?
-54,How are project risks handled?
-55,What is your estimation process?
-55,What if there is a deviation in estimates?
-55,How does the team know the tasks for each requirement?
-55,How do you ensure feature or story quality?
-55,"Define ""done."""
-55,What is your code review process?
-55,"What testing methods are used, including unit testing?"
-55,How do you validate acceptance criteria before handover to the Product Owner (PO)?
-55,How do you ensure quality during code promotion across environments?
-55,How do you check for vulnerabilities in your code?
-55,What is the process for releasing code to production?
-56,What happens if deliverables don't meet the requirements?
-57,How are requirement and scope changes managed after development starts?
-57,How are design changes handled once development has begun?
-58,What approach do you take to outsourcing? How are performance agreements established with vendors and tracked for compliance?
-59,What process do you follow with suppliers?
-61,How is information security managed?
-64,What activities occur post-software release?
-66,How is traceability maintained?
-69,What are the post-delivery activities?
-71,What actions occur after a product is released?
-72,How are bugs and defects identified and classified?
-72,What are the SLAs for bug resolution?
-72,How do you prevent defect recurrence?
-74,How is team performance measured?
-74,"What are your performance goals regarding completion, external bugs, and CAS score?"
-74,What happens if sprint goals are unmet?
-75,What is your Health Monitor?
-76,How do you measure customer satisfaction and gather feedback?
-76,How is customer feedback and complaints addressed?
-88,How do you ensure continual improvement?
+12,What is the scope of the Quality Management System (QMS)?,The organization should clearly define and document the boundaries and applicability of its QMS. Review documentation for scope statement that includes products/services covered and any exclusions with justifications (per clause 4.3). Verify that scope is maintained as documented information and available to interested parties.
+13,What are the team roles and responsibilities?,Verify that roles and responsibilities are clearly defined and communicated within the organization. Look for documentation that outlines roles specific to QMS activities with assigned responsibilities (per clause 5.3). Check that personnel understand their roles in relation to quality objectives.
+13,Who makes the final decision when the team disagrees?,Examine evidence of leadership's involvement in resolving conflicts (per clause 5.1). Verify that escalation paths are established and decision-making authorities are clearly defined. Look for documentation of how conflicts are resolved and decisions communicated.
+13,What happens if a role is vacant? How is the responsibility assigned?,Review succession planning documentation and temporary assignment procedures (per clause 7.1.2). Verify that responsibilities are reassigned promptly to maintain QMS integrity. Check for evidence of cross-training to mitigate risks from vacancies.
+25,"What are the objectives, and how do you implement them in planning?","Evaluate if quality objectives are established at relevant functions/levels (per clause 6.2). Verify objectives are measurable, monitored, communicated, and aligned with quality policy. Check planning documentation for how objectives are integrated into operational activities."
+26,How do you manage planning changes? What methodology supports this?,"Examine change management processes (per clause 6.3). Verify considerations of purpose, potential consequences, resource availability, and responsibility assignments. Look for evidence that changes are planned and implemented in a controlled manner to maintain QMS integrity."
+29,What is the talent acquisition process with the manager?,Review HR processes for identifying and acquiring necessary personnel (per clause 7.1.2). Verify that hiring processes consider competency requirements and qualification criteria. Check coordination between HR and departmental managers.
+30,How are job competencies defined?,"Examine competency frameworks and job descriptions (per clause 7.2). Verify that competencies are based on education, training, skills, and experience requirements. Check that competencies align with product/service quality requirements."
+30,Determine necessary competencies for those affecting product quality.,Review process for identifying competency requirements (per clause 7.2a). Verify that all roles impacting product quality have defined competency requirements. Check that requirements address technical and quality management skills.
+30,How will training cover any competency gaps?,Examine training plans and competency development programs (per clause 7.2b-c). Verify actions taken to acquire necessary competencies. Check evaluation methods to ensure training effectiveness.
+30,How do you support a new hire with insufficient knowledge?,"Review onboarding and mentoring programs (per clause 7.2). Check for evidence of additional training, supervision, or modified assignments until competency is achieved. Verify effectiveness evaluation methods."
+37,What are the onboarding and offboarding plans?,Examine documented procedures for onboarding/offboarding (per clause 7.1.6). Verify that organizational knowledge is preserved during personnel changes. Check for appropriate access control measures during transitions.
+37,What is the onboarding process for managers?,Review specialized onboarding for management roles (per clauses 5.3 and 7.2). Verify that management responsibilities regarding QMS are included in onboarding. Check for leadership training related to quality management.
+37,How is knowledge transferred within the team?,"Examine knowledge management practices (per clause 7.1.6). Verify methods to capture, document, and share organizational knowledge. Check for evidence of mentoring, documentation, and collaborative platforms."
+37,What is your Skill Matrix Plan?,Review skill matrix documentation (per clause 7.2). Verify that team competencies are mapped against requirements. Check for gap analysis and development planning based on the matrix.
+37,Ensure access is removed when an employee changes teams. Verify access removal evidence.,Examine access control procedures (per clause 7.5.3 regarding information security). Verify there's a systematic process to modify/revoke access when roles change. Check evidence of access reviews and removal confirmations.
+47,How do you communicate with customers?,"Review customer communication channels and processes (per clause 8.2.1). Verify mechanisms for handling inquiries, contracts, customer feedback, and complaints. Check evidence of effective customer interaction documentation."
+49,How do you review product or service requirements?,Examine review procedures for customer requirements (per clause 8.2.3). Verify that requirements are reviewed before commitment to supply products/services. Check that statutory and regulatory requirements are considered.
+50,How do you manage requirement changes?,Review change control procedures for requirements (per clause 8.2.4). Verify that changes are documented and communicated to relevant personnel. Check that affected documentation is updated when requirements change.
+51,What development framework does the team use?,Examine documentation of development methodology (per clause 8.3.1-8.3.2). Verify that chosen framework supports controlled design and development. Check that framework implementation addresses quality control points.
+51,Is there a Software Development Plan (SDP) in place?,"Review SDP documentation (per clause 8.3.2). Verify that plan defines development stages, review points, verification and validation activities. Check that responsibilities and authorities for development are clearly defined."
+53,How do you organize your planning?,Examine planning documentation and methodologies (per clause 8.1). Verify that planning addresses product/service requirements and process controls. Check for resource allocation and acceptance criteria definition.
+54,What is the process for gathering requirements?,Review requirements gathering procedures (per clause 8.3.3). Verify methods for capturing functional and performance requirements. Check that inputs include applicable regulatory requirements and consequences of failure.
+54,Where do your requirements originate?,"Examine requirement sources documentation (per clause 8.2.2). Verify that requirements come from customers, regulatory bodies, internal sources, or market analysis. Check traceability of requirements to their source."
+54,How do you assess if a requirement is ready for implementation?,"Review requirement qualification criteria (per clauses 8.2.3 and 8.3.3). Verify that requirements are analyzed for clarity, feasibility, and completeness before implementation. Check for evidence of requirement review and approval."
+54,How are Non-Functional Requirements (NFR) handled?,"Examine NFR documentation and management (per clause 8.3.3). Verify that performance, security, scalability, and other NFRs are documented and validated. Check that NFRs are incorporated into design and testing activities."
+54,What is your feature architecture design process?,Review design methodology documentation (per clause 8.3.3-8.3.4). Verify structured approach to translating requirements into detailed designs. Check for design reviews and approval processes.
+54,How do you make architectural decisions?,"Examine decision-making framework for architecture (per clause 8.3.4). Verify that architectural decisions consider requirements, constraints, and risks. Check for evidence of stakeholder involvement and decision documentation."
+54,How are project risks handled?,"Review risk management processes for projects (per clause 6.1). Verify systematic identification, analysis, and mitigation of risks. Check that risk status is monitored throughout project lifecycle."
+55,What is your estimation process?,Examine estimation methodology documentation (per clause 8.1). Verify techniques used for effort/duration estimation. Check for historical data usage and estimate review processes.
+55,What if there is a deviation in estimates?,Review procedures for handling estimate deviations (per clause 8.5.1 and 9.1.3). Verify corrective actions when estimates prove inaccurate. Check for root cause analysis and process improvement based on estimation lessons.
+55,How does the team know the tasks for each requirement?,"Examine task breakdown and assignment processes (per clause 8.1). Verify that requirements are decomposed into manageable tasks. Check for task allocation, tracking, and communication methods."
+55,How do you ensure feature or story quality?,"Review quality control measures for features (per clause 8.5.1). Verify that acceptance criteria are defined for each feature. Check for testing plans, reviews, and validation activities."
+55,"Define ""done.""","Examine definition of done documentation (per clause 8.6). Verify clear criteria for product/feature completion. Check that criteria address quality standards, testing, documentation, and approval requirements."
+55,What is your code review process?,"Review code review procedures (per clause 8.5.1). Verify systematic approach to evaluating code quality and correctness. Check for reviewer selection, review criteria, and defect management."
+55,"What testing methods are used, including unit testing?","Examine testing methodology documentation (per clause 8.5.1). Verify comprehensive testing strategy including unit, integration, system, and acceptance testing. Check for test planning, execution, and reporting processes."
+55,How do you validate acceptance criteria before handover to the Product Owner (PO)?,Review validation procedures (per clause 8.6). Verify that products/features are validated against acceptance criteria before handover. Check evidence of validation activities and results documentation.
+55,How do you ensure quality during code promotion across environments?,"Examine environment management and deployment procedures (per clause 8.5.1). Verify controls for code promotion between development, testing, and production environments. Check for environment consistency and deployment verification."
+55,How do you check for vulnerabilities in your code?,Review security testing processes (per clause 8.5.1). Verify static/dynamic code analysis for security vulnerabilities. Check for secure coding standards and security testing documentation.
+55,What is the process for releasing code to production?,"Examine release management procedures (per clause 8.6). Verify controlled process for production deployments. Check for approval workflows, release planning, and post-deployment verification."
+56,What happens if deliverables don't meet the requirements?,"Review nonconforming output control procedures (per clause 8.7). Verify processes for identification, documentation, and handling of nonconforming outputs. Check for correction actions and customer communication."
+57,How are requirement and scope changes managed after development starts?,"Examine change control procedures during development (per clauses 8.2.4 and 8.5.6). Verify that changes are evaluated, approved, and documented. Check for impact analysis and communication of changes."
+57,How are design changes handled once development has begun?,"Review design change control procedures (per clause 8.3.6). Verify systematic approach to evaluating, approving, and implementing design changes. Check for change impact assessment and verification."
+58,What approach do you take to outsourcing? How are performance agreements established with vendors and tracked for compliance?,"Examine external provider management processes (per clause 8.4). Verify criteria for evaluation, selection, and monitoring of suppliers. Check for performance agreements, monitoring methods, and corrective actions."
+59,What process do you follow with suppliers?,"Review supplier management procedures (per clause 8.4). Verify processes for supplier selection, evaluation, and monitoring. Check for communication of requirements and verification of supplied products/services."
+61,How is information security managed?,"Examine information security management system (per clause 7.5.3). Verify controls for confidentiality, integrity, and availability of information. Check for security risk assessment, access controls, and incident management."
+64,What activities occur post-software release?,"Review post-release procedures (per clauses 8.5.1 and 8.5.3). Verify monitoring, maintenance, and support processes after release. Check for monitoring of product performance and customer feedback collection."
+66,How is traceability maintained?,Examine traceability procedures (per clause 8.5.2). Verify methods to maintain identification and traceability throughout product realization. Check for requirement-to-implementation traceability and change tracking.
+69,What are the post-delivery activities?,"Review post-delivery support procedures (per clause 8.5.5). Verify warranty, maintenance, and support services. Check for customer communication channels and issue resolution processes."
+71,What actions occur after a product is released?,"Examine post-release monitoring and support (per clause 8.5.5). Verify processes for collecting feedback, providing technical support, and implementing updates. Check for monitoring of product performance in operation."
+72,How are bugs and defects identified and classified?,"Review defect management procedures (per clause 8.7). Verify methods for detecting, logging, and categorizing defects. Check for severity/priority classification criteria and defect tracking systems."
+72,What are the SLAs for bug resolution?,Examine service level agreements for defect resolution (per clause 8.5.5). Verify defined timeframes for addressing defects based on severity. Check for monitoring of SLA compliance and escalation procedures.
+72,How do you prevent defect recurrence?,Review corrective action procedures (per clause 10.2). Verify root cause analysis methods and preventive measures implementation. Check for effectiveness evaluation of corrective actions and knowledge sharing.
+74,How is team performance measured?,"Examine performance measurement methods (per clause 9.1). Verify defined metrics for evaluating team performance. Check for data collection, analysis, and reporting processes."
+74,"What are your performance goals regarding completion, external bugs, and CAS score?","Review performance objectives documentation (per clause 6.2). Verify specific, measurable goals for completion rates, defect levels, and customer satisfaction. Check for monitoring and reporting mechanisms."
+74,What happens if sprint goals are unmet?,Examine procedures for handling performance shortfalls (per clauses 9.1.3 and 10.2). Verify analysis and corrective action processes when goals aren't achieved. Check for continuous improvement based on performance analysis.
+75,What is your Health Monitor?,Review team health assessment methodology (per clause 9.1). Verify structured approach to evaluating team functioning and morale. Check for regular assessments and improvement actions based on results.
+76,How do you measure customer satisfaction and gather feedback?,Examine customer satisfaction monitoring procedures (per clause 9.1.2). Verify methods for obtaining feedback on product/service quality. Check for data analysis and improvement actions based on feedback.
+76,How is customer feedback and complaints addressed?,"Review customer feedback management procedures (per clause 8.2.1c and 10.2). Verify systematic approach to logging, investigating, and resolving complaints. Check for root cause analysis and preventive actions."
+88,How do you ensure continual improvement?,Examine continual improvement processes (per clause 10.3). Verify mechanisms for identifying improvement opportunities and implementing changes. Check for evaluation of improvement effectiveness and knowledge sharing.

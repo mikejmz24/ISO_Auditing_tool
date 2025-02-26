@@ -23,6 +23,19 @@ type SeedConfig struct {
 
 var seedConfigs = []SeedConfig{
 	{
+		TableName: "reference_types",
+		CSVPath:   filepath.Join("cmd", "internal", "seeds", "csv", "reference_types.csv"),
+		Columns:   []string{"name", "description"},
+		BatchSize: 30,
+	},
+	{
+		TableName:   "reference_values",
+		CSVPath:     filepath.Join("cmd", "internal", "seeds", "csv", "reference_values.csv"),
+		Columns:     []string{"type_id", "code", "name", "description"},
+		ForeignKeys: []string{"type_id"},
+		BatchSize:   30,
+	},
+	{
 		TableName: "standards",
 		CSVPath:   filepath.Join("cmd", "internal", "seeds", "csv", "standards.csv"),
 		Columns:   []string{"name", "description", "version"},
@@ -50,13 +63,13 @@ var seedConfigs = []SeedConfig{
 		BatchSize:   500,
 	},
 
-	//	{
-	//		TableName:   "evidence",
-	//		CSVPath:     filepath.Join("cmd", "internal", "seeds", "csv", "evidence.csv"),
-	//		Columns:     []string{"question_id", "expected"},
-	//		ForeignKeys: []string{"question_id", "type_id", "status_id"},
-	//		BatchSize:   500,
-	//	},
+	// {
+	// 	TableName:   "evidence",
+	// 	CSVPath:     filepath.Join("cmd", "internal", "seeds", "csv", "evidence.csv"),
+	// 	Columns:     []string{"question_id", "expected"},
+	// 	ForeignKeys: []string{"question_id", "type_id", "status_id"},
+	// 	BatchSize:   500,
+	// },
 }
 
 // buildInsertQuery generates a parameterized query for batch inserts
