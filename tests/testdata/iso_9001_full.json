@@ -1,0 +1,3137 @@
+{
+  "id": 1,
+  "name": "ISO 9001",
+  "version": "2015",
+  "description": "Quality management systems - Requirements",
+  "requirements": [
+    {
+      "id": 1,
+      "name": "Introduction",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Provides an overview of the purpose, structure, and application of ISO 9001:2015 for quality management systems (QMS), emphasizing risk-based thinking and the PDCA cycle.",
+      "standard_id": 1,
+      "reference_code": "0"
+    },
+    {
+      "id": 2,
+      "name": "General",
+      "level_id": 2,
+      "parent_id": 1,
+      "questions": null,
+      "description": "Describes the purpose of ISO 9001:2015 as enhancing customer satisfaction through effective QMS application, including risk-based thinking and process approach.",
+      "standard_id": 1,
+      "reference_code": "0.1"
+    },
+    {
+      "id": 3,
+      "name": "Quality management principles",
+      "level_id": 2,
+      "parent_id": 1,
+      "questions": null,
+      "description": "Outlines seven quality management principles (e.g., customer focus, leadership, engagement of people) underpinning the standard.",
+      "standard_id": 1,
+      "reference_code": "0.2"
+    },
+    {
+      "id": 4,
+      "name": "Process approach",
+      "level_id": 2,
+      "parent_id": 1,
+      "questions": null,
+      "description": "Explains the process approach, integrating the PDCA cycle and risk-based thinking for QMS effectiveness.",
+      "standard_id": 1,
+      "reference_code": "0.3"
+    },
+    {
+      "id": 5,
+      "name": "Relationship with other management system standards",
+      "level_id": 2,
+      "parent_id": 1,
+      "questions": null,
+      "description": "Describes compatibility with other ISO management system standards, such as ISO 14001.",
+      "standard_id": 1,
+      "reference_code": "0.4"
+    },
+    {
+      "id": 6,
+      "name": "Scope",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Defines the applicability of ISO 9001:2015, specifying requirements for a QMS when an organization needs to demonstrate its ability to consistently provide products and services meeting customer and regulatory requirements.",
+      "standard_id": 1,
+      "reference_code": "1"
+    },
+    {
+      "id": 7,
+      "name": "Normative references",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Lists ISO 9000:2015 as the essential normative reference for terms and definitions used in ISO 9001:2015.",
+      "standard_id": 1,
+      "reference_code": "2"
+    },
+    {
+      "id": 8,
+      "name": "Terms and definitions",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Refers to ISO 9000:2015 for definitions of terms used in the standard, ensuring consistent understanding of QMS concepts.",
+      "standard_id": 1,
+      "reference_code": "3"
+    },
+    {
+      "id": 9,
+      "name": "Context of the organization",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Requires the organization to determine external and internal issues, interested parties, and QMS scope to achieve intended results.",
+      "standard_id": 1,
+      "reference_code": "4"
+    },
+    {
+      "id": 10,
+      "name": "Understanding the organization and its context",
+      "level_id": 2,
+      "parent_id": 9,
+      "questions": null,
+      "description": "Determine external and internal issues relevant to the purpose and strategic direction that affect the QMS�s ability to achieve intended results.",
+      "standard_id": 1,
+      "reference_code": "4.1"
+    },
+    {
+      "id": 11,
+      "name": "Understanding the needs and expectations of interested parties",
+      "level_id": 2,
+      "parent_id": 9,
+      "questions": null,
+      "description": "Identify interested parties relevant to the QMS, their requirements, and which need to be addressed.",
+      "standard_id": 1,
+      "reference_code": "4.2"
+    },
+    {
+      "id": 12,
+      "name": "Determining the scope of the quality management system",
+      "level_id": 2,
+      "parent_id": 9,
+      "questions": [
+        {
+          "id": 1,
+          "evidence": null,
+          "guidance": "The organization should clearly define and document the boundaries and applicability of its QMS. Review documentation for scope statement that includes products/services covered and any exclusions with justifications (per clause 4.3). Verify that scope is maintained as documented information and available to interested parties.",
+          "question": "What is the scope of the Quality Management System (QMS)?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 12
+        }
+      ],
+      "description": "Define the QMS scope, considering internal and external issues, requirements of interested parties, and the organization�s products and services.",
+      "standard_id": 1,
+      "reference_code": "4.3"
+    },
+    {
+      "id": 13,
+      "name": "Quality management system and its processes",
+      "level_id": 2,
+      "parent_id": 9,
+      "questions": [
+        {
+          "id": 2,
+          "evidence": [
+            {
+              "id": 2,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document roles and responsibilities on the team page and keep it updated.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 2
+            },
+            {
+              "id": 1,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Clarity on roles and responsibilities is essential.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 2
+            },
+            {
+              "id": 4,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Share the official documentation (SOP, SDP) detailing roles and responsibilities.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 2
+            },
+            {
+              "id": 3,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Have a leave plan in place.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 2
+            }
+          ],
+          "guidance": "Verify that roles and responsibilities are clearly defined and communicated within the organization. Look for documentation that outlines roles specific to QMS activities with assigned responsibilities (per clause 5.3). Check that personnel understand their roles in relation to quality objectives.",
+          "question": "What are the team roles and responsibilities?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 13
+        },
+        {
+          "id": 4,
+          "evidence": null,
+          "guidance": "Review succession planning documentation and temporary assignment procedures (per clause 7.1.2). Verify that responsibilities are reassigned promptly to maintain QMS integrity. Check for evidence of cross-training to mitigate risks from vacancies.",
+          "question": "What happens if a role is vacant? How is the responsibility assigned?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 13
+        },
+        {
+          "id": 3,
+          "evidence": null,
+          "guidance": "Examine evidence of leadership's involvement in resolving conflicts (per clause 5.1). Verify that escalation paths are established and decision-making authorities are clearly defined. Look for documentation of how conflicts are resolved and decisions communicated.",
+          "question": "Who makes the final decision when the team disagrees?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 13
+        }
+      ],
+      "description": "Establish, implement, maintain, and improve QMS processes, including inputs, outputs, criteria, and risk management.",
+      "standard_id": 1,
+      "reference_code": "4.4"
+    },
+    {
+      "id": 14,
+      "name": "Leadership",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Requires top management to demonstrate leadership, establish a quality policy, and assign responsibilities for the QMS.",
+      "standard_id": 1,
+      "reference_code": "5"
+    },
+    {
+      "id": 15,
+      "name": "Leadership and commitment",
+      "level_id": 2,
+      "parent_id": 14,
+      "questions": null,
+      "description": "Top management must ensure the QMS achieves its intended outcomes, promotes customer focus, and provides necessary resources.",
+      "standard_id": 1,
+      "reference_code": "5.1"
+    },
+    {
+      "id": 16,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 15,
+      "questions": null,
+      "description": "Top management demonstrates leadership and commitment by ensuring the QMS is integrated into business processes and aligns with strategic direction.",
+      "standard_id": 1,
+      "reference_code": "5.1.1"
+    },
+    {
+      "id": 17,
+      "name": "Customer focus",
+      "level_id": 3,
+      "parent_id": 15,
+      "questions": null,
+      "description": "Top management ensures customer requirements are determined, understood, and met to enhance customer satisfaction.",
+      "standard_id": 1,
+      "reference_code": "5.1.2"
+    },
+    {
+      "id": 18,
+      "name": "Quality policy",
+      "level_id": 2,
+      "parent_id": 14,
+      "questions": null,
+      "description": "Establish a quality policy that is appropriate, communicates the organization�s quality objectives, and is maintained as documented information.",
+      "standard_id": 1,
+      "reference_code": "5.2"
+    },
+    {
+      "id": 19,
+      "name": "Establishing the quality policy",
+      "level_id": 3,
+      "parent_id": 18,
+      "questions": null,
+      "description": "Top management establishes a quality policy that is appropriate to the purpose and context of the organization, provides a framework for setting quality objectives, includes a commitment to satisfy applicable requirements, and commits to continual improvement of the QMS.",
+      "standard_id": 1,
+      "reference_code": "5.2.1"
+    },
+    {
+      "id": 20,
+      "name": "Communicating the quality policy",
+      "level_id": 3,
+      "parent_id": 18,
+      "questions": null,
+      "description": "The quality policy is communicated, understood, and applied within the organization, and is available to relevant interested parties as appropriate.",
+      "standard_id": 1,
+      "reference_code": "5.2.2"
+    },
+    {
+      "id": 21,
+      "name": "Organizational roles, responsibilities and authorities",
+      "level_id": 2,
+      "parent_id": 14,
+      "questions": null,
+      "description": "Top management assigns roles, responsibilities, and authorities for ensuring QMS conformity and reporting on performance.",
+      "standard_id": 1,
+      "reference_code": "5.3"
+    },
+    {
+      "id": 22,
+      "name": "Planning",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Plan actions to address risks and opportunities, set quality objectives, and plan changes to the QMS.",
+      "standard_id": 1,
+      "reference_code": "6"
+    },
+    {
+      "id": 23,
+      "name": "Actions to address risks and opportunities",
+      "level_id": 2,
+      "parent_id": 22,
+      "questions": null,
+      "description": "Determine risks and opportunities that could affect QMS conformity and take actions to address them.",
+      "standard_id": 1,
+      "reference_code": "6.1"
+    },
+    {
+      "id": 24,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 23,
+      "questions": null,
+      "description": "Identify risks and opportunities that need to be addressed to give assurance that the QMS achieves its intended results.",
+      "standard_id": 1,
+      "reference_code": "6.1.1"
+    },
+    {
+      "id": 25,
+      "name": "Quality objectives and planning to achieve them",
+      "level_id": 2,
+      "parent_id": 22,
+      "questions": [
+        {
+          "id": 5,
+          "evidence": [
+            {
+              "id": 5,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Provide evidence of quality objectives.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 5
+            }
+          ],
+          "guidance": "Evaluate if quality objectives are established at relevant functions/levels (per clause 6.2). Verify objectives are measurable, monitored, communicated, and aligned with quality policy. Check planning documentation for how objectives are integrated into operational activities.",
+          "question": "What are the objectives, and how do you implement them in planning?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 25
+        }
+      ],
+      "description": "Establish quality objectives at relevant functions and levels, and plan how to achieve them with measurable criteria.",
+      "standard_id": 1,
+      "reference_code": "6.2"
+    },
+    {
+      "id": 26,
+      "name": "Planning of changes",
+      "level_id": 2,
+      "parent_id": 22,
+      "questions": [
+        {
+          "id": 6,
+          "evidence": null,
+          "guidance": "Examine change management processes (per clause 6.3). Verify considerations of purpose, potential consequences, resource availability, and responsibility assignments. Look for evidence that changes are planned and implemented in a controlled manner to maintain QMS integrity.",
+          "question": "How do you manage planning changes? What methodology supports this?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 26
+        }
+      ],
+      "description": "Plan changes to the QMS in a controlled manner, considering potential impacts on quality performance.",
+      "standard_id": 1,
+      "reference_code": "6.3"
+    },
+    {
+      "id": 27,
+      "name": "Support",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Provide resources, competence, awareness, communication, and documented information to support the QMS.",
+      "standard_id": 1,
+      "reference_code": "7"
+    },
+    {
+      "id": 28,
+      "name": "Resources",
+      "level_id": 2,
+      "parent_id": 27,
+      "questions": null,
+      "description": "Determine and provide resources needed for the QMS, including infrastructure, work environment, and monitoring resources.",
+      "standard_id": 1,
+      "reference_code": "7.1"
+    },
+    {
+      "id": 29,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 28,
+      "questions": [
+        {
+          "id": 7,
+          "evidence": null,
+          "guidance": "Review HR processes for identifying and acquiring necessary personnel (per clause 7.1.2). Verify that hiring processes consider competency requirements and qualification criteria. Check coordination between HR and departmental managers.",
+          "question": "What is the talent acquisition process with the manager?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 29
+        }
+      ],
+      "description": "Ensure availability of resources to establish, implement, maintain, and improve the QMS.",
+      "standard_id": 1,
+      "reference_code": "7.1.1"
+    },
+    {
+      "id": 30,
+      "name": "People",
+      "level_id": 3,
+      "parent_id": 28,
+      "questions": [
+        {
+          "id": 8,
+          "evidence": null,
+          "guidance": "Examine competency frameworks and job descriptions (per clause 7.2). Verify that competencies are based on education, training, skills, and experience requirements. Check that competencies align with product/service quality requirements.",
+          "question": "How are job competencies defined?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 30
+        },
+        {
+          "id": 9,
+          "evidence": null,
+          "guidance": "Review process for identifying competency requirements (per clause 7.2a). Verify that all roles impacting product quality have defined competency requirements. Check that requirements address technical and quality management skills.",
+          "question": "Determine necessary competencies for those affecting product quality.",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 30
+        },
+        {
+          "id": 10,
+          "evidence": null,
+          "guidance": "Examine training plans and competency development programs (per clause 7.2b-c). Verify actions taken to acquire necessary competencies. Check evaluation methods to ensure training effectiveness.",
+          "question": "How will training cover any competency gaps?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 30
+        },
+        {
+          "id": 11,
+          "evidence": null,
+          "guidance": "Review onboarding and mentoring programs (per clause 7.2). Check for evidence of additional training, supervision, or modified assignments until competency is achieved. Verify effectiveness evaluation methods.",
+          "question": "How do you support a new hire with insufficient knowledge?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 30
+        }
+      ],
+      "description": "Determine and provide persons necessary for effective QMS operation.",
+      "standard_id": 1,
+      "reference_code": "7.1.2"
+    },
+    {
+      "id": 31,
+      "name": "Infrastructure",
+      "level_id": 3,
+      "parent_id": 28,
+      "questions": null,
+      "description": "Determine, provide, and maintain infrastructure needed for QMS operation.",
+      "standard_id": 1,
+      "reference_code": "7.1.3"
+    },
+    {
+      "id": 32,
+      "name": "Environment for the operation of processes",
+      "level_id": 3,
+      "parent_id": 28,
+      "questions": null,
+      "description": "Manage the work environment to achieve QMS conformity.",
+      "standard_id": 1,
+      "reference_code": "7.1.4"
+    },
+    {
+      "id": 33,
+      "name": "Monitoring and measuring resources",
+      "level_id": 3,
+      "parent_id": 28,
+      "questions": null,
+      "description": "Determine and provide resources for monitoring and measurement, ensuring validity of results.",
+      "standard_id": 1,
+      "reference_code": "7.1.5"
+    },
+    {
+      "id": 34,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 33,
+      "questions": null,
+      "description": "Ensure monitoring and measuring resources are suitable and maintained.",
+      "standard_id": 1,
+      "reference_code": "7.1.5.1"
+    },
+    {
+      "id": 35,
+      "name": "Measurement traceability",
+      "level_id": 3,
+      "parent_id": 33,
+      "questions": null,
+      "description": "Ensure traceability of measurements where required, using calibrated equipment.",
+      "standard_id": 1,
+      "reference_code": "7.1.5.2"
+    },
+    {
+      "id": 36,
+      "name": "Organizational knowledge",
+      "level_id": 3,
+      "parent_id": 28,
+      "questions": null,
+      "description": "Determine and maintain knowledge necessary for QMS operation.",
+      "standard_id": 1,
+      "reference_code": "7.1.6"
+    },
+    {
+      "id": 37,
+      "name": "Competence",
+      "level_id": 2,
+      "parent_id": 27,
+      "questions": [
+        {
+          "id": 12,
+          "evidence": null,
+          "guidance": "Examine documented procedures for onboarding/offboarding (per clause 7.1.6). Verify that organizational knowledge is preserved during personnel changes. Check for appropriate access control measures during transitions.",
+          "question": "What are the onboarding and offboarding plans?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 37
+        },
+        {
+          "id": 13,
+          "evidence": null,
+          "guidance": "Review specialized onboarding for management roles (per clauses 5.3 and 7.2). Verify that management responsibilities regarding QMS are included in onboarding. Check for leadership training related to quality management.",
+          "question": "What is the onboarding process for managers?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 37
+        },
+        {
+          "id": 14,
+          "evidence": null,
+          "guidance": "Examine knowledge management practices (per clause 7.1.6). Verify methods to capture, document, and share organizational knowledge. Check for evidence of mentoring, documentation, and collaborative platforms.",
+          "question": "How is knowledge transferred within the team?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 37
+        },
+        {
+          "id": 15,
+          "evidence": null,
+          "guidance": "Review skill matrix documentation (per clause 7.2). Verify that team competencies are mapped against requirements. Check for gap analysis and development planning based on the matrix.",
+          "question": "What is your Skill Matrix Plan?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 37
+        },
+        {
+          "id": 16,
+          "evidence": null,
+          "guidance": "Examine access control procedures (per clause 7.5.3 regarding information security). Verify there's a systematic process to modify/revoke access when roles change. Check evidence of access reviews and removal confirmations.",
+          "question": "Ensure access is removed when an employee changes teams. Verify access removal evidence.",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 37
+        }
+      ],
+      "description": "Ensure persons doing work under the QMS are competent based on appropriate education, training, or experience.",
+      "standard_id": 1,
+      "reference_code": "7.2"
+    },
+    {
+      "id": 38,
+      "name": "Awareness",
+      "level_id": 2,
+      "parent_id": 27,
+      "questions": null,
+      "description": "Ensure persons are aware of the quality policy, objectives, their contribution to QMS effectiveness, and implications of not conforming.",
+      "standard_id": 1,
+      "reference_code": "7.3"
+    },
+    {
+      "id": 39,
+      "name": "Communication",
+      "level_id": 2,
+      "parent_id": 27,
+      "questions": null,
+      "description": "Determine internal and external communication processes relevant to the QMS, including what, when, with whom, and how.",
+      "standard_id": 1,
+      "reference_code": "7.4"
+    },
+    {
+      "id": 40,
+      "name": "Documented information",
+      "level_id": 2,
+      "parent_id": 27,
+      "questions": null,
+      "description": "Maintain documented information required by the standard and determined by the organization as necessary for QMS effectiveness.",
+      "standard_id": 1,
+      "reference_code": "7.5"
+    },
+    {
+      "id": 41,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 40,
+      "questions": null,
+      "description": "Determine the necessary documented information to support the QMS and demonstrate conformity.",
+      "standard_id": 1,
+      "reference_code": "7.5.1"
+    },
+    {
+      "id": 42,
+      "name": "Creating and updating",
+      "level_id": 3,
+      "parent_id": 40,
+      "questions": null,
+      "description": "Ensure documented information is identified, described, reviewed, and approved for suitability and adequacy.",
+      "standard_id": 1,
+      "reference_code": "7.5.2"
+    },
+    {
+      "id": 43,
+      "name": "Control of documented information",
+      "level_id": 3,
+      "parent_id": 40,
+      "questions": null,
+      "description": "Control distribution, access, retrieval, storage, preservation, retention, and disposal of documented information.",
+      "standard_id": 1,
+      "reference_code": "7.5.3"
+    },
+    {
+      "id": 44,
+      "name": "Operation",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Plan, implement, and control processes needed to meet QMS requirements and customer expectations.",
+      "standard_id": 1,
+      "reference_code": "8"
+    },
+    {
+      "id": 45,
+      "name": "Operational planning and control",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": null,
+      "description": "Plan, implement, and control processes to meet QMS requirements, including criteria, risk management, and change control.",
+      "standard_id": 1,
+      "reference_code": "8.1"
+    },
+    {
+      "id": 46,
+      "name": "Requirements for products and services",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": null,
+      "description": "Ensure customer and statutory/regulatory requirements for products and services are determined, reviewed, and met.",
+      "standard_id": 1,
+      "reference_code": "8.2"
+    },
+    {
+      "id": 47,
+      "name": "Customer communication",
+      "level_id": 3,
+      "parent_id": 46,
+      "questions": [
+        {
+          "id": 17,
+          "evidence": [
+            {
+              "id": 6,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "The Product Owner must facilitate communication.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 17
+            },
+            {
+              "id": 7,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Ensure internal communication is effective.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 17
+            },
+            {
+              "id": 8,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document evidence of meetings.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 17
+            }
+          ],
+          "guidance": "Review customer communication channels and processes (per clause 8.2.1). Verify mechanisms for handling inquiries, contracts, customer feedback, and complaints. Check evidence of effective customer interaction documentation.",
+          "question": "How do you communicate with customers?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 47
+        }
+      ],
+      "description": "Determine and implement effective communication with customers regarding products, services, inquiries, and complaints.",
+      "standard_id": 1,
+      "reference_code": "8.2.1"
+    },
+    {
+      "id": 48,
+      "name": "Determining requirements for products and services",
+      "level_id": 3,
+      "parent_id": 46,
+      "questions": null,
+      "description": "Identify requirements for products and services, including statutory and regulatory requirements.",
+      "standard_id": 1,
+      "reference_code": "8.2.2"
+    },
+    {
+      "id": 49,
+      "name": "Review of requirements for products and services",
+      "level_id": 3,
+      "parent_id": 46,
+      "questions": [
+        {
+          "id": 18,
+          "evidence": null,
+          "guidance": "Examine review procedures for customer requirements (per clause 8.2.3). Verify that requirements are reviewed before commitment to supply products/services. Check that statutory and regulatory requirements are considered.",
+          "question": "How do you review product or service requirements?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 49
+        }
+      ],
+      "description": "Review requirements before committing to supply products or services, ensuring feasibility and clarity.",
+      "standard_id": 1,
+      "reference_code": "8.2.3"
+    },
+    {
+      "id": 50,
+      "name": "Changes to requirements for products and services",
+      "level_id": 3,
+      "parent_id": 46,
+      "questions": [
+        {
+          "id": 19,
+          "evidence": null,
+          "guidance": "Review change control procedures for requirements (per clause 8.2.4). Verify that changes are documented and communicated to relevant personnel. Check that affected documentation is updated when requirements change.",
+          "question": "How do you manage requirement changes?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 50
+        }
+      ],
+      "description": "Control changes to requirements, ensuring relevant information is communicated and documented.",
+      "standard_id": 1,
+      "reference_code": "8.2.4"
+    },
+    {
+      "id": 51,
+      "name": "Design and development of products and services",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": [
+        {
+          "id": 20,
+          "evidence": [
+            {
+              "id": 9,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Require the team to explain the Scrum process briefly and adapt the checklist accordingly, reflecting this in the SDP and SOP.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 20
+            },
+            {
+              "id": 10,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Identify the team's main space (Confluence).",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 20
+            },
+            {
+              "id": 11,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Define the team's product/service.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 20
+            }
+          ],
+          "guidance": "Examine documentation of development methodology (per clause 8.3.1-8.3.2). Verify that chosen framework supports controlled design and development. Check that framework implementation addresses quality control points.",
+          "question": "What development framework does the team use?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 51
+        },
+        {
+          "id": 21,
+          "evidence": [
+            {
+              "id": 12,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Outline the full process, framework, estimation process, tools, and scope.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 21
+            },
+            {
+              "id": 13,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review the SDP before the audit and ensure it's current and any addendum is updated.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 21
+            }
+          ],
+          "guidance": "Review SDP documentation (per clause 8.3.2). Verify that plan defines development stages, review points, verification and validation activities. Check that responsibilities and authorities for development are clearly defined.",
+          "question": "Is there a Software Development Plan (SDP) in place?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 51
+        }
+      ],
+      "description": "Plan and control design and development processes to ensure product/service conformity.",
+      "standard_id": 1,
+      "reference_code": "8.3"
+    },
+    {
+      "id": 52,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 51,
+      "questions": null,
+      "description": "Establish, implement, and maintain design and development processes to meet QMS requirements.",
+      "standard_id": 1,
+      "reference_code": "8.3.1"
+    },
+    {
+      "id": 53,
+      "name": "Design and development planning",
+      "level_id": 3,
+      "parent_id": 51,
+      "questions": [
+        {
+          "id": 22,
+          "evidence": null,
+          "guidance": "Examine planning documentation and methodologies (per clause 8.1). Verify that planning addresses product/service requirements and process controls. Check for resource allocation and acceptance criteria definition.",
+          "question": "How do you organize your planning?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 53
+        }
+      ],
+      "description": "Plan design and development stages, responsibilities, and interfaces, considering risks and opportunities.",
+      "standard_id": 1,
+      "reference_code": "8.3.2"
+    },
+    {
+      "id": 54,
+      "name": "Design and development inputs",
+      "level_id": 3,
+      "parent_id": 51,
+      "questions": [
+        {
+          "id": 27,
+          "evidence": [
+            {
+              "id": 19,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Include the process in the addendum and provide the architecture diagram.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 27
+            }
+          ],
+          "guidance": "Review design methodology documentation (per clause 8.3.3-8.3.4). Verify structured approach to translating requirements into detailed designs. Check for design reviews and approval processes.",
+          "question": "What is your feature architecture design process?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        },
+        {
+          "id": 29,
+          "evidence": [
+            {
+              "id": 22,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Each document must have the corresponding PBI ID.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 29
+            },
+            {
+              "id": 23,
+              "type": {
+                "id": 39,
+                "code": "OBSERVATION",
+                "name": "Observation",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Direct observation of processes, activities, or conditions."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review risk management evidence with all sections complete.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 29
+            },
+            {
+              "id": 24,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document risks, including description, mitigation, owner, and status.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 29
+            }
+          ],
+          "guidance": "Review risk management processes for projects (per clause 6.1). Verify systematic identification, analysis, and mitigation of risks. Check that risk status is monitored throughout project lifecycle.",
+          "question": "How are project risks handled?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        },
+        {
+          "id": 28,
+          "evidence": [
+            {
+              "id": 20,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Get approval from the architect if required.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 28
+            },
+            {
+              "id": 21,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Show evidence of architecture reviews and necessary approvals.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 28
+            }
+          ],
+          "guidance": "Examine decision-making framework for architecture (per clause 8.3.4). Verify that architectural decisions consider requirements, constraints, and risks. Check for evidence of stakeholder involvement and decision documentation.",
+          "question": "How do you make architectural decisions?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        },
+        {
+          "id": 26,
+          "evidence": [
+            {
+              "id": 17,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Include NFR (Non-Functional Requirements) in user stories when applicable.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 26
+            },
+            {
+              "id": 18,
+              "type": {
+                "id": 40,
+                "code": "DEMONSTRATION",
+                "name": "Demonstration",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Live demonstration of system functionality or process execution."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "The team must demonstrate implementation of security requirements with traceability in place.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 26
+            }
+          ],
+          "guidance": "Examine NFR documentation and management (per clause 8.3.3). Verify that performance, security, scalability, and other NFRs are documented and validated. Check that NFRs are incorporated into design and testing activities.",
+          "question": "How are Non-Functional Requirements (NFR) handled?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        },
+        {
+          "id": 25,
+          "evidence": null,
+          "guidance": "Review requirement qualification criteria (per clauses 8.2.3 and 8.3.3). Verify that requirements are analyzed for clarity, feasibility, and completeness before implementation. Check for evidence of requirement review and approval.",
+          "question": "How do you assess if a requirement is ready for implementation?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        },
+        {
+          "id": 24,
+          "evidence": [
+            {
+              "id": 16,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Link all spikes or design items to corresponding documents in Confluence.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 24
+            },
+            {
+              "id": 15,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Ensure traceability from requirements to user stories (e.g., FDA1 _ Epic _ User stories).",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 24
+            }
+          ],
+          "guidance": "Examine requirement sources documentation (per clause 8.2.2). Verify that requirements come from customers, regulatory bodies, internal sources, or market analysis. Check traceability of requirements to their source.",
+          "question": "Where do your requirements originate?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        },
+        {
+          "id": 23,
+          "evidence": [
+            {
+              "id": 14,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Gather the latest release planning documentation and an updated product roadmap.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 23
+            }
+          ],
+          "guidance": "Review requirements gathering procedures (per clause 8.3.3). Verify methods for capturing functional and performance requirements. Check that inputs include applicable regulatory requirements and consequences of failure.",
+          "question": "What is the process for gathering requirements?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 54
+        }
+      ],
+      "description": "Determine requirements for design and development, including functional, performance, and regulatory needs.",
+      "standard_id": 1,
+      "reference_code": "8.3.3"
+    },
+    {
+      "id": 55,
+      "name": "Design and development controls",
+      "level_id": 3,
+      "parent_id": 51,
+      "questions": [
+        {
+          "id": 40,
+          "evidence": [
+            {
+              "id": 41,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Request the last RFC with these elements:  QA plan, rollback and implementation plans, security scan sign-off, approval from Release Management.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 40
+            }
+          ],
+          "guidance": "Examine release management procedures (per clause 8.6). Verify controlled process for production deployments. Check for approval workflows, release planning, and post-deployment verification.",
+          "question": "What is the process for releasing code to production?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 31,
+          "evidence": [
+            {
+              "id": 26,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Conduct retrospective estimation exercises.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 31
+            }
+          ],
+          "guidance": "Review procedures for handling estimate deviations (per clause 8.5.1 and 9.1.3). Verify corrective actions when estimates prove inaccurate. Check for root cause analysis and process improvement based on estimation lessons.",
+          "question": "What if there is a deviation in estimates?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 39,
+          "evidence": [
+            {
+              "id": 37,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document the security scan process and sign-off.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 39
+            },
+            {
+              "id": 38,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "For applications, include scan details on the Security Scan Details for Applications page.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 39
+            },
+            {
+              "id": 39,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "For platform components, use the Security Scan Details for Platform Services page.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 39
+            },
+            {
+              "id": 40,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Check all active services and address any high vulnerabilities before production; seek exemption approval if needed.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 39
+            }
+          ],
+          "guidance": "Review security testing processes (per clause 8.5.1). Verify static/dynamic code analysis for security vulnerabilities. Check for secure coding standards and security testing documentation.",
+          "question": "How do you check for vulnerabilities in your code?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 38,
+          "evidence": [
+            {
+              "id": 36,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Find evidence of CI/CD, Jenkins, release process, and sanity test cases.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 38
+            }
+          ],
+          "guidance": "Examine environment management and deployment procedures (per clause 8.5.1). Verify controls for code promotion between development, testing, and production environments. Check for environment consistency and deployment verification.",
+          "question": "How do you ensure quality during code promotion across environments?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 37,
+          "evidence": [
+            {
+              "id": 33,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Request unit testing reports (pass/fail, code coverage).",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 37
+            },
+            {
+              "id": 34,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Map all testing to the corresponding PBI, and make comments during reviews.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 37
+            },
+            {
+              "id": 35,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Tag all code relevant to a user story with the PBI ID.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 37
+            }
+          ],
+          "guidance": "Review validation procedures (per clause 8.6). Verify that products/features are validated against acceptance criteria before handover. Check evidence of validation activities and results documentation.",
+          "question": "How do you validate acceptance criteria before handover to the Product Owner (PO)?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 36,
+          "evidence": [
+            {
+              "id": 32,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Ensure all review comments are traceable and addressed.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 36
+            }
+          ],
+          "guidance": "Examine testing methodology documentation (per clause 8.5.1). Verify comprehensive testing strategy including unit, integration, system, and acceptance testing. Check for test planning, execution, and reporting processes.",
+          "question": "What testing methods are used, including unit testing?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 34,
+          "evidence": [
+            {
+              "id": 31,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Search for evidence of code reviews, including assignments, comments, and sign-offs.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 34
+            }
+          ],
+          "guidance": "Examine definition of done documentation (per clause 8.6). Verify clear criteria for product/feature completion. Check that criteria address quality standards, testing, documentation, and approval requirements.",
+          "question": "Define \"done.\"",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 33,
+          "evidence": [
+            {
+              "id": 30,
+              "type": {
+                "id": 40,
+                "code": "DEMONSTRATION",
+                "name": "Demonstration",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Live demonstration of system functionality or process execution."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Select a story from past sprints and check it against the definition of done.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 33
+            }
+          ],
+          "guidance": "Review quality control measures for features (per clause 8.5.1). Verify that acceptance criteria are defined for each feature. Check for testing plans, reviews, and validation activities.",
+          "question": "How do you ensure feature or story quality?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 32,
+          "evidence": [
+            {
+              "id": 29,
+              "type": {
+                "id": 38,
+                "code": "INTERVIEW",
+                "name": "Interview",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Information gathered through formal discussions with personnel."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review user stories periodically to ensure they are current.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 32
+            },
+            {
+              "id": 27,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document coding standards and code review guidelines.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 32
+            },
+            {
+              "id": 28,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Ensure all user stories have conditions of acceptance.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 32
+            }
+          ],
+          "guidance": "Examine task breakdown and assignment processes (per clause 8.1). Verify that requirements are decomposed into manageable tasks. Check for task allocation, tracking, and communication methods.",
+          "question": "How does the team know the tasks for each requirement?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 30,
+          "evidence": [
+            {
+              "id": 25,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Track story points and hours in subtasks.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 30
+            }
+          ],
+          "guidance": "Examine estimation methodology documentation (per clause 8.1). Verify techniques used for effort/duration estimation. Check for historical data usage and estimate review processes.",
+          "question": "What is your estimation process?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        },
+        {
+          "id": 35,
+          "evidence": null,
+          "guidance": "Review code review procedures (per clause 8.5.1). Verify systematic approach to evaluating code quality and correctness. Check for reviewer selection, review criteria, and defect management.",
+          "question": "What is your code review process?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 55
+        }
+      ],
+      "description": "Apply controls to verify, validate, and review design and development outputs.",
+      "standard_id": 1,
+      "reference_code": "8.3.4"
+    },
+    {
+      "id": 56,
+      "name": "Design and development outputs",
+      "level_id": 3,
+      "parent_id": 51,
+      "questions": [
+        {
+          "id": 41,
+          "evidence": [
+            {
+              "id": 42,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Maintain records of sprint reviews and document decisions made.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 41
+            }
+          ],
+          "guidance": "Review nonconforming output control procedures (per clause 8.7). Verify processes for identification, documentation, and handling of nonconforming outputs. Check for correction actions and customer communication.",
+          "question": "What happens if deliverables don't meet the requirements?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 56
+        }
+      ],
+      "description": "Ensure outputs meet input requirements, are approved, and include acceptance criteria.",
+      "standard_id": 1,
+      "reference_code": "8.3.5"
+    },
+    {
+      "id": 57,
+      "name": "Design and development changes",
+      "level_id": 3,
+      "parent_id": 51,
+      "questions": [
+        {
+          "id": 42,
+          "evidence": null,
+          "guidance": "Examine change control procedures during development (per clauses 8.2.4 and 8.5.6). Verify that changes are evaluated, approved, and documented. Check for impact analysis and communication of changes.",
+          "question": "How are requirement and scope changes managed after development starts?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 57
+        },
+        {
+          "id": 43,
+          "evidence": [
+            {
+              "id": 43,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Search for evidence of sprint review activities, including smoking testing.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 43
+            }
+          ],
+          "guidance": "Review design change control procedures (per clause 8.3.6). Verify systematic approach to evaluating, approving, and implementing design changes. Check for change impact assessment and verification.",
+          "question": "How are design changes handled once development has begun?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 57
+        }
+      ],
+      "description": "Control changes to design and development, reviewing impacts and maintaining records.",
+      "standard_id": 1,
+      "reference_code": "8.3.6"
+    },
+    {
+      "id": 58,
+      "name": "Control of externally provided processes, products and services",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": [
+        {
+          "id": 44,
+          "evidence": null,
+          "guidance": "Examine external provider management processes (per clause 8.4). Verify criteria for evaluation, selection, and monitoring of suppliers. Check for performance agreements, monitoring methods, and corrective actions.",
+          "question": "What approach do you take to outsourcing? How are performance agreements established with vendors and tracked for compliance?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 58
+        }
+      ],
+      "description": "Determine criteria for selecting, monitoring, and controlling external providers to ensure conformity of externally provided processes, products, and services.",
+      "standard_id": 1,
+      "reference_code": "8.4"
+    },
+    {
+      "id": 59,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 58,
+      "questions": [
+        {
+          "id": 45,
+          "evidence": null,
+          "guidance": "Review supplier management procedures (per clause 8.4). Verify processes for supplier selection, evaluation, and monitoring. Check for communication of requirements and verification of supplied products/services.",
+          "question": "What process do you follow with suppliers?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 59
+        }
+      ],
+      "description": "Ensure externally provided processes, products, and services conform to specified requirements, determining the type and extent of controls based on their effect on QMS conformity.",
+      "standard_id": 1,
+      "reference_code": "8.4.1"
+    },
+    {
+      "id": 60,
+      "name": "Type and extent of controls",
+      "level_id": 3,
+      "parent_id": 58,
+      "questions": null,
+      "description": "Define the type and extent of controls to be applied to external providers based on the potential impact on product conformity and the QMS.",
+      "standard_id": 1,
+      "reference_code": "8.4.2"
+    },
+    {
+      "id": 61,
+      "name": "Information for external providers",
+      "level_id": 3,
+      "parent_id": 58,
+      "questions": [
+        {
+          "id": 46,
+          "evidence": null,
+          "guidance": "Examine information security management system (per clause 7.5.3). Verify controls for confidentiality, integrity, and availability of information. Check for security risk assessment, access controls, and incident management.",
+          "question": "How is information security managed?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 61
+        }
+      ],
+      "description": "Communicate to external providers the requirements for processes, products, and services, including acceptance criteria and competence of personnel.",
+      "standard_id": 1,
+      "reference_code": "8.4.3"
+    },
+    {
+      "id": 62,
+      "name": "Control of changes",
+      "level_id": 3,
+      "parent_id": 58,
+      "questions": null,
+      "description": "Control changes to externally provided processes, products, and services, reviewing and approving changes and their impact on the QMS.",
+      "standard_id": 1,
+      "reference_code": "8.4.5"
+    },
+    {
+      "id": 63,
+      "name": "Monitoring and measuring",
+      "level_id": 3,
+      "parent_id": 58,
+      "questions": null,
+      "description": "Monitor and measure the performance of external providers, including their ability to meet requirements and maintain QMS conformity.",
+      "standard_id": 1,
+      "reference_code": "8.4.6"
+    },
+    {
+      "id": 64,
+      "name": "Production and service provision",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": [
+        {
+          "id": 47,
+          "evidence": null,
+          "guidance": "Review post-release procedures (per clauses 8.5.1 and 8.5.3). Verify monitoring, maintenance, and support processes after release. Check for monitoring of product performance and customer feedback collection.",
+          "question": "What activities occur post-software release?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 64
+        }
+      ],
+      "description": "Control production and service provision processes to ensure conformity of products and services.",
+      "standard_id": 1,
+      "reference_code": "8.5"
+    },
+    {
+      "id": 65,
+      "name": "Control of production and service provision",
+      "level_id": 3,
+      "parent_id": 64,
+      "questions": null,
+      "description": "Plan and carry out production and service provision under controlled conditions.",
+      "standard_id": 1,
+      "reference_code": "8.5.1"
+    },
+    {
+      "id": 66,
+      "name": "Identification and traceability",
+      "level_id": 3,
+      "parent_id": 64,
+      "questions": [
+        {
+          "id": 48,
+          "evidence": null,
+          "guidance": "Examine traceability procedures (per clause 8.5.2). Verify methods to maintain identification and traceability throughout product realization. Check for requirement-to-implementation traceability and change tracking.",
+          "question": "How is traceability maintained?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 66
+        }
+      ],
+      "description": "Identify outputs and maintain traceability where required throughout production and service provision.",
+      "standard_id": 1,
+      "reference_code": "8.5.2"
+    },
+    {
+      "id": 67,
+      "name": "Property belonging to customers or external providers",
+      "level_id": 3,
+      "parent_id": 64,
+      "questions": null,
+      "description": "Identify, verify, protect, and safeguard customer or external provider property.",
+      "standard_id": 1,
+      "reference_code": "8.5.3"
+    },
+    {
+      "id": 68,
+      "name": "Preservation",
+      "level_id": 3,
+      "parent_id": 64,
+      "questions": null,
+      "description": "Preserve outputs during production and service provision to maintain conformity.",
+      "standard_id": 1,
+      "reference_code": "8.5.4"
+    },
+    {
+      "id": 69,
+      "name": "Post-delivery activities",
+      "level_id": 3,
+      "parent_id": 64,
+      "questions": [
+        {
+          "id": 49,
+          "evidence": [
+            {
+              "id": 44,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document release notes that define product and service characteristics.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 49
+            }
+          ],
+          "guidance": "Review post-delivery support procedures (per clause 8.5.5). Verify warranty, maintenance, and support services. Check for customer communication channels and issue resolution processes.",
+          "question": "What are the post-delivery activities?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 69
+        }
+      ],
+      "description": "Meet requirements for post-delivery activities, such as warranty or maintenance, as applicable.",
+      "standard_id": 1,
+      "reference_code": "8.5.5"
+    },
+    {
+      "id": 70,
+      "name": "Control of changes",
+      "level_id": 3,
+      "parent_id": 64,
+      "questions": null,
+      "description": "Review and control unplanned changes to production and service provision, evaluating impacts.",
+      "standard_id": 1,
+      "reference_code": "8.5.6"
+    },
+    {
+      "id": 71,
+      "name": "Release of products and services",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": [
+        {
+          "id": 50,
+          "evidence": null,
+          "guidance": "Examine post-release monitoring and support (per clause 8.5.5). Verify processes for collecting feedback, providing technical support, and implementing updates. Check for monitoring of product performance in operation.",
+          "question": "What actions occur after a product is released?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 71
+        }
+      ],
+      "description": "Ensure products and services are released only after verification of conformity to requirements.",
+      "standard_id": 1,
+      "reference_code": "8.6"
+    },
+    {
+      "id": 72,
+      "name": "Control of nonconforming outputs",
+      "level_id": 2,
+      "parent_id": 44,
+      "questions": [
+        {
+          "id": 51,
+          "evidence": [
+            {
+              "id": 45,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Search for bugs from previous sprints; classify them per guidelines.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 51
+            }
+          ],
+          "guidance": "Review defect management procedures (per clause 8.7). Verify methods for detecting, logging, and categorizing defects. Check for severity/priority classification criteria and defect tracking systems.",
+          "question": "How are bugs and defects identified and classified?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 72
+        },
+        {
+          "id": 52,
+          "evidence": [
+            {
+              "id": 46,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "P1 & P2 bugs require evidence of RCA and completion of Jira fields.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 52
+            }
+          ],
+          "guidance": "Examine service level agreements for defect resolution (per clause 8.5.5). Verify defined timeframes for addressing defects based on severity. Check for monitoring of SLA compliance and escalation procedures.",
+          "question": "What are the SLAs for bug resolution?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 72
+        },
+        {
+          "id": 53,
+          "evidence": [
+            {
+              "id": 47,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Link bugs/defects to the original user story or requirement, if known.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 53
+            }
+          ],
+          "guidance": "Review corrective action procedures (per clause 10.2). Verify root cause analysis methods and preventive measures implementation. Check for effectiveness evaluation of corrective actions and knowledge sharing.",
+          "question": "How do you prevent defect recurrence?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 72
+        }
+      ],
+      "description": "Identify, control, and address nonconforming outputs, taking action to prevent unintended use or delivery.",
+      "standard_id": 1,
+      "reference_code": "8.7"
+    },
+    {
+      "id": 73,
+      "name": "Performance evaluation",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Monitor, measure, analyze, and evaluate QMS performance to ensure its effectiveness.",
+      "standard_id": 1,
+      "reference_code": "9"
+    },
+    {
+      "id": 74,
+      "name": "Monitoring, measurement, analysis and evaluation",
+      "level_id": 2,
+      "parent_id": 73,
+      "questions": [
+        {
+          "id": 54,
+          "evidence": [
+            {
+              "id": 48,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Provide evidence of QPPI review.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 54
+            }
+          ],
+          "guidance": "Examine performance measurement methods (per clause 9.1). Verify defined metrics for evaluating team performance. Check for data collection, analysis, and reporting processes.",
+          "question": "How is team performance measured?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 74
+        },
+        {
+          "id": 55,
+          "evidence": [
+            {
+              "id": 49,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review all metrics from the last quarter and verify whether they meet quality objectives; show an action plan for unmet metrics.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 55
+            },
+            {
+              "id": 50,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Document minor NCs for missing metrics.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 55
+            }
+          ],
+          "guidance": "Review performance objectives documentation (per clause 6.2). Verify specific, measurable goals for completion rates, defect levels, and customer satisfaction. Check for monitoring and reporting mechanisms.",
+          "question": "What are your performance goals regarding completion, external bugs, and CAS score?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 74
+        },
+        {
+          "id": 56,
+          "evidence": [
+            {
+              "id": 51,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review metrics from two or three sprints to ensure the team has followed up on actions for improvement.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 56
+            }
+          ],
+          "guidance": "Examine procedures for handling performance shortfalls (per clauses 9.1.3 and 10.2). Verify analysis and corrective action processes when goals aren't achieved. Check for continuous improvement based on performance analysis.",
+          "question": "What happens if sprint goals are unmet?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 74
+        }
+      ],
+      "description": "Determine what needs to be monitored and measured, analyze results, and evaluate QMS performance.",
+      "standard_id": 1,
+      "reference_code": "9.1"
+    },
+    {
+      "id": 75,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 74,
+      "questions": [
+        {
+          "id": 57,
+          "evidence": [
+            {
+              "id": 52,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Evaluate overall adherence to Agile practices.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 57
+            },
+            {
+              "id": 53,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Check alignment and support with Engineering Management and stakeholders.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 57
+            }
+          ],
+          "guidance": "Review team health assessment methodology (per clause 9.1). Verify structured approach to evaluating team functioning and morale. Check for regular assessments and improvement actions based on results.",
+          "question": "What is your Health Monitor?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 75
+        }
+      ],
+      "description": "Define what, when, and how monitoring and measurement will be performed, and retain evidence of results.",
+      "standard_id": 1,
+      "reference_code": "9.1.1"
+    },
+    {
+      "id": 76,
+      "name": "Customer satisfaction",
+      "level_id": 3,
+      "parent_id": 74,
+      "questions": [
+        {
+          "id": 58,
+          "evidence": [
+            {
+              "id": 54,
+              "type": {
+                "id": 41,
+                "code": "ANALYSIS",
+                "name": "Analysis",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Detailed examination of data, trends, or metrics."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review the stakeholder survey dashboard and actions taken from feedback.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 58
+            },
+            {
+              "id": 55,
+              "type": {
+                "id": 37,
+                "code": "RECORD",
+                "name": "Record",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Historical data or completed forms demonstrating control implementation."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "During demos and reviews, the PO must keep records of sprint reviews and establish a mechanism to track backlog feedback.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 58
+            }
+          ],
+          "guidance": "Examine customer satisfaction monitoring procedures (per clause 9.1.2). Verify methods for obtaining feedback on product/service quality. Check for data analysis and improvement actions based on feedback.",
+          "question": "How do you measure customer satisfaction and gather feedback?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 76
+        },
+        {
+          "id": 59,
+          "evidence": null,
+          "guidance": "Review customer feedback management procedures (per clause 8.2.1c and 10.2). Verify systematic approach to logging, investigating, and resolving complaints. Check for root cause analysis and preventive actions.",
+          "question": "How is customer feedback and complaints addressed?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 76
+        }
+      ],
+      "description": "Monitor customer perceptions of the degree to which requirements are met.",
+      "standard_id": 1,
+      "reference_code": "9.1.2"
+    },
+    {
+      "id": 77,
+      "name": "Analysis and evaluation",
+      "level_id": 3,
+      "parent_id": 74,
+      "questions": null,
+      "description": "Analyze and evaluate QMS performance data to identify improvement opportunities.",
+      "standard_id": 1,
+      "reference_code": "9.1.3"
+    },
+    {
+      "id": 78,
+      "name": "Internal audit",
+      "level_id": 2,
+      "parent_id": 73,
+      "questions": null,
+      "description": "Conduct internal audits at planned intervals to ensure QMS conformity and effectiveness.",
+      "standard_id": 1,
+      "reference_code": "9.2"
+    },
+    {
+      "id": 79,
+      "name": "Management review",
+      "level_id": 2,
+      "parent_id": 73,
+      "questions": null,
+      "description": "Top management reviews the QMS at planned intervals to ensure its continued suitability, adequacy, and effectiveness.",
+      "standard_id": 1,
+      "reference_code": "9.3"
+    },
+    {
+      "id": 80,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 79,
+      "questions": null,
+      "description": "Conduct management reviews to ensure the QMS remains suitable, adequate, and effective.",
+      "standard_id": 1,
+      "reference_code": "9.3.1"
+    },
+    {
+      "id": 81,
+      "name": "Management review input",
+      "level_id": 3,
+      "parent_id": 79,
+      "questions": null,
+      "description": "Use inputs for management review, such as audit results, customer feedback, and performance indicators.",
+      "standard_id": 1,
+      "reference_code": "9.3.2"
+    },
+    {
+      "id": 82,
+      "name": "Management review output",
+      "level_id": 3,
+      "parent_id": 79,
+      "questions": null,
+      "description": "Determine outputs from management review, including decisions and actions for improvement.",
+      "standard_id": 1,
+      "reference_code": "9.3.3"
+    },
+    {
+      "id": 83,
+      "name": "Improvement",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Determine and implement actions to address nonconformities, take corrective actions, and continually improve the QMS.",
+      "standard_id": 1,
+      "reference_code": "10"
+    },
+    {
+      "id": 84,
+      "name": "General",
+      "level_id": 2,
+      "parent_id": 83,
+      "questions": null,
+      "description": "The organization shall determine and select opportunities for improvement and implement any necessary actions to meet customer requirements and enhance customer satisfaction.",
+      "standard_id": 1,
+      "reference_code": "10.1"
+    },
+    {
+      "id": 85,
+      "name": "Nonconformity and corrective action",
+      "level_id": 2,
+      "parent_id": 83,
+      "questions": null,
+      "description": "React to nonconformities, take action to control and correct them, and address causes to prevent recurrence.",
+      "standard_id": 1,
+      "reference_code": "10.2"
+    },
+    {
+      "id": 86,
+      "name": "General",
+      "level_id": 3,
+      "parent_id": 85,
+      "questions": null,
+      "description": "When a nonconformity occurs, react to it, take action to control and correct it, evaluate the need for corrective action, and implement actions to prevent recurrence.",
+      "standard_id": 1,
+      "reference_code": "10.2.1"
+    },
+    {
+      "id": 87,
+      "name": "Corrective action",
+      "level_id": 3,
+      "parent_id": 85,
+      "questions": null,
+      "description": "Determine causes of nonconformities, implement actions to eliminate them, review effectiveness, and update the QMS as needed.",
+      "standard_id": 1,
+      "reference_code": "10.2.2"
+    },
+    {
+      "id": 88,
+      "name": "Continual improvement",
+      "level_id": 2,
+      "parent_id": 83,
+      "questions": [
+        {
+          "id": 60,
+          "evidence": [
+            {
+              "id": 56,
+              "type": {
+                "id": 36,
+                "code": "DOCUMENT",
+                "name": "Document",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Formal documentation such as policies, procedures, or specifications."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Review and update retrospective action items every sprint and recommend consolidating items onto a single page if necessary.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 60
+            },
+            {
+              "id": 57,
+              "type": {
+                "id": 39,
+                "code": "OBSERVATION",
+                "name": "Observation",
+                "type_id": 7,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Direct observation of processes, activities, or conditions."
+              },
+              "status": {
+                "id": 42,
+                "code": "NOT_REQUESTED",
+                "name": "Not Requested",
+                "type_id": 8,
+                "is_active": 1,
+                "created_at": "2025-02-26 19:42:12.000000",
+                "updated_at": "2025-02-26 19:42:12.000000",
+                "description": "Evidence identified but not yet formally requested from the auditee."
+              },
+              "expected": "Implement other practices to ensure continual improvement and assign ownership to all action items.",
+              "created_at": "2025-02-26 19:42:12.000000",
+              "updated_at": "2025-02-26 19:42:12.000000",
+              "question_id": 60
+            }
+          ],
+          "guidance": "Examine continual improvement processes (per clause 10.3). Verify mechanisms for identifying improvement opportunities and implementing changes. Check for evaluation of improvement effectiveness and knowledge sharing.",
+          "question": "How do you ensure continual improvement?",
+          "created_at": "2025-02-26 19:42:12.000000",
+          "updated_at": "2025-02-26 19:42:12.000000",
+          "requirement_id": 88
+        }
+      ],
+      "description": "Continually improve the QMS suitability, adequacy, and effectiveness using quality policy, objectives, audit results, and analysis.",
+      "standard_id": 1,
+      "reference_code": "10.3"
+    },
+    {
+      "id": 89,
+      "name": "Annex A (Informative)",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Clarification of new structure, terminology, and concepts, providing additional guidance on implementing ISO 9001:2015.",
+      "standard_id": 1,
+      "reference_code": "A"
+    },
+    {
+      "id": 90,
+      "name": "Structure and terminology",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Explains the new structure and terminology of ISO 9001:2015, including the process approach and risk-based thinking.",
+      "standard_id": 1,
+      "reference_code": "A.1"
+    },
+    {
+      "id": 91,
+      "name": "Products and services",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Clarifies the use of 'products and services' in ISO 9001:2015, replacing 'product' from previous versions.",
+      "standard_id": 1,
+      "reference_code": "A.2"
+    },
+    {
+      "id": 92,
+      "name": "Understanding the needs and expectations of interested parties",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Provides guidance on identifying and addressing the needs and expectations of interested parties relevant to the QMS.",
+      "standard_id": 1,
+      "reference_code": "A.3"
+    },
+    {
+      "id": 93,
+      "name": "Risk-based thinking",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Describes how risk-based thinking is integrated into the QMS to address risks and opportunities.",
+      "standard_id": 1,
+      "reference_code": "A.4"
+    },
+    {
+      "id": 94,
+      "name": "Applicability",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Addresses the applicability of ISO 9001:2015 requirements to different types and sizes of organizations.",
+      "standard_id": 1,
+      "reference_code": "A.5"
+    },
+    {
+      "id": 95,
+      "name": "Documented information",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Offers guidance on the use of documented information, replacing previous documentation and record requirements.",
+      "standard_id": 1,
+      "reference_code": "A.6"
+    },
+    {
+      "id": 96,
+      "name": "Organizational knowledge",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Explains the requirement to determine and maintain knowledge necessary for QMS operation.",
+      "standard_id": 1,
+      "reference_code": "A.7"
+    },
+    {
+      "id": 97,
+      "name": "Control of externally provided processes, products and services",
+      "level_id": 2,
+      "parent_id": 89,
+      "questions": null,
+      "description": "Provides additional clarification on managing externally provided processes, products, and services.",
+      "standard_id": 1,
+      "reference_code": "A.8"
+    },
+    {
+      "id": 98,
+      "name": "Annex B (Informative)",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Other international standards on quality management and quality management systems, listing related standards for reference.",
+      "standard_id": 1,
+      "reference_code": "B"
+    },
+    {
+      "id": 99,
+      "name": "Bibliography",
+      "level_id": 1,
+      "parent_id": null,
+      "questions": null,
+      "description": "Lists reference documents and standards related to ISO 9001:2015, including ISO 9000:2015 and other relevant publications, for further reading.",
+      "standard_id": 1,
+      "reference_code": "C"
+    }
+  ]}

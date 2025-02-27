@@ -1,57 +1,57 @@
-2,Clarity on roles and responsibilities is essential.
-2,Document roles and responsibilities on the team page and keep it updated.
-2,Have a leave plan in place.
-2,"Share the official documentation (SOP, SDP) detailing roles and responsibilities."
-5,Provide evidence of quality objectives.
-17,The Product Owner must facilitate communication.
-17,Ensure internal communication is effective.
-17,Document evidence of meetings.
-20,"Require the team to explain the Scrum process briefly and adapt the checklist accordingly, reflecting this in the SDP and SOP."
-20,Identify the team's main space (Confluence).
-20,Define the team's product/service.
-21,"Outline the full process, framework, estimation process, tools, and scope."
-21,Review the SDP before the audit and ensure it’s current and any addendum is updated.
-23,Gather the latest release planning documentation and an updated product roadmap.
-24,"Ensure traceability from requirements to user stories (e.g., FDA1 _ Epic _ User stories)."
-24,Link all spikes or design items to corresponding documents in Confluence.
-26,Include NFR (Non-Functional Requirements) in user stories when applicable.
-26,The team must demonstrate implementation of security requirements with traceability in place.
-27,Include the process in the addendum and provide the architecture diagram.
-28,Get approval from the architect if required.
-28,Show evidence of architecture reviews and necessary approvals.
-29,Each document must have the corresponding PBI ID.
-29,Review risk management evidence with all sections complete.
-29,"Document risks, including description, mitigation, owner, and status."
-30,Track story points and hours in subtasks.
-31,Conduct retrospective estimation exercises.
-32,Document coding standards and code review guidelines.
-32,Ensure all user stories have conditions of acceptance.
-32,Review user stories periodically to ensure they are current.
-33,Select a story from past sprints and check it against the definition of done.
-34,"Search for evidence of code reviews, including assignments, comments, and sign-offs."
-36,Ensure all review comments are traceable and addressed.
-37,"Request unit testing reports (pass/fail, code coverage)."
-37,"Map all testing to the corresponding PBI, and make comments during reviews."
-37,Tag all code relevant to a user story with the PBI ID.
-38,"Find evidence of CI/CD, Jenkins, release process, and sanity test cases."
-39,Document the security scan process and sign-off.
-39,"For applications, include scan details on the Security Scan Details for Applications page."
-39,"For platform components, use the Security Scan Details for Platform Services page."
-39,Check all active services and address any high vulnerabilities before production; seek exemption approval if needed.
-40,"Request the last RFC with these elements:  QA plan, rollback and implementation plans, security scan sign-off, approval from Release Management."
-41,Maintain records of sprint reviews and document decisions made.
-43,"Search for evidence of sprint review activities, including smoking testing."
-49,Document release notes that define product and service characteristics.
-51,Search for bugs from previous sprints; classify them per guidelines.
-52,P1 & P2 bugs require evidence of RCA and completion of Jira fields.
-53,"Link bugs/defects to the original user story or requirement, if known."
-54,Provide evidence of QPPI review.
-55,Review all metrics from the last quarter and verify whether they meet quality objectives; show an action plan for unmet metrics.
-55,Document minor NCs for missing metrics.
-56,Review metrics from two or three sprints to ensure the team has followed up on actions for improvement.
-57,Evaluate overall adherence to Agile practices.
-57,Check alignment and support with Engineering Management and stakeholders.
-58,Review the stakeholder survey dashboard and actions taken from feedback.
-58,"During demos and reviews, the PO must keep records of sprint reviews and establish a mechanism to track backlog feedback."
-60,Review and update retrospective action items every sprint and recommend consolidating items onto a single page if necessary.
-60,Implement other practices to ensure continual improvement and assign ownership to all action items.
+2,36,Clarity on roles and responsibilities is essential.
+2,36,Document roles and responsibilities on the team page and keep it updated.
+2,36,Have a leave plan in place.
+2,36,"Share the official documentation (SOP, SDP) detailing roles and responsibilities."
+5,36,Provide evidence of quality objectives.
+17,38,The Product Owner must facilitate communication.
+17,38,Ensure internal communication is effective.
+17,36,Document evidence of meetings.
+20,38,"Require the team to explain the Scrum process briefly and adapt the checklist accordingly, reflecting this in the SDP and SOP."
+20,36,Identify the team's main space (Confluence).
+20,38,Define the team's product/service.
+21,38,"Outline the full process, framework, estimation process, tools, and scope."
+21,36,Review the SDP before the audit and ensure it's current and any addendum is updated.
+23,36,Gather the latest release planning documentation and an updated product roadmap.
+24,36,"Ensure traceability from requirements to user stories (e.g., FDA1 _ Epic _ User stories)."
+24,36,Link all spikes or design items to corresponding documents in Confluence.
+26,36,Include NFR (Non-Functional Requirements) in user stories when applicable.
+26,40,The team must demonstrate implementation of security requirements with traceability in place.
+27,36,Include the process in the addendum and provide the architecture diagram.
+28,37,Get approval from the architect if required.
+28,37,Show evidence of architecture reviews and necessary approvals.
+29,36,Each document must have the corresponding PBI ID.
+29,39,Review risk management evidence with all sections complete.
+29,36,"Document risks, including description, mitigation, owner, and status."
+30,37,Track story points and hours in subtasks.
+31,38,Conduct retrospective estimation exercises.
+32,36,Document coding standards and code review guidelines.
+32,36,Ensure all user stories have conditions of acceptance.
+32,38,Review user stories periodically to ensure they are current.
+33,40,Select a story from past sprints and check it against the definition of done.
+34,37,"Search for evidence of code reviews, including assignments, comments, and sign-offs."
+36,37,Ensure all review comments are traceable and addressed.
+37,36,"Request unit testing reports (pass/fail, code coverage)."
+37,37,"Map all testing to the corresponding PBI, and make comments during reviews."
+37,37,Tag all code relevant to a user story with the PBI ID.
+38,37,"Find evidence of CI/CD, Jenkins, release process, and sanity test cases."
+39,36,Document the security scan process and sign-off.
+39,36,"For applications, include scan details on the Security Scan Details for Applications page."
+39,36,"For platform components, use the Security Scan Details for Platform Services page."
+39,41,Check all active services and address any high vulnerabilities before production; seek exemption approval if needed.
+40,36,"Request the last RFC with these elements:  QA plan, rollback and implementation plans, security scan sign-off, approval from Release Management."
+41,36,Maintain records of sprint reviews and document decisions made.
+43,37,"Search for evidence of sprint review activities, including smoking testing."
+49,36,Document release notes that define product and service characteristics.
+51,41,Search for bugs from previous sprints; classify them per guidelines.
+52,37,P1 & P2 bugs require evidence of RCA and completion of Jira fields.
+53,37,"Link bugs/defects to the original user story or requirement, if known."
+54,37,Provide evidence of QPPI review.
+55,41,Review all metrics from the last quarter and verify whether they meet quality objectives; show an action plan for unmet metrics.
+55,36,Document minor NCs for missing metrics.
+56,41,Review metrics from two or three sprints to ensure the team has followed up on actions for improvement.
+57,41,Evaluate overall adherence to Agile practices.
+57,41,Check alignment and support with Engineering Management and stakeholders.
+58,41,Review the stakeholder survey dashboard and actions taken from feedback.
+58,37,"During demos and reviews, the PO must keep records of sprint reviews and establish a mechanism to track backlog feedback."
+60,36,Review and update retrospective action items every sprint and recommend consolidating items onto a single page if necessary.
+60,39,Implement other practices to ensure continual improvement and assign ownership to all action items.

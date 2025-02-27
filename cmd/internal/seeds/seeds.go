@@ -62,14 +62,13 @@ var seedConfigs = []SeedConfig{
 		ForeignKeys: []string{"requirement_id"},
 		BatchSize:   500,
 	},
-
-	// {
-	// 	TableName:   "evidence",
-	// 	CSVPath:     filepath.Join("cmd", "internal", "seeds", "csv", "evidence.csv"),
-	// 	Columns:     []string{"question_id", "expected"},
-	// 	ForeignKeys: []string{"question_id", "type_id", "status_id"},
-	// 	BatchSize:   500,
-	// },
+	{
+		TableName:   "evidence",
+		CSVPath:     filepath.Join("cmd", "internal", "seeds", "csv", "evidence.csv"),
+		Columns:     []string{"question_id", "type_id", "expected"},
+		ForeignKeys: []string{"question_id", "type_id", "status_id"},
+		BatchSize:   500,
+	},
 }
 
 // buildInsertQuery generates a parameterized query for batch inserts
@@ -258,10 +257,13 @@ type TableInfo struct {
 
 // Database tables configuration - ordered by dependency
 var tableInfo = []TableInfo{
-	{Name: "questions", Priority: 10},
-	{Name: "requirement", Priority: 20},
+	{Name: "reference_values", Priority: 10},
+	{Name: "reference_types", Priority: 20},
 	{Name: "requirement_level", Priority: 30},
-	{Name: "standards", Priority: 40},
+	{Name: "requirement", Priority: 40},
+	{Name: "evidence", Priority: 50},
+	{Name: "questions", Priority: 60},
+	{Name: "standards", Priority: 70},
 }
 
 // TruncateOptions provides configuration for truncation operations

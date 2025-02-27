@@ -39,12 +39,15 @@
 7,OBSERVATION,Observation,"Direct observation of processes, activities, or conditions."
 7,DEMONSTRATION,Demonstration,Live demonstration of system functionality or process execution.
 7,ANALYSIS,Analysis,"Detailed examination of data, trends, or metrics."
-8,REQUESTED,Requested,Evidence has been requested but not yet provided.
-8,SUBMITTED,Submitted,Evidence has been provided and awaiting review.
-8,ACCEPTED,Accepted,Evidence has been reviewed and accepted as satisfactory.
-8,REJECTED,Rejected,Evidence has been reviewed and deemed insufficient.
-8,PENDING,Pending Additional,Partially accepted but requires additional information.
-8,EXPIRED,Expired,Previously valid evidence that has now expired.
+8,NOT_REQUESTED,Not Requested,Evidence identified but not yet formally requested from the auditee.
+8,REQUESTED,Requested,Formal request for evidence has been sent to the auditee.
+8,OVERDUE,Overdue,Evidence was requested but not provided by the deadline.
+8,RECEIVED,Received,Evidence has been provided and is awaiting review.
+8,UNDER_REVIEW,Under Review,Evidence is currently being evaluated for adequacy.
+8,INSUFFICIENT,Insufficient,Evidence provided does not fully satisfy requirements.
+8,ADEQUATE,Adequate,Evidence satisfies the requirements but may have minor gaps.
+8,COMPLETE,Complete,Evidence fully satisfies all requirements.
+8,NOT_APPLICABLE,Not Applicable,Evidence requirement has been waived for valid reasons.
 9,FILE,File Attachment,Digital file uploaded as evidence.
 9,URL,URL Link,Web link to online evidence.
 9,REFERENCE,Reference,Reference to physical document or other non-digital evidence.

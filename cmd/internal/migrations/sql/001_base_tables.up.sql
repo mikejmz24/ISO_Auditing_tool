@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS evidence (
     , question_id INT NOT NULL
     , type_id INT NOT NULL COMMENT 'Reference to reference_values.id for evidence types'
     , expected TEXT NOT NULL
-    , status_id INT NOT NULL COMMENT 'Reference to reference_values.id for status'
+    , status_id INT NOT NULL DEFAULT 42 COMMENT 'Reference to reference_values.id for status'
     , created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     , CONSTRAINT fk_evidence_question FOREIGN KEY (question_id) REFERENCES questions (id)
