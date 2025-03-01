@@ -5,7 +5,6 @@ findings.type_id,Type of item classified as finding.
 findings.severity_id,Severity of the audit finding witih regards to its impact and priority.
 findings.status_id,Status of the finding item with regards to team actions.
 evidence.type_id,Evidence item classification.
-evidence.status_id,Status of the evidence item with regards to the audit process.
 evidence_provided.type_id,Provided evidence classification with reagards to format.
 evidence_provided.confidentiality_id,Confidentiality of the provided evidence item.
 evidence_provided.status_id,Status of the provided evidence item with regards to the audit process.

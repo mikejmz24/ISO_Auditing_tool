@@ -154,29 +154,6 @@ func (s *service) Seed() error {
 }
 
 func (s *service) Truncate() error {
-	// 	log.Println("Truncating seed tables...")
-	//
-	// 	// Disable foreign key checks
-	// 	if _, err := s.db.Exec("SET FOREIGN_KEY_CHECKS = 0"); err != nil {
-	// 		return fmt.Errorf("failed to disable foreign key checks: %w", err)
-	// 	}
-	//
-	// 	tables := []string{"question", "subsection", "section", "clause", "iso_standard"}
-	// 	for _, table := range tables {
-	// 		query := fmt.Sprintf("TRUNCATE TABLE %s", table)
-	// 		log.Printf("Executing query: %s", query)
-	// 		if _, err := s.db.Exec(query); err != nil {
-	// 			return fmt.Errorf("failed to truncate table %s: %w", table, err)
-	// 		}
-	// 	}
-	//
-	// 	// Re-enable foreign key checks
-	// 	if _, err := s.db.Exec("SET FOREIGN_KEY_CHECKS = 1"); err != nil {
-	// 		return fmt.Errorf("failed to re-enable foreign key checks: %w", err)
-	// 	}
-	//
-	// 	log.Println("All seed tables truncated successfully")
-	// 	return nil
 	if err := seeds.Truncate(s.db, seeds.DefaultTruncateOptions()); err != nil {
 		log.Fatalf("Failed to truncate database: %v", err)
 	}

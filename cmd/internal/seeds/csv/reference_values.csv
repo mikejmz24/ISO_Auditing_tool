@@ -39,29 +39,20 @@
 7,OBSERVATION,Observation,"Direct observation of processes, activities, or conditions."
 7,DEMONSTRATION,Demonstration,Live demonstration of system functionality or process execution.
 7,ANALYSIS,Analysis,"Detailed examination of data, trends, or metrics."
-8,NOT_REQUESTED,Not Requested,Evidence identified but not yet formally requested from the auditee.
-8,REQUESTED,Requested,Formal request for evidence has been sent to the auditee.
-8,OVERDUE,Overdue,Evidence was requested but not provided by the deadline.
-8,RECEIVED,Received,Evidence has been provided and is awaiting review.
-8,UNDER_REVIEW,Under Review,Evidence is currently being evaluated for adequacy.
-8,INSUFFICIENT,Insufficient,Evidence provided does not fully satisfy requirements.
-8,ADEQUATE,Adequate,Evidence satisfies the requirements but may have minor gaps.
-8,COMPLETE,Complete,Evidence fully satisfies all requirements.
-8,NOT_APPLICABLE,Not Applicable,Evidence requirement has been waived for valid reasons.
-9,FILE,File Attachment,Digital file uploaded as evidence.
-9,URL,URL Link,Web link to online evidence.
-9,REFERENCE,Reference,Reference to physical document or other non-digital evidence.
-9,TEXT,Text Description,Textual description of evidence.
-9,IMAGE,Image,Photographic evidence.
-9,VIDEO,Video,Video recording provided as evidence.
-10,PUBLIC,Public,Can be shared without restrictions.
-10,INTERNAL,Internal Only,For internal distribution within the audit team.
-10,CONFIDENTIAL,Confidential,Sensitive information with restricted access.
-10,RESTRICTED,Restricted,Highly sensitive with very limited access.
-10,CLASSIFIED,Classified,Requires special clearance and handling procedures.
-11,PENDING,Pending Review,Evidence provided but not yet reviewed.
-11,ACCEPTED,Accepted,Evidence has been reviewed and accepted.
-11,REJECTED,Rejected,Evidence has been reviewed and rejected.
-11,PARTIALLY_ACCEPTED,Partially Accepted,Evidence partially meets requirements but needs supplementation.
-11,EXPIRED,Expired,Evidence was valid but has now expired and requires updating.
-11,SUPERSEDED,Superseded,Evidence has been replaced by newer submission.
+8,FILE,File Attachment,Digital file uploaded as evidence.
+8,URL,URL Link,Web link to online evidence.
+8,REFERENCE,Reference,Reference to physical document or other non-digital evidence.
+8,TEXT,Text Description,Textual description of evidence.
+8,IMAGE,Image,Photographic evidence.
+8,VIDEO,Video,Video recording provided as evidence.
+9,PUBLIC,Public,Can be shared without restrictions.
+9,INTERNAL,Internal Only,For internal distribution within the audit team.
+9,CONFIDENTIAL,Confidential,Sensitive information with restricted access.
+9,RESTRICTED,Restricted,Highly sensitive with very limited access.
+9,CLASSIFIED,Classified,Requires special clearance and handling procedures.
+10,PENDING,Pending Review,Evidence provided but not yet reviewed.
+10,ACCEPTED,Accepted,Evidence has been reviewed and accepted.
+10,REJECTED,Rejected,Evidence has been reviewed and rejected.
+10,PARTIALLY_ACCEPTED,Partially Accepted,Evidence partially meets requirements but needs supplementation.
+10,EXPIRED,Expired,Evidence was valid but has now expired and requires updating.
+10,SUPERSEDED,Superseded,Evidence has been replaced by newer submission.
