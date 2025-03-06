@@ -7,6 +7,53 @@ import (
 	"sort"
 )
 
+func FindSingleFileInDir(address string) (string, error) {
+	root, err := GetProjectRoot()
+	if err != nil {
+		return "", fmt.Errorf("Failed to get project root: %w", err)
+	}
+
+	// Build the full path using the address argument
+	path := filepath.Join(root, address)
+
+	// Check if the directory exists
+	info, err := os.Stat(path)
+	if err != nil {
+		return "", fmt.Errorf("Failed to access directory %s: %w", path, err)
+	}
+
+	if !info.IsDir() {
+		return "", fmt.Errorf("%s is not a directory", path)
+	}
+
+	// Read directory contents
+	entries, err := os.ReadDir(path)
+	if err != nil {
+		return "", fmt.Errorf("Failed to read directory %s:: %w", path, err)
+	}
+
+	// Look for files (non-directories)
+	var fileNames []string
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			fileNames = append(fileNames, entry.Name())
+		}
+	}
+
+	// Check if we found exactly one file
+	if len(fileNames) == 0 {
+		return "", fmt.Errorf("No files found in directory %s", path)
+	}
+
+	if len(fileNames) > 1 {
+		return "", fmt.Errorf("Multiple files found in directory %s, expected only one", path)
+	}
+
+	// Return the full path to the single file
+	file := filepath.Join(path, fileNames[0])
+	return file, nil
+}
+
 // FindFilesInDir handles discovery of migration files based on parameters
 func FindFilesInDir(file string, direction string) ([]string, error) {
 	root, err := GetProjectRoot()

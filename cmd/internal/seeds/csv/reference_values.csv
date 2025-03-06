@@ -56,3 +56,9 @@
 10,PARTIALLY_ACCEPTED,Partially Accepted,Evidence partially meets requirements but needs supplementation.
 10,EXPIRED,Expired,Evidence was valid but has now expired and requires updating.
 10,SUPERSEDED,Superseded,Evidence has been replaced by newer submission.
+11,STANDARD,Standard,"A standard including its requirements, questions and evidence."
+11,AUDIT_PLAN,Audit Plan,An Auditing plan including its auditing plan requirements.
+12,DRAFT_DRAFT,Draft,Item is still owned by the user who is pending to request approval.
+12,DRAFT_PENDING_APPROVAL,Pending Approval,Item is submited and is waiting for publishing approval.
+12,DRAFT_REJECTED,Rejected,Item has been reviewed and rejected for publication.
+12,DRAFT_PUBLISHED,Published,Item has been published and is live in production.

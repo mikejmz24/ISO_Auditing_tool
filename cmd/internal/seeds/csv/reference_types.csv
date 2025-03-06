@@ -8,3 +8,5 @@ evidence.type_id,Evidence item classification.
 evidence_provided.type_id,Provided evidence classification with reagards to format.
 evidence_provided.confidentiality_id,Confidentiality of the provided evidence item.
 evidence_provided.status_id,Status of the provided evidence item with regards to the audit process.
+drafts.type_id,Type of item that is being drafted. Items in this category will likely have children data that will be normalized in their own tables.
+drafts.status_id,Status of the item being drafted.

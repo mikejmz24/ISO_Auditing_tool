@@ -155,10 +155,8 @@ CREATE TABLE IF NOT EXISTS evidence (
     , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     , CONSTRAINT fk_evidence_question FOREIGN KEY (question_id) REFERENCES questions (id)
     , CONSTRAINT fk_evidence_type FOREIGN KEY (type_id) REFERENCES reference_values (id)
-    , CONSTRAINT fk_evidence_status FOREIGN KEY (status_id) REFERENCES reference_values (id)
     , INDEX idx_evidence_question (question_id)
     , INDEX idx_evidence_type (type_id)
-    , INDEX idx_evidence_status (status_id)
 ) ENGINE = InnoDB COMMENT = 'Stores expected evidence requirements';
 
 -- Create evidence_provided table
@@ -300,3 +298,25 @@ CREATE TABLE IF NOT EXISTS materialized_queries (
     , UNIQUE KEY uk_materialized_query_name (query_name)
     , INDEX idx_materialized_queries_refresh (is_refreshing, next_refresh_at)
 ) ENGINE = InnoDB COMMENT = 'Stores materialized query results for complex joins simplyfying interface to consume data';
+
+CREATE TABLE IF NOT EXISTS drafts (
+    id INT AUTO_INCREMENT PRIMARY KEY
+    , type_id INT NOT NULL COMMENT 'Reference to reference_values.id ie standard, audit, audit_plan, finding'
+    , object_id INT NULL COMMENT 'ID of existing object being edited, NULL if new object'
+    , status_id INT NOT NULL COMMENT 'Reference to reference_values.id ie draft, pending_approval, rejected, published'
+    , `version` INT NOT NULL DEFAULT 1 COMMENT 'Draft version number'
+    , `data` JSON NOT NULL COMMENT 'Complete JSON representation of the object'
+    , diff JSON NULL COMMENT 'Changes from previous version (for existing objects)'
+    , user_id INT NOT NULL COMMENT 'User who created/owns this draft'
+    , approver_id INT NULL COMMENT 'User who approved/rejected the draft'
+    , approval_comment TEXT NULL
+    , published_at TIMESTAMP NULL COMMENT 'When the draft was published'
+    , publish_error TEXT NULL COMMENT 'Any error during publishing process'
+    , created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    , expires_at TIMESTAMP NULL COMMENT 'Optional expiration for abandoned drafts'
+
+    , INDEX idx_drafts_object (type_id, object_id)
+    , INDEX idx_drafts_user (user_id, status)
+    , INDEX idx_drafts_status (status_id, expires_at)
+) ENGINE = InnoDB COMMENT = 'Stores draft JSON data before publishing to normalized tables';

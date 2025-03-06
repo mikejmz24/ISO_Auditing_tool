@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS questions;
 DROP TABLE IF EXISTS requirement;
 DROP TABLE IF EXISTS requirement_level;
 DROP TABLE IF EXISTS audit_plans;
+DROP TABLE IF EXISTS drafts;
 
 -- Drop reference tables with their indexes and constraints
 DROP TABLE IF EXISTS standards;
