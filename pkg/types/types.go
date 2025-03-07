@@ -162,8 +162,8 @@ type Draft struct {
 	Data            json.RawMessage `json:"data"`
 	Diff            json.RawMessage `json:"diff"`
 	UserID          int             `json:"user_id"`
-	Approver        int             `json:"approver"`
-	ApproverComment string          `json:"approver_comment"`
+	ApproverID      int             `json:"approver_id"`
+	ApprovalComment string          `json:"approval_comment"`
 	PublishError    string          `json:"publish_error"`
 	CreatedAt       time.Time       `json:"created_at"`
 	UpdatedAt       time.Time       `json:"updated_at"`

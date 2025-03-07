@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ISO_Auditing_Tool/cmd/internal/database"
-	"ISO_Auditing_Tool/cmd/server"
+	"ISO_Auditing_Tool/internal/database"
+	"ISO_Auditing_Tool/internal/server"
 	"context"
 	"log"
 	"net/http"

@@ -1,8 +1,8 @@
 package database
 
 import (
-	"ISO_Auditing_Tool/cmd/internal/migrations"
-	"ISO_Auditing_Tool/cmd/internal/seeds"
+	"ISO_Auditing_Tool/internal/migrations"
+	"ISO_Auditing_Tool/internal/seeds"
 	"ISO_Auditing_Tool/pkg/utils"
 	"context"
 	"database/sql"
