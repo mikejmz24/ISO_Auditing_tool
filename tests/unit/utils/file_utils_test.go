@@ -16,15 +16,16 @@ type TestFileUtils struct {
 // Helper function to check file discovery for 'up' or 'down' files.
 func (suite *TestFileUtils) checkFilesForMigration(file string, direction string, expectedFiles []string) {
 	root, _ := utils.GetProjectRoot()
+	migrationsPath := filepath.Join(root, "internal", "migrations", "sql")
 
-	// Test FindSQLFiles
-	foundFiles, err := utils.FindFilesInDir(file, direction)
+	// Test FindFilesInDir with explicit path
+	foundFiles, err := utils.FindFilesInDir(migrationsPath, file, direction)
 	assert.NoError(suite.T(), err, "FindFilesInDir() returned an error")
 
 	// Normalize paths and ensure the found files match the expected ones
 	var expectedFilesRes []string
 	for _, expectedFile := range expectedFiles {
-		expectedFilesRes = append(expectedFilesRes, filepath.Join(root, "cmd", "internal", "migrations", "sql", expectedFile))
+		expectedFilesRes = append(expectedFilesRes, filepath.Join(root, "internal", "migrations", "sql", expectedFile))
 	}
 	assert.Equal(suite.T(), expectedFilesRes, foundFiles, "Mismatched files. Got: %v, Expected: %v", foundFiles, expectedFilesRes)
 }

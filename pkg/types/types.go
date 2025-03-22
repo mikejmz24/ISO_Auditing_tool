@@ -29,7 +29,7 @@ var (
 )
 
 // DecodeForm decodes url.Values into a struct using form tags
-func DecodeForm(values url.Values, dst interface{}) error {
+func DecodeForm(values url.Values, dst any) error {
 	v := reflect.ValueOf(dst)
 	if v.Kind() != reflect.Ptr {
 		return fmt.Errorf("destination must be a pointer")
@@ -168,6 +168,18 @@ type Draft struct {
 	CreatedAt       time.Time       `json:"created_at"`
 	UpdatedAt       time.Time       `json:"updated_at"`
 	ExpiresAt       time.Time       `json:"expires_at"`
+}
+
+type MaterializedQuery struct {
+	ID         int             `json:"id"`
+	Name       string          `json:"query_name"`
+	Definition string          `json:"query_definition"`
+	Data       json.RawMessage `json:"data"`
+	Version    int             `json:"version"`
+	ErrorCount int             `json:"error_count"`
+	LastError  string          `json:"last_error"`
+	CreatedAt  time.Time       `json:"created_at"`
+	UpdatedAt  *time.Time      `json:"updated_at"`
 }
 
 type ISOStandardForm struct {

@@ -24,11 +24,14 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	api.Use(middleware.ErrorHandler())
 	{
 		api.POST("/drafts", s.apiDraftController.Create)
+		api.PUT("/drafts/:id", s.apiDraftController.Update)
 		// api.GET("/iso_standards", s.apiIsoStandardController.GetAllISOStandards)
 		// api.GET("/iso_standards/:id", s.apiIsoStandardController.GetISOStandardByID)
 		// api.POST("/iso_standards", s.apiIsoStandardController.CreateISOStandard)
 		// api.PUT("/iso_standards/:id", s.apiIsoStandardController.UpdateISOStandard)
 		// api.DELETE("/iso_standards/:id", s.apiIsoStandardController.DeleteISOStandard)
+		api.GET("/query/:name", s.apiMaterializedQueryController.GetByName)
+		api.POST("/query", s.apiMaterializedQueryController.CreateOrUpdateMaterializedQuery)
 
 	}
 
@@ -40,7 +43,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 		// html.GET("/iso_standards/add", s.webIsoStandardController.RenderAddISOStandardForm)
 		// html.POST("/iso_standards", s.webIsoStandardController.CreateISOStandard)
 		// html.GET("/iso_standards/:id", s.webIsoStandardController.GetISOStandardByID)
-
+		html.GET("/standards/:id", s.webStandardController.GetByID)
 	}
 
 	return r

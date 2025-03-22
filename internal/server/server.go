@@ -11,55 +11,58 @@ import (
 
 	"ISO_Auditing_Tool/internal/database"
 	apiControllers "ISO_Auditing_Tool/pkg/controllers/api"
-	"ISO_Auditing_Tool/pkg/services/api"
+	webControllers "ISO_Auditing_Tool/pkg/controllers/web"
+	"ISO_Auditing_Tool/pkg/events"
+	"ISO_Auditing_Tool/pkg/services"
 
 	// webControllers "ISO_Auditing_Tool/cmd/web/controllers"
 	"ISO_Auditing_Tool/pkg/repositories"
 )
 
 type Server struct {
-	port               int
-	db                 database.Service
-	apiDraftController *apiControllers.ApiDraftController
-	// apiIsoStandardController *apiControllers.ApiIsoStandardController
-	// apiClauseController      *apiControllers.ApiClauseController
-	// webIsoStandardController *webControllers.WebIsoStandardController
-	// webClauseController      *webControllers.HtmlClauseController
+	port                           int
+	db                             database.Service
+	eventBus                       *events.EventBus
+	apiDraftController             *apiControllers.ApiDraftController
+	webStandardController          *webControllers.WebStandardController
+	apiMaterializedQueryController *apiControllers.ApiMaterializedQueryController
+
+	// Add more Controllers here...
 }
 
 func NewServer() *Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	db := database.New()
 
-	// if err := db.Migrate(); err != nil {
-	// 	fmt.Printf("Failed to migrate database: %v\n", err)
-	// 	os.Exit(1)
-	// }
-	//
-	// if err := db.Seed(); err != nil {
-	// 	fmt.Printf("Failed to seed the database: %v\n", err)
-	// 	os.Exit(1)
-	// }
+	eventBus := events.NewEventBus()
 
-	// clauseRepo := repositories.NewClauseRepository(db.DB())
-	// apiStandardRepo := repositories.NewIsoStandardRepository(db.DB())
+	eventBus.Subscribe(events.MaterializedQueryCreated, events.LoggingHandler())
+	eventBus.Subscribe(events.MaterializedQueryUpdated, events.LoggingHandler())
+	eventBus.Subscribe(events.MaterializedQueryRefreshRequested, events.LoggingHandler())
+
 	apiDraftRepo, _ := repositories.NewDraftRepository(db.DB())
 	apiDraftService := services.NewDraftService(apiDraftRepo)
 	apiDraftController := apiControllers.NewAPIDraftController(apiDraftService)
 
-	// apiClauseController := apiControllers.NewApiClauseController(clauseRepo)
-	// apiIsoStandardController := apiControllers.NewApiIsoStandardController(apiStandardRepo)
-	// htmlClauseController := webControllers.NewHtmlClauseController(clauseRepo)
-	// htmlIsoStandardController := webControllers.NewWebIsoStandardController(apiIsoStandardController)
+	apiMaterializedQueryRepo, _ := repositories.NewMaterializedQueriesRepository(db.DB())
+	apiMaterializedQueryService := services.NewMaterializedQueryService(apiMaterializedQueryRepo, eventBus)
+	apiMaterializedQueryController := apiControllers.NewApiMaterializedQueryController(apiMaterializedQueryService)
+
+	webStandardRepo, _ := repositories.NewStandardRepository(db.DB())
+	webStandardService := services.NewStandardService(webStandardRepo)
+	webStandardController := webControllers.NewWebStandardController(webStandardService)
+
+	// Add more repos, services, and controllers here...
 
 	return &Server{
-		port:               port,
-		db:                 db,
-		apiDraftController: apiDraftController,
-		// 	apiIsoStandardController: apiIsoStandardController,
-		// 	apiClauseController:      apiClauseController,
-		// 	webIsoStandardController: htmlIsoStandardController,
-		// 	webClauseController:      htmlClauseController,
+		port:                           port,
+		db:                             db,
+		eventBus:                       eventBus,
+		apiDraftController:             apiDraftController,
+		apiMaterializedQueryController: apiMaterializedQueryController,
+		webStandardController:          webStandardController,
+
+		// Add more Controllers here...
 	}
 }
 

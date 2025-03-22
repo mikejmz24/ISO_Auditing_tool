@@ -55,13 +55,16 @@ func FindSingleFileInDir(address string) (string, error) {
 }
 
 // FindFilesInDir handles discovery of migration files based on parameters
-func FindFilesInDir(file string, direction string) ([]string, error) {
-	root, err := GetProjectRoot()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get project root: %w", err)
-	}
+func FindFilesInDir(migrationsPath string, file string, direction string) ([]string, error) {
+	if migrationsPath == "" {
+		root, err := GetProjectRoot()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get project root: %w", err)
+		}
 
-	migrationsPath := filepath.Join(root, "cmd", "internal", "migrations", "sql")
+		// Use default path if nont provided
+		migrationsPath = filepath.Join(root, "internal", "migrations", "sql")
+	}
 	var files []string
 
 	// Handle specific file case
@@ -76,6 +79,7 @@ func FindFilesInDir(file string, direction string) ([]string, error) {
 		pattern := filepath.Join(migrationsPath, fmt.Sprintf("*.%s.sql", direction))
 		// log.Printf("Searching for migrations with pattern: %s", pattern)
 
+		var err error
 		files, err = filepath.Glob(pattern)
 		if err != nil {
 			return nil, fmt.Errorf("failed to find migration files: %w", err)

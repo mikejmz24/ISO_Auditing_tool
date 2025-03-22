@@ -286,17 +286,12 @@ CREATE TABLE IF NOT EXISTS materialized_queries (
     , query_definition TEXT NOT NULL COMMENT 'Original query that generates the data'
     , `data` JSON NOT NULL
     , `version` INT NOT NULL DEFAULT 1
-    , is_refreshing BOOLEAN NOT NULL DEFAULT FALSE
-    , refresh_interval INT NOT NULL DEFAULT 3600 COMMENT 'Refresh interval in seconds'
-    , last_refresh_at TIMESTAMP NULL
-    , next_refresh_at TIMESTAMP NULL
-    , refresh_started_at TIMESTAMP NULL
     , error_count INT NOT NULL DEFAULT 0
     , last_error TEXT
     , created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     , UNIQUE KEY uk_materialized_query_name (query_name)
-    , INDEX idx_materialized_queries_refresh (is_refreshing, next_refresh_at)
+    , INDEX idx_materialized_queries_name (query_name)
 ) ENGINE = InnoDB COMMENT = 'Stores materialized query results for complex joins simplyfying interface to consume data';
 
 CREATE TABLE IF NOT EXISTS drafts (
@@ -317,6 +312,6 @@ CREATE TABLE IF NOT EXISTS drafts (
     , expires_at TIMESTAMP NULL COMMENT 'Optional expiration for abandoned drafts'
 
     , INDEX idx_drafts_object (type_id, object_id)
-    , INDEX idx_drafts_user (user_id, status)
+    , INDEX idx_drafts_user (user_id, status_id)
     , INDEX idx_drafts_status (status_id, expires_at)
 ) ENGINE = InnoDB COMMENT = 'Stores draft JSON data before publishing to normalized tables';

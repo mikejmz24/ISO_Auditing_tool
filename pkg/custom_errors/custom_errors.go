@@ -32,15 +32,16 @@ var (
 	ErrInvalidJSON     = NewError(context.Background(), ErrCodeInvalidJSON, "Invalid JSON format", http.StatusBadRequest, nil)
 	ErrInvalidFormData = NewError(context.Background(), ErrCodeInvalidFormData, "Invalid form data format", http.StatusBadRequest, nil)
 	ErrInvalidData     = NewError(context.Background(), ErrCodeInvalidData, "Invalid data", http.StatusBadRequest, nil)
+	ErrNotFound        = NewError(context.Background(), ErrCodeNotFound, "Entity not found", http.StatusNotFound, nil)
 )
 
 // CustomError represents a structured error with context and metadata
 type CustomError struct {
-	Code       ErrorCode              `json:"code"`
-	Message    string                 `json:"message"`
-	StatusCode int                    `json:"status"`
-	Context    map[string]interface{} `json:"-"`
-	Err        error                  `json:"-"` // Wrapped error
+	Code       ErrorCode      `json:"code"`
+	Message    string         `json:"message"`
+	StatusCode int            `json:"status"`
+	Context    map[string]any `json:"-"`
+	Err        error          `json:"-"` // Wrapped error
 }
 
 // Error implements the error interface

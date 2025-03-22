@@ -1,16 +1,18 @@
 package templates
 
 import "ISO_Auditing_Tool/templates/components"
+import "time"
 
 templ Base(content templ.Component) {
-	<!DOCTYPE html>
-	<html lang="en">
-		@components.Header()
-		<body>
-			<main class="min-h-screen w-full ">
-				@content
-			</main>
-		</body>
-		@components.Footer()
-	</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+  <main class="min-h-screen w-full ">
+    @content
+  </main>
+</body>
+@components.Footer(string(time.Now().Year()))
+
+</html>
 }

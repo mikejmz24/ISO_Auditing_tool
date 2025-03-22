@@ -1,4 +1,4 @@
-// Contains draaft business logic
+// Contains draft business logic
 // Calls the draft repository and applies transformations
 package services
 
@@ -17,5 +17,15 @@ func NewDraftService(repo repositories.DraftRepository) *DraftService {
 }
 
 func (s *DraftService) Create(ctx context.Context, draft types.Draft) (types.Draft, error) {
-	return s.Repo.Create(ctx, draft)
+	return s.Repo.CreateDraft(ctx, draft)
+
+	// Create
+	// GetByID
+	// Update
+	// Delete
+	// List
+}
+
+func (s *DraftService) Update(ctx context.Context, draft types.Draft) (types.Draft, error) {
+	return s.Repo.UpdateDraft(ctx, draft)
 }

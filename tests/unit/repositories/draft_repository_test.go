@@ -233,6 +233,93 @@ func (s *DraftRepositoryFailureTestSuite) TestCreateFailure() {
 	}
 }
 
+func (s *DraftRepositorySuccessTestSuite) TestUpdateSuccess() {
+	draftUpdate := types.Draft{
+		TypeID:          1,
+		ObjectID:        2,
+		StatusID:        3,
+		Version:         1,
+		Data:            json.RawMessage(`{"field1": "value1", "field2": "value2"}`),
+		Diff:            json.RawMessage(`{"changed": "content"}`),
+		UserID:          42,
+		ApproverID:      0,
+		ApprovalComment: "",
+		PublishError:    "",
+		CreatedAt:       time.Now().UTC().Truncate(time.Second),
+		UpdatedAt:       time.Now().UTC().Truncate(time.Second),
+		ExpiresAt:       time.Now().UTC().Truncate(time.Second).Add(24 * time.Hour),
+	}
+	testCases := []struct {
+		name     string
+		draft    types.Draft
+		expected types.Draft
+	}{
+		{
+			name:     "Basic_draft",
+			draft:    draftUpdate,
+			expected: draftUpdate,
+		},
+		// 	{
+		// 		name: "Draft_with_approver_id",
+		// 		draft: types.Draft{
+		// 			TypeID:          1,
+		// 			ObjectID:        2,
+		// 			StatusID:        3,
+		// 			Version:         2,
+		// 			Data:            json.RawMessage(`{"field1": "updated"}`),
+		// 			Diff:            json.RawMessage(`{"field1": {"old": "value1", "new": "updated"}}`),
+		// 			UserID:          42,
+		// 			ApproverID:      10,
+		// 			ApprovalComment: "Looks good",
+		// 			PublishError:    "",
+		// 			CreatedAt:       time.Now().UTC().Truncate(time.Second),
+		// 			UpdatedAt:       time.Now().UTC().Truncate(time.Second),
+		// 			ExpiresAt:       time.Now().UTC().Truncate(time.Second).Add(24 * time.Hour),
+		// 		},
+		// 		expected: types.Draft{
+		// 			ID:              1,
+		// 			TypeID:          1,
+		// 			ObjectID:        2,
+		// 			StatusID:        3,
+		// 			Version:         2,
+		// 			Data:            json.RawMessage(`{"field1": "updated"}`),
+		// 			Diff:            json.RawMessage(`{"field1": {"old": "value1", "new": "updated"}}`),
+		// 			UserID:          42,
+		// 			ApproverID:      10,
+		// 			ApprovalComment: "Looks good",
+		// 			PublishError:    "",
+		// 		},
+		// 	},
+	}
+
+	for _, tc := range testCases {
+		s.Run(tc.name, func() {
+			// Arrange - set up the mock
+			s.mock.ExpectExec("").WillReturnResult(sqlmock.NewResult(1, 1))
+
+			// Act
+			result, err := s.repo.Update(context.Background(), tc.draft)
+
+			// Assert
+			s.NoError(err)
+			s.Equal(tc.expected.ID, result.ID)
+			s.Equal(tc.expected.TypeID, result.TypeID)
+			s.Equal(tc.expected.ObjectID, result.ObjectID)
+			s.Equal(tc.expected.StatusID, result.StatusID)
+			s.Equal(tc.expected.Version, result.Version)
+			s.Equal(tc.expected.UserID, result.UserID)
+			s.Equal(string(tc.expected.Data), string(result.Data))
+			s.Equal(string(tc.expected.Diff), string(result.Diff))
+			s.Equal(tc.expected.ApproverID, result.ApproverID)
+			s.Equal(tc.expected.ApprovalComment, result.ApprovalComment)
+			s.Equal(tc.expected.PublishError, result.PublishError)
+
+			// Verify expectations were met
+			s.NoError(s.mock.ExpectationsWereMet())
+		})
+	}
+}
+
 // TestNewDraftRepository tests the repository constructor
 func (s *DraftRepositorySuccessTestSuite) TestNewDraftRepository() {
 	testCases := []struct {

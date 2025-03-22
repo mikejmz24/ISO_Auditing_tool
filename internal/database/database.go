@@ -122,7 +122,7 @@ func (s *service) DB() *sql.DB {
 }
 
 func (s *service) Migrate(file string, direction string) error {
-	files, err := utils.FindFilesInDir(file, direction)
+	files, err := utils.FindFilesInDir("", file, direction)
 	if err != nil {
 		return nil
 	}
