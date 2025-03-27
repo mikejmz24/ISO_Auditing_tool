@@ -16,7 +16,6 @@ func LoggingHandler() Handler {
 	}
 }
 
-// TODO: Review is the Payload makes sense for the uses cases of the app
 type MaterializedQueryPayload struct {
 	QueryName       string          `json:"query_name"`
 	QuerySQL        string          `json:"query_definition"`

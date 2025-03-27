@@ -42,12 +42,24 @@ func (cc *ApiMaterializedQueryController) CreateOrUpdateMaterializedQuery(c *gin
 		return
 	}
 
-	event := events.CreateMaterializedQueryEvent(requestData)
+	var event events.Event
+	var statusCode int
+
+	materialized, _ := cc.Service.GetByName(c.Request.Context(), requestData.Name)
+	if materialized.Name != requestData.Name {
+		// New query
+		event = events.CreateMaterializedQueryEvent(requestData)
+		statusCode = http.StatusCreated
+	} else {
+		// Existing query
+		event = events.RefreshMaterializedQueryEvent(requestData)
+		statusCode = http.StatusOK
+	}
 
 	if err := cc.Service.PublishEvent(c.Request.Context(), event); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Publish error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Materialized query creation/update request accepted"})
+	c.JSON(statusCode, event)
 }
