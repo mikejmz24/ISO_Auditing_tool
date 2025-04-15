@@ -51,7 +51,7 @@ var seedConfigs = []SeedConfig{
 	{
 		TableName:   "requirement",
 		CSVPath:     filepath.Join("internal", "seeds", "csv", "requirements.csv"),
-		Columns:     []string{"standard_id", "level_id", "parent_id", "reference_code", "name", "description"},
+		Columns:     []string{"standard_id", "requirement_level_id", "parent_id", "reference_code", "name", "description"},
 		ForeignKeys: []string{"standard_id"},
 		BatchSize:   500,
 	},

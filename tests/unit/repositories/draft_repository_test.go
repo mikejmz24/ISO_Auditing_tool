@@ -147,7 +147,7 @@ func (s *DraftRepositorySuccessTestSuite) TestCreateSuccess() {
 			s.mock.ExpectExec("").WillReturnResult(sqlmock.NewResult(1, 1))
 
 			// Act
-			result, err := s.repo.Create(context.Background(), tc.draft)
+			result, err := s.repo.CreateDraft(context.Background(), tc.draft)
 
 			// Assert
 			s.NoError(err)
@@ -220,7 +220,7 @@ func (s *DraftRepositoryFailureTestSuite) TestCreateFailure() {
 			tc.mockSetup(s.mock)
 
 			// Act
-			result, err := s.repo.Create(context.Background(), tc.draft)
+			result, err := s.repo.CreateDraft(context.Background(), tc.draft)
 
 			// Assert
 			s.Error(err)
@@ -298,7 +298,7 @@ func (s *DraftRepositorySuccessTestSuite) TestUpdateSuccess() {
 			s.mock.ExpectExec("").WillReturnResult(sqlmock.NewResult(1, 1))
 
 			// Act
-			result, err := s.repo.Update(context.Background(), tc.draft)
+			result, err := s.repo.UpdateDraft(context.Background(), tc.draft)
 
 			// Assert
 			s.NoError(err)

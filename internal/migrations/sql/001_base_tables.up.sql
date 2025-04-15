@@ -114,8 +114,8 @@ CREATE TABLE IF NOT EXISTS standards (
 CREATE TABLE IF NOT EXISTS requirement_level (
     id INT AUTO_INCREMENT PRIMARY KEY
     , standard_id INT NOT NULL
-    , level_name VARCHAR(255) NOT NULL COMMENT 'The naming convention for each level. e.g., Clause, Subclause, Requirement, etc.'
     , level_order INT NOT NULL COMMENT 'The level of the item. Nested location'
+    , level_name VARCHAR(255) NOT NULL COMMENT 'The naming convention for each level. e.g., Clause, Subclause, Requirement, etc.'
     , CONSTRAINT fk_requirement_level_standard FOREIGN KEY (standard_id) REFERENCES standards (id)
     , INDEX idx_requirements_level_standard (standard_id)
 ) ENGINE = InnoDB COMMENT = 'Stores the requirement level for standards allowing different schemas';
@@ -124,12 +124,13 @@ CREATE TABLE IF NOT EXISTS requirement_level (
 CREATE TABLE IF NOT EXISTS requirement (
     id INT AUTO_INCREMENT PRIMARY KEY
     , standard_id INT NOT NULL
-    , level_id INT NOT NULL COMMENT 'The level of the item. Nested location'
+    , requirement_level_id INT NOT NULL COMMENT 'Use the requirement_level.id to join'
     , parent_id INT NULL COMMENT 'The parent id of the requirement for self joining. Can be null'
     , reference_code VARCHAR(50) NOT NULL COMMENT 'The number of the standard item. e.g., 4.1, 2.3.4, etc'
     , `name` VARCHAR(255) NOT NULL COMMENT 'The given name. e.g., Planning'
     , `description` TEXT NULL
     , CONSTRAINT fk_requirement_standard FOREIGN KEY (standard_id) REFERENCES standards (id)
+    , CONSTRAINT fk_requirement_requirement_level FOREIGN KEY (requirement_level_id) REFERENCES requirement_level (id)
     , INDEX idx_requirements_level_standard (standard_id)
 ) ENGINE = InnoDB COMMENT = 'Stores the requirement level for standards allowing different schemas';
 
