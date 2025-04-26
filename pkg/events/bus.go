@@ -3,8 +3,17 @@ package events
 import (
 	"context"
 	"fmt"
+	"log"
 	"sync"
 )
+
+// ErrorCallback defines a function that handles errors during event processing
+type ErrorCallback func(eventType EventType, err error)
+
+// DefaultErrorCallback provides a standard logging implementation for event errors
+func DefaultErrorCallback(eventType EventType, err error) {
+	log.Printf("Error handling event %s: %v", eventType, err)
+}
 
 type EventBus struct {
 	mu       sync.RWMutex
@@ -37,27 +46,63 @@ func (b *EventBus) SubscribeAll(handler Handler) {
 	}
 }
 
+// Publish synchronously publishes an event to all handlers
 func (b *EventBus) Publish(ctx context.Context, event Event) error {
 	b.mu.RLock()
-	handlers := b.handlers[event.Type]
+	handlers, exists := b.handlers[event.Type]
 	b.mu.RUnlock()
 
-	var lastErr error
+	if !exists {
+		// No handlers registered for this event type
+		return nil
+	}
+
+	var errs []error
 	for _, handler := range handlers {
 		if err := handler(ctx, event); err != nil {
-			lastErr = err
-			// Consider logging the error but continuing to process other handlers
+			errs = append(errs, fmt.Errorf("handler error for event %s: %w", event.Type, err))
 		}
 	}
 
-	return lastErr
+	if len(errs) > 0 {
+		// Return just the first error for simplicity
+		// In a more robust implementation, you might want to create a multi-error type
+		return errs[0]
+	}
+	return nil
 }
 
+// AsyncPublish asynchronously publishes an event
+// This maintains compatibility with existing code
 func (b *EventBus) AsyncPublish(ctx context.Context, event Event) {
+	b.AsyncPublishWithCallback(ctx, event, nil)
+}
+
+// AsyncPublishWithCallback asynchronously publishes an event with a custom error callback
+func (b *EventBus) AsyncPublishWithCallback(ctx context.Context, event Event, errCallback ErrorCallback) {
+	// Create a background context for continuing work after original context is done
+	bgCtx := context.Background()
+
+	go func() {
+		if err := b.Publish(bgCtx, event); err != nil {
+			if errCallback != nil {
+				errCallback(event.Type, err)
+			} else {
+				DefaultErrorCallback(event.Type, err)
+			}
+		}
+	}()
+}
+
+// AsyncPublishWithContext publishes an event asynchronously but respects the provided context
+func (b *EventBus) AsyncPublishWithContext(ctx context.Context, event Event, errCallback ErrorCallback) {
 	go func() {
 		if err := b.Publish(ctx, event); err != nil {
-			// Log the erro but don't propagete it sinve this is AsyncPublish
-			fmt.Printf("Error publishing event %s: %v\n", event.Type, err)
+			if errCallback != nil {
+				errCallback(event.Type, err)
+			} else {
+				DefaultErrorCallback(event.Type, err)
+			}
 		}
 	}()
 }

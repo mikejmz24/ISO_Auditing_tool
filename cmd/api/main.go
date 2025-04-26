@@ -79,8 +79,8 @@ func main() {
 		return
 	}
 
-	srv := server.NewServer()
-	httpServer := srv.Start()
+	srv, _ := server.NewServer()
+	httpServer, _ := srv.Start()
 
 	// Channel to listen for interrupt signals
 	stop := make(chan os.Signal, 1)
