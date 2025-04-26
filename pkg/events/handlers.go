@@ -18,7 +18,7 @@ func CreateMaterializedQueryEvent(materializedQuery types.MaterializedQuery) Eve
 	return NewMaterializedQueryCreatedEvent(
 		materializedQuery.Name,
 		materializedQuery.Definition,
-		materializedQuery.Data,
+		materializedQuery.Data, // This will be json.RawMessage but the function expects []byte
 		materializedQuery.Version,
 		materializedQuery.ErrorCount,
 		materializedQuery.LastError,
@@ -30,7 +30,7 @@ func RefreshMaterializedQueryEvent(materializedQuery types.MaterializedQuery) Ev
 	return NewMaterializedQueryRefreshEvent(
 		materializedQuery.Name,
 		materializedQuery.Definition,
-		materializedQuery.Data,
+		materializedQuery.Data, // This will be json.RawMessage but the function expects []byte
 		materializedQuery.Version,
 		materializedQuery.ErrorCount,
 		materializedQuery.LastError,
@@ -42,7 +42,7 @@ func UpdateMaterializedQueryEvent(materializedQuery types.MaterializedQuery) Eve
 	return NewMaterializedQueryUpdatedEvent(
 		materializedQuery.Name,
 		materializedQuery.Definition,
-		materializedQuery.Data,
+		materializedQuery.Data, // This will be json.RawMessage but the function expects []byte
 		materializedQuery.Version,
 		materializedQuery.ErrorCount,
 		materializedQuery.LastError,

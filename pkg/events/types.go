@@ -2,6 +2,7 @@ package events
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 )
 
@@ -16,6 +17,16 @@ const (
 	MaterializedQueryCreated          EventType = "materialized_query_created"
 	MaterializedQueryUpdated          EventType = "materialized_query_updated"
 )
+
+// MaterializedQuerySource is an interface for objects that can be used to create materialized query events
+type MaterializedQuerySource interface {
+	GetName() string
+	GetDefinition() string
+	GetData() []byte // Keep as []byte to match current interface
+	GetVersion() int
+	GetErrorCount() int
+	GetLastError() string
+}
 
 type Event struct {
 	Type    EventType
@@ -36,12 +47,12 @@ type DataChangePayload struct {
 }
 
 type MaterializedQueryPayload struct {
-	QueryName       string `json:"query_name"`
-	QuerySQL        string `json:"query_definition"`
-	QueryData       []byte `json:"data"`
-	QueryVersion    int    `json:"version"`
-	QueryErrorCount int    `json:"error_count"`
-	QueryLastError  string `json:"last_error"`
+	QueryName       string          `json:"query_name"`
+	QuerySQL        string          `json:"query_definition"`
+	QueryData       json.RawMessage `json:"data"`
+	QueryVersion    int             `json:"version"`
+	QueryErrorCount int             `json:"error_count"`
+	QueryLastError  string          `json:"last_error"`
 }
 
 // Helper functions for creating specific events
@@ -86,13 +97,14 @@ func NewDataDeletedEvent(entityType string, entityID any, affectedQuery string) 
 }
 
 // NewMaterializedQueryCreatedEvent creates a MaterializedQueryCreated event
-func NewMaterializedQueryCreatedEvent(name string, sql string, data []byte, version int, errorCount int, lastError string) Event {
+// Update the parameter type from []byte to json.RawMessage
+func NewMaterializedQueryCreatedEvent(name string, sql string, data json.RawMessage, version int, errorCount int, lastError string) Event {
 	return Event{
 		Type: MaterializedQueryCreated,
 		Payload: MaterializedQueryPayload{
 			QueryName:       name,
 			QuerySQL:        sql,
-			QueryData:       data,
+			QueryData:       data, // No conversion needed now
 			QueryVersion:    version,
 			QueryErrorCount: errorCount,
 			QueryLastError:  lastError,
@@ -101,13 +113,14 @@ func NewMaterializedQueryCreatedEvent(name string, sql string, data []byte, vers
 }
 
 // NewMaterializedQueryUpdatedEvent creates a MaterializedQueryUpdated event
-func NewMaterializedQueryUpdatedEvent(name string, sql string, data []byte, version int, errorCount int, lastError string) Event {
+// Update the parameter type from []byte to json.RawMessage
+func NewMaterializedQueryUpdatedEvent(name string, sql string, data json.RawMessage, version int, errorCount int, lastError string) Event {
 	return Event{
 		Type: MaterializedQueryUpdated,
 		Payload: MaterializedQueryPayload{
 			QueryName:       name,
 			QuerySQL:        sql,
-			QueryData:       data,
+			QueryData:       data, // No conversion needed now
 			QueryVersion:    version,
 			QueryErrorCount: errorCount,
 			QueryLastError:  lastError,
@@ -116,13 +129,14 @@ func NewMaterializedQueryUpdatedEvent(name string, sql string, data []byte, vers
 }
 
 // NewMaterializedQueryRefreshEvent creates a MaterializedQueryRefreshRequested event
-func NewMaterializedQueryRefreshEvent(name string, sql string, data []byte, version int, errorCount int, lastError string) Event {
+// Update the parameter type from []byte to json.RawMessage
+func NewMaterializedQueryRefreshEvent(name string, sql string, data json.RawMessage, version int, errorCount int, lastError string) Event {
 	return Event{
 		Type: MaterializedQueryRefreshRequested,
 		Payload: MaterializedQueryPayload{
 			QueryName:       name,
 			QuerySQL:        sql,
-			QueryData:       data,
+			QueryData:       data, // No conversion needed now
 			QueryVersion:    version,
 			QueryErrorCount: errorCount,
 			QueryLastError:  lastError,
