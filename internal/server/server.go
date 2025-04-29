@@ -85,12 +85,12 @@ func LoadConfig() (*Config, error) {
 }
 
 type Server struct {
-	config                         *Config
-	db                             database.Service
-	eventBus                       *events.EventBus
-	apiDraftController             *apiControllers.ApiDraftController
-	webStandardController          *webControllers.WebStandardController
-	apiMaterializedQueryController *apiControllers.ApiMaterializedQueryController
+	config                             *Config
+	db                                 database.Service
+	eventBus                           *events.EventBus
+	apiDraftController                 *apiControllers.ApiDraftController
+	webStandardController              *webControllers.WebStandardController
+	apiMaterializedJSONQueryController *apiControllers.ApiMaterializedJSONQueryController
 }
 
 // NewServer creates a new server instance with the given configuration
@@ -113,38 +113,60 @@ func NewServer() (*Server, error) {
 	eventBus.Subscribe(events.MaterializedQueryRefreshRequested, events.LoggingHandler())
 
 	// Setup repositories
-	apiDraftRepo, err := repositories.NewDraftRepository(db.DB())
+	draftRepo, err := repositories.NewDraftRepository(db.DB())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create draft repository: %w", err)
 	}
 
-	apiMaterializedQueryRepo, err := repositories.NewMaterializedQueriesRepository(db.DB())
+	materializedJSONQueryRepo, err := repositories.NewMaterializedQueriesJSONRepository(db.DB())
 	if err != nil {
-		return nil, fmt.Errorf("failed to create materialized query repository: %w", err)
+		return nil, fmt.Errorf("failed to create materialized JSON query repository: %w", err)
 	}
 
-	webStandardRepo, err := repositories.NewStandardRepository(db.DB())
+	materializedHTMLQueryRepo, err := repositories.NewMaterializedQueriesHTMLRepository(db.DB())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create materialized HTML query repository: %w", err)
+	}
+
+	standardRepo, err := repositories.NewStandardRepository(db.DB())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create standard repository: %w", err)
 	}
 
+	requirementRepo, err := repositories.NewRequirementRepository(db.DB())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create requirement repository: %w", err)
+	}
+
+	questionRepo, err := repositories.NewQuestionRepository(db.DB())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create question repository: %w", err)
+	}
+
+	evidenceRepo, err := repositories.NewEvidenceRepository(db.DB())
+	if err != nil {
+		return nil, fmt.Errorf("failed to create evidence repository: %w", err)
+	}
+
 	// Setup services
-	apiDraftService := services.NewDraftService(apiDraftRepo)
-	apiMaterializedQueryService := services.NewMaterializedQueryService(apiMaterializedQueryRepo, eventBus)
-	webStandardService := services.NewStandardService(webStandardRepo)
+	draftService := services.NewDraftService(draftRepo)
+	// apiMaterializedQueryService := services.NewMaterializedJSONService(apiMaterializedQueryRepo, eventBus)
+	materializedJSONQueryService := services.NewMaterializedJSONService(materializedJSONQueryRepo, standardRepo, requirementRepo, questionRepo, evidenceRepo, eventBus)
+	htmlCacheService := services.NewHTMLCacheService(materializedHTMLQueryRepo, materializedJSONQueryRepo, standardRepo, requirementRepo, eventBus)
+	standardService := services.NewStandardService(standardRepo)
 
 	// Setup controllers
-	apiDraftController := apiControllers.NewAPIDraftController(apiDraftService)
-	apiMaterializedQueryController := apiControllers.NewApiMaterializedQueryController(apiMaterializedQueryService)
-	webStandardController := webControllers.NewWebStandardController(webStandardService)
+	apiDraftController := apiControllers.NewAPIDraftController(draftService)
+	apiMaterializedQueryController := apiControllers.NewApiMaterializedJSONQueryController(materializedJSONQueryService, htmlCacheService, eventBus)
+	webStandardController := webControllers.NewWebStandardController(standardService)
 
 	return &Server{
-		config:                         config,
-		db:                             db,
-		eventBus:                       eventBus,
-		apiDraftController:             apiDraftController,
-		apiMaterializedQueryController: apiMaterializedQueryController,
-		webStandardController:          webStandardController,
+		config:                             config,
+		db:                                 db,
+		eventBus:                           eventBus,
+		apiDraftController:                 apiDraftController,
+		apiMaterializedJSONQueryController: apiMaterializedQueryController,
+		webStandardController:              webStandardController,
 	}, nil
 }
 

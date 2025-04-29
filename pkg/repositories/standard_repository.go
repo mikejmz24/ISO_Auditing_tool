@@ -13,6 +13,14 @@ func NewStandardRepository(db *sql.DB) (StandardRepository, error) {
 	}, nil
 }
 
+func (r *repository) GetAllStandards(ctx context.Context) ([]types.Standard, error) {
+	return []types.Standard{}, nil
+}
+
+func (r *repository) GetByIDWithFullHierarchyStandard(ctx context.Context, standard types.Standard) (types.Standard, error) {
+	return types.Standard{}, nil
+}
+
 func (r *repository) GetByIDStandard(ctx context.Context, standard types.Standard) (types.Standard, error) {
 	query := `
   INSERT INTO drafts (

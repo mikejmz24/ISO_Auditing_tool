@@ -30,9 +30,8 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 		// api.POST("/iso_standards", s.apiIsoStandardController.CreateISOStandard)
 		// api.PUT("/iso_standards/:id", s.apiIsoStandardController.UpdateISOStandard)
 		// api.DELETE("/iso_standards/:id", s.apiIsoStandardController.DeleteISOStandard)
-		api.GET("/query/:name", s.apiMaterializedQueryController.GetByName)
-		api.POST("/query", s.apiMaterializedQueryController.CreateOrUpdateMaterializedQuery)
-
+		api.GET("/query/:name", s.apiMaterializedJSONQueryController.GetByName)
+		api.POST("/query", s.apiMaterializedJSONQueryController.CreateOrUpdateJSONQuery)
 	}
 
 	// // HTML routes group

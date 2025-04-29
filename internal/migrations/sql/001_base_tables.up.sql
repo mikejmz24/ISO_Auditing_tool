@@ -280,20 +280,35 @@ CREATE TABLE IF NOT EXISTS comments (
     , INDEX idx_comments_user (user_id)
 ) ENGINE = InnoDB COMMENT = 'Stores user comments';
 
--- Create materialized_queries table with improved structure
-CREATE TABLE IF NOT EXISTS materialized_queries (
+CREATE TABLE IF NOT EXISTS materialized_json_queries (
     id INT AUTO_INCREMENT PRIMARY KEY
     , query_name VARCHAR(100) NOT NULL
     , query_definition TEXT NOT NULL COMMENT 'Original query that generates the data'
+    , entity_type VARCHAR(50) NOT NULL COMMENT 'Standard, Requirement, Question, Evidence, Standard_Full'
+    , entity_id INT NOT NULL
     , `data` JSON NOT NULL
     , `version` INT NOT NULL DEFAULT 1
     , error_count INT NOT NULL DEFAULT 0
     , last_error TEXT
     , created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    , UNIQUE KEY uk_materialized_query_name (query_name)
-    , INDEX idx_materialized_queries_name (query_name)
-) ENGINE = InnoDB COMMENT = 'Stores materialized query results for complex joins simplyfying interface to consume data';
+    , UNIQUE KEY uk_materialized_json_query_name (query_name)
+    , INDEX idx_materialized_json_queries_name (query_name)
+) ENGINE = InnoDB COMMENT = 'Stores materialized JSON query results for complex joins simplyfying interface to consume data';
+
+CREATE TABLE IF NOT EXISTS materialized_html_queries (
+    id INT AUTO_INCREMENT PRIMARY KEY
+    , query_name VARCHAR(100) NOT NULL
+    , view_path VARCHAR(255) NOT NULL COMMENT 'Path or identifier for the view this HTML represents'
+    , html_content LONGTEXT NOT NULL
+    , `version` INT NOT NULL DEFAULT 1
+    , error_count INT NOT NULL DEFAULT 0
+    , last_error TEXT
+    , created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    , updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    , UNIQUE KEY uk_materialized_html_query_name (query_name)
+    , INDEX idx_materialized_html_queries_name (query_name)
+) ENGINE = InnoDB COMMENT = 'Stores pre-rendered HTMLM content for web views';
 
 CREATE TABLE IF NOT EXISTS drafts (
     id INT AUTO_INCREMENT PRIMARY KEY

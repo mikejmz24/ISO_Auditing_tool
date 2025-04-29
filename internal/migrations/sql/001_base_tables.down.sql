@@ -4,7 +4,8 @@ SET NAMES utf8mb4;
 SET sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- Drop materialized views
-DROP TABLE IF EXISTS materialized_queries;
+DROP TABLE IF EXISTS materialized_json_queries;
+DROP TABLE IF EXISTS materialized_html_queries;
 
 -- Drop linking/junction tables with their indexes and constraints
 DROP TABLE IF EXISTS audit_questions_comments;

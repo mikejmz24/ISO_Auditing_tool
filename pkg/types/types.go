@@ -170,16 +170,30 @@ type Draft struct {
 	ExpiresAt       time.Time       `json:"expires_at"`
 }
 
-type MaterializedQuery struct {
+type MaterializedJSONQuery struct {
 	ID         int             `json:"id"`
 	Name       string          `json:"query_name"`
-	Definition string          `json:"query_definition"`
+	EntityType string          `json:"entity_type"` // standard, requirement, question, evidence, standard_full
+	EntityID   int             `json:"entity_id"`
+	Definition string          `json:"query_definition"` // Query definition to debug on MySQL
 	Data       json.RawMessage `json:"data"`
 	Version    int             `json:"version"`
 	ErrorCount int             `json:"error_count"`
 	LastError  string          `json:"last_error"`
 	CreatedAt  time.Time       `json:"created_at"`
 	UpdatedAt  *time.Time      `json:"updated_at"`
+}
+
+type MaterializedHTMLQuery struct {
+	ID          int        `json:"id"`
+	Name        string     `json:"query_name"`
+	ViewPath    string     `json:"view_path"`
+	HTMLContent string     `json:"html_content"`
+	Version     int        `json:"version"`
+	ErrorCount  int        `json:"error_count"`
+	LastError   string     `json:"last_error"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
 }
 
 type ISOStandardForm struct {
