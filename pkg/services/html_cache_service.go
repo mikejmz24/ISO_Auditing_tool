@@ -161,7 +161,7 @@ func (s *HTMLCacheService) regenerateHTMLForStandard(ctx context.Context, standa
 	}
 
 	// Step 2: Parse the JSON data
-	var standardData map[string]interface{}
+	var standardData map[string]any
 	if err := json.Unmarshal(materializedJSON.Data, &standardData); err != nil {
 		return fmt.Errorf("failed to unmarshal standard data: %w", err)
 	}
@@ -180,7 +180,7 @@ func (s *HTMLCacheService) regenerateHTMLForStandard(ctx context.Context, standa
 	return nil
 }
 
-func (s *HTMLCacheService) generateAuditView(ctx context.Context, standardID int, standardData map[string]interface{}) error {
+func (s *HTMLCacheService) generateAuditView(ctx context.Context, standardID int, standardData map[string]any) error {
 	// Get the standard information for the view
 	standard := types.Standard{ID: standardID}
 	std, err := s.StandardRepo.GetByIDStandard(ctx, standard)
@@ -218,7 +218,7 @@ func (s *HTMLCacheService) generateAuditView(ctx context.Context, standardID int
 	return err
 }
 
-func (s *HTMLCacheService) generateRequirementsView(ctx context.Context, standardID int, standardData map[string]interface{}) error {
+func (s *HTMLCacheService) generateRequirementsView(ctx context.Context, standardID int, standardData map[string]any) error {
 	// Get the standard information for the view
 	standard := types.Standard{ID: standardID}
 	std, err := s.StandardRepo.GetByIDStandard(ctx, standard)

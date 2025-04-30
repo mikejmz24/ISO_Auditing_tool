@@ -37,7 +37,7 @@ type TestTypesFormEncoding struct {
 // Test cases struct to be shared across suites
 type testCase struct {
 	name string
-	obj  interface{}
+	obj  any
 }
 
 // TestTypesToFormMethods
@@ -199,7 +199,7 @@ func TestTypes(t *testing.T) {
 	suite.Run(t, new(TestTypesToFormMethods))
 }
 
-func createNewInstance(obj interface{}) interface{} {
+func createNewInstance(obj any) any {
 	t := reflect.TypeOf(obj)
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()

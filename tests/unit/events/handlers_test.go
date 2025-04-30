@@ -12,18 +12,72 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
-// EventHandlersTestSuite is a test suite for event handlers functionality
-type EventHandlersTestSuite struct {
+// Mock service implementations
+type MockEntityService struct {
+	mock.Mock
+}
+
+func (m *MockEntityService) HandleEntityChange(ctx context.Context, payload events.EntityChangePayload) error {
+	args := m.Called(ctx, payload)
+	return args.Error(0)
+}
+
+type MockMaterializedQueryService struct {
+	mock.Mock
+}
+
+func (m *MockMaterializedQueryService) HandleQueryEvent(ctx context.Context, eventType events.EventType, payload events.MaterializedQueryPayload) error {
+	args := m.Called(ctx, eventType, payload)
+	return args.Error(0)
+}
+
+type MockHTMLCacheService struct {
+	mock.Mock
+}
+
+func (m *MockHTMLCacheService) RefreshHTMLForQuery(ctx context.Context, queryName string) error {
+	args := m.Called(ctx, queryName)
+	return args.Error(0)
+}
+
+// Suite for testing logging handlers
+type LoggingHandlerSuite struct {
 	suite.Suite
 	logOutput *bytes.Buffer
-	oldOutput io.Writer // Changed from log.Writer to io.Writer
+	oldOutput io.Writer
+}
+
+// Suite for testing entity change handlers
+type EntityChangeHandlerSuite struct {
+	suite.Suite
+	mockEntityService *MockEntityService
+}
+
+// Suite for testing materialized query handlers
+type MaterializedQueryHandlerSuite struct {
+	suite.Suite
+	mockQueryService *MockMaterializedQueryService
+}
+
+// Suite for testing HTML cache handlers
+type HTMLCacheHandlerSuite struct {
+	suite.Suite
+	mockHTMLCacheService *MockHTMLCacheService
+}
+
+// Suite for testing typed event handlers
+type TypedEventHandlerSuite struct {
+	suite.Suite
+	logOutput *bytes.Buffer
+	oldOutput io.Writer
 }
 
 // SetupTest initializes the test environment before each test
-func (suite *EventHandlersTestSuite) SetupTest() {
+func (suite *LoggingHandlerSuite) SetupTest() {
 	// Capture log output
 	suite.logOutput = new(bytes.Buffer)
 	suite.oldOutput = log.Writer()
@@ -31,13 +85,44 @@ func (suite *EventHandlersTestSuite) SetupTest() {
 }
 
 // TearDownTest cleans up after each test
-func (suite *EventHandlersTestSuite) TearDownTest() {
+func (suite *LoggingHandlerSuite) TearDownTest() {
 	// Restore log output
 	log.SetOutput(suite.oldOutput)
 }
 
-// TestLoggingHandler_LogsEventInformation tests the LoggingHandler function
-func (suite *EventHandlersTestSuite) TestLoggingHandler_LogsEventInformation() {
+// SetupTest for EntityChangeHandlerSuite
+func (suite *EntityChangeHandlerSuite) SetupTest() {
+	suite.mockEntityService = new(MockEntityService)
+}
+
+// SetupTest for MaterializedQueryHandlerSuite
+func (suite *MaterializedQueryHandlerSuite) SetupTest() {
+	suite.mockQueryService = new(MockMaterializedQueryService)
+}
+
+// SetupTest for HTMLCacheHandlerSuite
+func (suite *HTMLCacheHandlerSuite) SetupTest() {
+	suite.mockHTMLCacheService = new(MockHTMLCacheService)
+}
+
+// SetupTest initializes the test environment before TypedEventHandlerSuite tests
+func (suite *TypedEventHandlerSuite) SetupTest() {
+	// Capture log output
+	suite.logOutput = new(bytes.Buffer)
+	suite.oldOutput = log.Writer()
+	log.SetOutput(suite.logOutput)
+}
+
+// TearDownTest cleans up after TypedEventHandlerSuite tests
+func (suite *TypedEventHandlerSuite) TearDownTest() {
+	// Restore log output
+	log.SetOutput(suite.oldOutput)
+}
+
+// --- Logging Handler Tests ---
+
+// TestLoggingHandler_WhenEventReceived_LogsEventInformation tests the LoggingHandler function
+func (suite *LoggingHandlerSuite) TestLoggingHandler_WhenEventReceived_LogsEventInformation() {
 	// Arrange
 	handler := events.LoggingHandler()
 	event := events.NewDataCreatedEvent("user", 123, "users_query")
@@ -53,8 +138,262 @@ func (suite *EventHandlersTestSuite) TestLoggingHandler_LogsEventInformation() {
 	assert.Contains(suite.T(), logOutput, "Payload type: events.DataChangePayload")
 }
 
-// TestTypedEventHandler_DataChangeHandler tests the TypedEventHandler with DataChangeHandler
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_DataChangeHandler_CallsHandlerWithTypedPayload() {
+// --- Entity Change Handler Tests ---
+
+// TestEntityChangeHandler_WhenEntityChangedEvent_CallsServiceWithPayload tests handling of entity change events
+func (suite *EntityChangeHandlerSuite) TestEntityChangeHandler_WhenEntityChangedEvent_CallsServiceWithPayload() {
+	// Arrange
+	ctx := context.Background()
+	payload := events.EntityChangePayload{
+		EntityType: events.EntityStandard,
+		EntityID:   123,
+		ChangeType: events.ChangeCreated,
+	}
+	event := events.Event{
+		Type:    events.EntityChanged,
+		Payload: payload,
+	}
+
+	suite.mockEntityService.On("HandleEntityChange", ctx, payload).Return(nil)
+	handler := events.EntityChangeHandler(suite.mockEntityService)
+
+	// Act
+	err := handler(ctx, event)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+	suite.mockEntityService.AssertExpectations(suite.T())
+}
+
+// TestEntityChangeHandler_WhenLegacyDataCreatedEvent_ConvertsAndCallsService tests handling legacy event types
+func (suite *EntityChangeHandlerSuite) TestEntityChangeHandler_WhenLegacyDataCreatedEvent_ConvertsAndCallsService() {
+	// Arrange
+	ctx := context.Background()
+	event := events.NewDataCreatedEvent("standard", 123, "standards_query")
+
+	// The payload that should be converted to by the handler
+	expectedPayload := events.EntityChangePayload{
+		EntityType:    events.EntityType("standard"),
+		EntityID:      123,
+		ChangeType:    events.ChangeType("created"),
+		AffectedQuery: "standards_query",
+	}
+
+	suite.mockEntityService.On("HandleEntityChange", ctx, mock.MatchedBy(func(p events.EntityChangePayload) bool {
+		return p.EntityType == expectedPayload.EntityType &&
+			p.EntityID == expectedPayload.EntityID &&
+			p.ChangeType == expectedPayload.ChangeType &&
+			p.AffectedQuery == expectedPayload.AffectedQuery
+	})).Return(nil)
+
+	handler := events.EntityChangeHandler(suite.mockEntityService)
+
+	// Act
+	err := handler(ctx, event)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+	suite.mockEntityService.AssertExpectations(suite.T())
+}
+
+// TestEntityChangeHandler_WhenInvalidPayload_ReturnsError tests handling of invalid payloads
+func (suite *EntityChangeHandlerSuite) TestEntityChangeHandler_WhenInvalidPayload_ReturnsError() {
+	// Arrange
+	ctx := context.Background()
+	invalidEvent := events.Event{
+		Type:    events.EntityChanged,
+		Payload: "invalid payload",
+	}
+
+	handler := events.EntityChangeHandler(suite.mockEntityService)
+
+	// Act
+	err := handler(ctx, invalidEvent)
+
+	// Assert
+	assert.Error(suite.T(), err)
+	assert.Contains(suite.T(), err.Error(), "invalid payload type")
+	// Service should not be called with invalid payload
+	suite.mockEntityService.AssertNotCalled(suite.T(), "HandleEntityChange")
+}
+
+// TestEntityChangeHandler_WhenServiceReturnsError_PropagatesError tests error propagation
+func (suite *EntityChangeHandlerSuite) TestEntityChangeHandler_WhenServiceReturnsError_PropagatesError() {
+	// Arrange
+	ctx := context.Background()
+	expectedError := errors.New("service error")
+	payload := events.EntityChangePayload{
+		EntityType: events.EntityStandard,
+		EntityID:   123,
+		ChangeType: events.ChangeCreated,
+	}
+	event := events.Event{
+		Type:    events.EntityChanged,
+		Payload: payload,
+	}
+
+	suite.mockEntityService.On("HandleEntityChange", ctx, payload).Return(expectedError)
+	handler := events.EntityChangeHandler(suite.mockEntityService)
+
+	// Act
+	err := handler(ctx, event)
+
+	// Assert
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), expectedError, err)
+	suite.mockEntityService.AssertExpectations(suite.T())
+}
+
+// --- Materialized Query Handler Tests ---
+
+// TestMaterializedQueryHandler_WhenValidEvent_CallsServiceWithPayload tests materialized query handler
+func (suite *MaterializedQueryHandlerSuite) TestMaterializedQueryHandler_WhenValidEvent_CallsServiceWithPayload() {
+	// Arrange
+	ctx := context.Background()
+	payload := events.MaterializedQueryPayload{
+		QueryName: "test_query",
+		QuerySQL:  "SELECT * FROM test",
+	}
+	event := events.Event{
+		Type:    events.MaterializedQueryCreated,
+		Payload: payload,
+	}
+
+	suite.mockQueryService.On("HandleQueryEvent", ctx, events.MaterializedQueryCreated, payload).Return(nil)
+	handler := events.MaterializedQueryHandler(suite.mockQueryService)
+
+	// Act
+	err := handler(ctx, event)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+	suite.mockQueryService.AssertExpectations(suite.T())
+}
+
+// TestMaterializedQueryHandler_WhenInvalidPayload_ReturnsError tests handling of invalid payloads
+func (suite *MaterializedQueryHandlerSuite) TestMaterializedQueryHandler_WhenInvalidPayload_ReturnsError() {
+	// Arrange
+	ctx := context.Background()
+	invalidEvent := events.Event{
+		Type:    events.MaterializedQueryCreated,
+		Payload: "invalid payload",
+	}
+
+	handler := events.MaterializedQueryHandler(suite.mockQueryService)
+
+	// Act
+	err := handler(ctx, invalidEvent)
+
+	// Assert
+	assert.Error(suite.T(), err)
+	assert.Contains(suite.T(), err.Error(), "invalid payload type")
+	// Service should not be called with invalid payload
+	suite.mockQueryService.AssertNotCalled(suite.T(), "HandleQueryEvent")
+}
+
+// --- HTML Cache Handler Tests ---
+
+// TestHTMLCacheHandler_WhenValidEvent_CallsServiceWithQueryName tests HTML cache handler
+func (suite *HTMLCacheHandlerSuite) TestHTMLCacheHandler_WhenValidEvent_CallsServiceWithQueryName() {
+	// Arrange
+	ctx := context.Background()
+	payload := events.MaterializedQueryPayload{
+		QueryName: "test_query",
+		QuerySQL:  "SELECT * FROM test",
+	}
+	event := events.Event{
+		Type:    events.MaterializedQueryUpdated,
+		Payload: payload,
+	}
+
+	suite.mockHTMLCacheService.On("RefreshHTMLForQuery", ctx, "test_query").Return(nil)
+	handler := events.HTMLCacheHandler(suite.mockHTMLCacheService)
+
+	// Act
+	err := handler(ctx, event)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+	suite.mockHTMLCacheService.AssertExpectations(suite.T())
+}
+
+// TestHTMLCacheHandler_WhenInvalidPayload_ReturnsError tests handling of invalid payloads
+func (suite *HTMLCacheHandlerSuite) TestHTMLCacheHandler_WhenInvalidPayload_ReturnsError() {
+	// Arrange
+	ctx := context.Background()
+	invalidEvent := events.Event{
+		Type:    events.MaterializedQueryUpdated,
+		Payload: "invalid payload",
+	}
+
+	handler := events.HTMLCacheHandler(suite.mockHTMLCacheService)
+
+	// Act
+	err := handler(ctx, invalidEvent)
+
+	// Assert
+	assert.Error(suite.T(), err)
+	assert.Contains(suite.T(), err.Error(), "invalid payload type")
+	// Service should not be called with invalid payload
+	suite.mockHTMLCacheService.AssertNotCalled(suite.T(), "RefreshHTMLForQuery")
+}
+
+// --- Event Creation Helper Function Tests ---
+
+// TestCreateMaterializedQueryEvent_WhenGivenMaterializedQuery_CreatesCorrectEvent tests event creation from MaterializedQuery
+func (suite *TypedEventHandlerSuite) TestCreateMaterializedQueryEvent_WhenGivenMaterializedQuery_CreatesCorrectEvent() {
+	// Arrange
+	materializedQuery := types.MaterializedJSONQuery{
+		Name:       "test_query",
+		Definition: "SELECT * FROM test",
+		Data:       json.RawMessage(`{"test":"data"}`),
+		Version:    1,
+		ErrorCount: 2,
+		LastError:  "test error",
+	}
+
+	// Act
+	event := events.CreateMaterializedQueryEvent(materializedQuery)
+
+	// Assert
+	assert.Equal(suite.T(), events.MaterializedQueryCreated, event.Type)
+
+	payload, err := events.GetMaterializedQueryPayload(event)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), materializedQuery.Name, payload.QueryName)
+	assert.Equal(suite.T(), materializedQuery.Data, payload.QueryData)
+	assert.Equal(suite.T(), materializedQuery.Version, payload.QueryVersion)
+	assert.Equal(suite.T(), materializedQuery.ErrorCount, payload.QueryErrorCount)
+	assert.Equal(suite.T(), materializedQuery.LastError, payload.QueryLastError)
+}
+
+// TestUpdateMaterializedQueryEvent_WhenGivenMaterializedQuery_CreatesCorrectEvent tests update event creation
+func (suite *TypedEventHandlerSuite) TestUpdateMaterializedQueryEvent_WhenGivenMaterializedQuery_CreatesCorrectEvent() {
+	// Arrange
+	materializedQuery := types.MaterializedJSONQuery{
+		Name:       "test_query",
+		Definition: "SELECT * FROM test",
+		Data:       json.RawMessage(`{"test":"data"}`),
+		Version:    1,
+		ErrorCount: 2,
+		LastError:  "test error",
+	}
+
+	// Act
+	event := events.UpdateMaterializedQueryEvent(materializedQuery)
+
+	// Assert
+	assert.Equal(suite.T(), events.MaterializedQueryUpdated, event.Type)
+
+	payload, err := events.GetMaterializedQueryPayload(event)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), materializedQuery.Name, payload.QueryName)
+}
+
+// --- Typed Event Handler Tests ---
+
+// TestTypedEventHandler_WhenDataChangeHandler_CallsHandlerWithTypedPayload tests typed event handler with DataChangeHandler
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenDataChangeHandler_CallsHandlerWithTypedPayload() {
 	// Arrange
 	handlerCalled := false
 	capturedType := events.EventType("")
@@ -85,8 +424,48 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_DataChangeHandler_Cal
 	assert.Equal(suite.T(), 123, capturedEntityID)
 }
 
-// TestTypedEventHandler_MaterializedQueryHandler tests the TypedEventHandler with MaterializedQueryHandler
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_MaterializedQueryHandler_CallsHandlerWithTypedPayload() {
+// TestTypedEventHandler_WhenEntityChangeHandler_CallsHandlerWithTypedPayload tests entity change handler
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenEntityChangeHandler_CallsHandlerWithTypedPayload() {
+	// Arrange
+	handlerCalled := false
+	capturedType := events.EventType("")
+	capturedEntityType := events.EntityType("")
+	capturedEntityID := 0
+
+	handler := events.TypedEventHandler{
+		EntityChangeHandler: func(ctx context.Context, eventType events.EventType, payload events.EntityChangePayload) error {
+			handlerCalled = true
+			capturedType = eventType
+			capturedEntityType = payload.EntityType
+			capturedEntityID = payload.EntityID.(int)
+			return nil
+		},
+	}
+
+	payload := events.EntityChangePayload{
+		EntityType: events.EntityStandard,
+		EntityID:   123,
+		ChangeType: events.ChangeCreated,
+	}
+	event := events.Event{
+		Type:    events.EntityChanged,
+		Payload: payload,
+	}
+	ctx := context.Background()
+
+	// Act
+	err := handler.HandleEvent(ctx, event)
+
+	// Assert
+	assert.NoError(suite.T(), err)
+	assert.True(suite.T(), handlerCalled)
+	assert.Equal(suite.T(), events.EntityChanged, capturedType)
+	assert.Equal(suite.T(), events.EntityStandard, capturedEntityType)
+	assert.Equal(suite.T(), 123, capturedEntityID)
+}
+
+// TestTypedEventHandler_WhenMaterializedQueryHandler_CallsHandlerWithTypedPayload tests materialized query handler
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenMaterializedQueryHandler_CallsHandlerWithTypedPayload() {
 	// Arrange
 	handlerCalled := false
 	capturedType := events.EventType("")
@@ -103,7 +482,7 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_MaterializedQueryHand
 		},
 	}
 
-	event := events.NewMaterializedQueryCreatedEvent("test_query", "SELECT * FROM test", []byte("test_data"), 1, 0, "")
+	event := events.NewMaterializedQueryCreatedEvent("test_query", "SELECT * FROM test", json.RawMessage(`{"test":"data"}`), 1, 0, "")
 	ctx := context.Background()
 
 	// Act
@@ -117,8 +496,8 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_MaterializedQueryHand
 	assert.Equal(suite.T(), "SELECT * FROM test", capturedQuerySQL)
 }
 
-// TestTypedEventHandler_FallbackHandler tests the fallback handler for unknown event types
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_FallbackHandler_CalledForUnhandledEventTypes() {
+// TestTypedEventHandler_WhenFallbackHandler_CalledForUnhandledEventTypes tests the fallback handler
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenFallbackHandler_CalledForUnhandledEventTypes() {
 	// Arrange
 	dataChangeCalled := false
 	materializedQueryCalled := false
@@ -159,8 +538,8 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_FallbackHandler_Calle
 	assert.Equal(suite.T(), events.EventType("custom_event"), capturedEventType)
 }
 
-// TestTypedEventHandler_DataChangeHandlerReturnsError tests error propagation from DataChangeHandler
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_DataChangeHandlerReturnsError_PropagatesError() {
+// TestTypedEventHandler_WhenDataChangeHandlerReturnsError_PropagatesError tests error propagation
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenDataChangeHandlerReturnsError_PropagatesError() {
 	// Arrange
 	expectedErr := errors.New("data handler error")
 
@@ -181,8 +560,8 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_DataChangeHandlerRetu
 	assert.Equal(suite.T(), expectedErr, err)
 }
 
-// TestTypedEventHandler_AsHandler tests conversion of TypedEventHandler to Handler
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_AsHandler_ReturnsHandlerFunction() {
+// TestTypedEventHandler_WhenAsHandlerCalled_ReturnsHandlerFunction tests conversion to Handler
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenAsHandlerCalled_ReturnsHandlerFunction() {
 	// Arrange
 	handlerCalled := false
 
@@ -208,8 +587,8 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_AsHandler_ReturnsHand
 	assert.True(suite.T(), handlerCalled)
 }
 
-// TestTypedEventHandler_InvalidPayload tests handling of invalid payloads
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_InvalidPayload_LogsErrorButDoesNotCallHandler() {
+// TestTypedEventHandler_WhenInvalidPayload_LogsErrorButDoesNotPanic tests handling of invalid payloads
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenInvalidPayload_LogsErrorButDoesNotPanic() {
 	// Arrange
 	handlerCalled := false
 
@@ -237,8 +616,8 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_InvalidPayload_LogsEr
 	assert.Contains(suite.T(), logOutput, "Error extracting DataChangePayload")
 }
 
-// TestTypedEventHandler_NoHandlersRegistered tests behavior with no handlers
-func (suite *EventHandlersTestSuite) TestTypedEventHandler_NoHandlersRegistered_LogsAndReturnsNil() {
+// TestTypedEventHandler_WhenNoHandlersRegistered_LogsAndReturnsNil tests behavior with no handlers
+func (suite *TypedEventHandlerSuite) TestTypedEventHandler_WhenNoHandlersRegistered_LogsAndReturnsNil() {
 	// Arrange
 	handler := events.TypedEventHandler{}
 	event := events.NewDataCreatedEvent("user", 123, "users_query")
@@ -253,81 +632,11 @@ func (suite *EventHandlersTestSuite) TestTypedEventHandler_NoHandlersRegistered_
 	assert.Contains(suite.T(), logOutput, "No handler for event type")
 }
 
-// TestCreateMaterializedQueryEvent_CreatesEventFromMaterializedQuery tests helper function for MaterializedQuery events
-func (suite *EventHandlersTestSuite) TestCreateMaterializedQueryEvent_CreatesEventFromMaterializedQuery() {
-	// Create a real MaterializedQuery with json.RawMessage
-	materializedQuery := types.MaterializedQuery{
-		Name:       "test_query",
-		Definition: "SELECT * FROM test",
-		Data:       json.RawMessage(`test_data`), // Use json.RawMessage for JSON data
-		Version:    1,
-		ErrorCount: 2,
-		LastError:  "test error",
-	}
-
-	// Act
-	event := events.CreateMaterializedQueryEvent(materializedQuery)
-
-	// Assert
-	assert.Equal(suite.T(), events.MaterializedQueryCreated, event.Type)
-
-	payload, err := events.GetMaterializedQueryPayload(event)
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), materializedQuery.Name, payload.QueryName)
-	assert.Equal(suite.T(), materializedQuery.Definition, payload.QuerySQL)
-	assert.Equal(suite.T(), materializedQuery.Data, payload.QueryData) // Compare json.RawMessage values
-	assert.Equal(suite.T(), materializedQuery.Version, payload.QueryVersion)
-	assert.Equal(suite.T(), materializedQuery.ErrorCount, payload.QueryErrorCount)
-	assert.Equal(suite.T(), materializedQuery.LastError, payload.QueryLastError)
-}
-
-// TestRefreshMaterializedQueryEvent tests helper function for refresh events
-func (suite *EventHandlersTestSuite) TestRefreshMaterializedQueryEvent_CreatesEventFromMaterializedQuery() {
-	// Arrange
-	materializedQuery := types.MaterializedQuery{
-		Name:       "test_query",
-		Definition: "SELECT * FROM test",
-		Data:       []byte("test_data"),
-		Version:    1,
-		ErrorCount: 2,
-		LastError:  "test error",
-	}
-
-	// Act
-	event := events.RefreshMaterializedQueryEvent(materializedQuery)
-
-	// Assert
-	assert.Equal(suite.T(), events.MaterializedQueryRefreshRequested, event.Type)
-
-	payload, err := events.GetMaterializedQueryPayload(event)
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), materializedQuery.Name, payload.QueryName)
-}
-
-// TestUpdateMaterializedQueryEvent tests helper function for update events
-func (suite *EventHandlersTestSuite) TestUpdateMaterializedQueryEvent_CreatesEventFromMaterializedQuery() {
-	// Arrange
-	materializedQuery := types.MaterializedQuery{
-		Name:       "test_query",
-		Definition: "SELECT * FROM test",
-		Data:       []byte("test_data"),
-		Version:    1,
-		ErrorCount: 2,
-		LastError:  "test error",
-	}
-
-	// Act
-	event := events.UpdateMaterializedQueryEvent(materializedQuery)
-
-	// Assert
-	assert.Equal(suite.T(), events.MaterializedQueryUpdated, event.Type)
-
-	payload, err := events.GetMaterializedQueryPayload(event)
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), materializedQuery.Name, payload.QueryName)
-}
-
-// Run the test suite
-func TestEventHandlersSuite(t *testing.T) {
-	suite.Run(t, new(EventHandlersTestSuite))
+// Run all test suites
+func TestHandlersSuites(t *testing.T) {
+	suite.Run(t, new(LoggingHandlerSuite))
+	suite.Run(t, new(EntityChangeHandlerSuite))
+	suite.Run(t, new(MaterializedQueryHandlerSuite))
+	suite.Run(t, new(HTMLCacheHandlerSuite))
+	suite.Run(t, new(TypedEventHandlerSuite))
 }

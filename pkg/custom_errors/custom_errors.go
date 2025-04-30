@@ -58,14 +58,14 @@ func (e *CustomError) Unwrap() error {
 }
 
 // WithContext adds context to an existing error
-func (e *CustomError) WithContext(ctx map[string]interface{}) *CustomError {
+func (e *CustomError) WithContext(ctx map[string]any) *CustomError {
 	e.Context = ctx
 	return e
 }
 
 // NewError creates a new CustomError with context
 func NewError(ctx context.Context, code ErrorCode, message string, statusCode int, err error) *CustomError {
-	ctxValues := make(map[string]interface{})
+	ctxValues := make(map[string]any)
 	if requestID := ctx.Value("request_id"); requestID != nil {
 		ctxValues["request_id"] = requestID
 	}
@@ -122,9 +122,9 @@ func MaxFieldCharacters(ctx context.Context, fieldName string, chars int) *Custo
 
 // For backward compatibility with existing code
 type ErrorResponse struct {
-	Code    ErrorCode              `json:"code"`
-	Message string                 `json:"message"`
-	Details map[string]interface{} `json:"details,omitempty"`
+	Code    ErrorCode      `json:"code"`
+	Message string         `json:"message"`
+	Details map[string]any `json:"details,omitempty"`
 }
 
 // ToResponse converts a CustomError to an API response
@@ -146,6 +146,6 @@ func IsErrorCode(err error, code ErrorCode) bool {
 }
 
 // As is a helper function that wraps errors.As
-func As(err error, target interface{}) bool {
+func As(err error, target any) bool {
 	return errors.As(err, target)
 }

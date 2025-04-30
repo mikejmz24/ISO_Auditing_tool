@@ -46,13 +46,13 @@ type Handler func(ctx context.Context, event Event) error
 
 // Enhanced data change payload with stronger typing
 type EntityChangePayload struct {
-	EntityType    EntityType  `json:"entity_type"`
-	EntityID      any         `json:"entity_id"`
-	ChangeType    ChangeType  `json:"change_type"`
-	ParentType    EntityType  `json:"parent_type,omitempty"`
-	ParentID      any         `json:"parent_id,omitempty"`
-	AffectedQuery string      `json:"affected_query,omitempty"`
-	Data          interface{} `json:"data,omitempty"` // Optional entity data for direct use
+	EntityType    EntityType `json:"entity_type"`
+	EntityID      any        `json:"entity_id"`
+	ChangeType    ChangeType `json:"change_type"`
+	ParentType    EntityType `json:"parent_type,omitempty"`
+	ParentID      any        `json:"parent_id,omitempty"`
+	AffectedQuery string     `json:"affected_query,omitempty"`
+	Data          any        `json:"data,omitempty"` // Optional entity data for direct use
 }
 
 type MaterializedQueryPayload struct {
@@ -72,7 +72,7 @@ func NewEntityChangeEvent(
 	affectedQuery string,
 	parentType EntityType,
 	parentID any,
-	data interface{},
+	data any,
 ) Event {
 	return Event{
 		Type: EntityChanged,
@@ -89,19 +89,19 @@ func NewEntityChangeEvent(
 }
 
 // Helper convenience functions for common entity types
-func NewStandardEvent(standardID any, changeType ChangeType, affectedQuery string, data interface{}) Event {
+func NewStandardEvent(standardID any, changeType ChangeType, affectedQuery string, data any) Event {
 	return NewEntityChangeEvent(EntityStandard, standardID, changeType, affectedQuery, "", nil, data)
 }
 
-func NewRequirementEvent(requirementID any, changeType ChangeType, standardID any, affectedQuery string, data interface{}) Event {
+func NewRequirementEvent(requirementID any, changeType ChangeType, standardID any, affectedQuery string, data any) Event {
 	return NewEntityChangeEvent(EntityRequirement, requirementID, changeType, affectedQuery, EntityStandard, standardID, data)
 }
 
-func NewQuestionEvent(questionID any, changeType ChangeType, requirementID any, affectedQuery string, data interface{}) Event {
+func NewQuestionEvent(questionID any, changeType ChangeType, requirementID any, affectedQuery string, data any) Event {
 	return NewEntityChangeEvent(EntityQuestion, questionID, changeType, affectedQuery, EntityRequirement, requirementID, data)
 }
 
-func NewEvidenceEvent(evidenceID any, changeType ChangeType, questionID any, affectedQuery string, data interface{}) Event {
+func NewEvidenceEvent(evidenceID any, changeType ChangeType, questionID any, affectedQuery string, data any) Event {
 	return NewEntityChangeEvent(EntityEvidence, evidenceID, changeType, affectedQuery, EntityQuestion, questionID, data)
 }
 

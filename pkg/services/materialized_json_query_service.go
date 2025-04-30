@@ -130,7 +130,7 @@ func (s *MaterializedJSONService) debounceUpdate(key string, fn func()) {
 	s.debounceTimers[key] = time.AfterFunc(s.debounceInterval, fn)
 }
 
-func (s *MaterializedJSONService) updateEntity(ctx context.Context, entityType events.EntityType, entityID int, data interface{}) error {
+func (s *MaterializedJSONService) updateEntity(ctx context.Context, entityType events.EntityType, entityID int, data any) error {
 	switch entityType {
 	case events.EntityStandard:
 		return s.updateStandard(ctx, entityID, data)
@@ -145,7 +145,7 @@ func (s *MaterializedJSONService) updateEntity(ctx context.Context, entityType e
 	}
 }
 
-func (s *MaterializedJSONService) updateStandard(ctx context.Context, standardID int, data interface{}) error {
+func (s *MaterializedJSONService) updateStandard(ctx context.Context, standardID int, data any) error {
 	var standard types.Standard
 
 	// If data is provided, use it directly
@@ -154,7 +154,7 @@ func (s *MaterializedJSONService) updateStandard(ctx context.Context, standardID
 			standard = std
 		} else {
 			// Try to convert from map
-			if dataMap, ok := data.(map[string]interface{}); ok {
+			if dataMap, ok := data.(map[string]any); ok {
 				if id, ok := dataMap["id"].(float64); ok {
 					standard.ID = int(id)
 				}
@@ -183,7 +183,7 @@ func (s *MaterializedJSONService) updateStandard(ctx context.Context, standardID
 	return s.updateMaterializedQuery(ctx, "standard", standardID, jsonData)
 }
 
-func (s *MaterializedJSONService) updateRequirement(ctx context.Context, requirementID int, data interface{}) error {
+func (s *MaterializedJSONService) updateRequirement(ctx context.Context, requirementID int, data any) error {
 	var requirement types.Requirement
 
 	// If data is provided, use it directly
@@ -192,7 +192,7 @@ func (s *MaterializedJSONService) updateRequirement(ctx context.Context, require
 			requirement = req
 		} else {
 			// Try to convert from map
-			if dataMap, ok := data.(map[string]interface{}); ok {
+			if dataMap, ok := data.(map[string]any); ok {
 				if id, ok := dataMap["id"].(float64); ok {
 					requirement.ID = int(id)
 				}
@@ -222,7 +222,7 @@ func (s *MaterializedJSONService) updateRequirement(ctx context.Context, require
 	return s.updateMaterializedQuery(ctx, "requirement", requirementID, jsonData)
 }
 
-func (s *MaterializedJSONService) updateQuestion(ctx context.Context, questionID int, data interface{}) error {
+func (s *MaterializedJSONService) updateQuestion(ctx context.Context, questionID int, data any) error {
 	var question types.Question
 
 	// If data is provided, use it directly
@@ -231,7 +231,7 @@ func (s *MaterializedJSONService) updateQuestion(ctx context.Context, questionID
 			question = q
 		} else {
 			// Try to convert from map
-			if dataMap, ok := data.(map[string]interface{}); ok {
+			if dataMap, ok := data.(map[string]any); ok {
 				if id, ok := dataMap["id"].(float64); ok {
 					question.ID = int(id)
 				}
@@ -261,7 +261,7 @@ func (s *MaterializedJSONService) updateQuestion(ctx context.Context, questionID
 	return s.updateMaterializedQuery(ctx, "question", questionID, jsonData)
 }
 
-func (s *MaterializedJSONService) updateEvidence(ctx context.Context, evidenceID int, data interface{}) error {
+func (s *MaterializedJSONService) updateEvidence(ctx context.Context, evidenceID int, data any) error {
 	var evidence types.Evidence
 
 	// If data is provided, use it directly
@@ -270,7 +270,7 @@ func (s *MaterializedJSONService) updateEvidence(ctx context.Context, evidenceID
 			evidence = ev
 		} else {
 			// Try to convert from map
-			if dataMap, ok := data.(map[string]interface{}); ok {
+			if dataMap, ok := data.(map[string]any); ok {
 				if id, ok := dataMap["id"].(float64); ok {
 					evidence.ID = int(id)
 				}
@@ -294,7 +294,7 @@ func (s *MaterializedJSONService) updateEvidence(ctx context.Context, evidenceID
 	return s.updateQuestion(ctx, question.ID, nil)
 }
 
-func (s *MaterializedJSONService) updateParentEntities(ctx context.Context, entityType events.EntityType, entityID int, parentType events.EntityType, parentID interface{}) error {
+func (s *MaterializedJSONService) updateParentEntities(ctx context.Context, entityType events.EntityType, entityID int, parentType events.EntityType, parentID any) error {
 	switch entityType {
 	case events.EntityEvidence:
 		// If we already know the parent question ID, use it

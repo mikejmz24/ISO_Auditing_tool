@@ -1,4 +1,4 @@
-package repositories
+package repositories_test
 
 import (
 	"ISO_Auditing_Tool/pkg/repositories"

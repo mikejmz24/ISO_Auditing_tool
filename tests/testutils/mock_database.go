@@ -10,12 +10,12 @@ type MockDatabase struct {
 	mock.Mock
 }
 
-func (m *MockDatabase) Query(query string, args ...interface{}) (*sql.Rows, error) {
+func (m *MockDatabase) Query(query string, args ...any) (*sql.Rows, error) {
 	argsMock := m.Called(query, args)
 	return argsMock.Get(0).(*sql.Rows), argsMock.Error(1)
 }
 
-func (m *MockDatabase) Exec(query string, args ...interface{}) (sql.Result, error) {
+func (m *MockDatabase) Exec(query string, args ...any) (sql.Result, error) {
 	argsMock := m.Called(query, args)
 	return argsMock.Get(0).(sql.Result), argsMock.Error(1)
 }

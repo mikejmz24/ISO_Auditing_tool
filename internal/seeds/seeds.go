@@ -162,7 +162,7 @@ func insertBatch(db *sql.DB, config SeedConfig, records [][]string, batchSize in
 	query := buildInsertQuery(config.TableName, config.Columns, batchSize)
 
 	// Flatten all values into a single slice for the prepared statement
-	args := make([]interface{}, 0, batchSize*len(config.Columns))
+	args := make([]any, 0, batchSize*len(config.Columns))
 	for _, record := range records {
 		for _, v := range record {
 			if v == "" {

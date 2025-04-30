@@ -35,7 +35,7 @@ func GetValidator() *validator.Validate {
 }
 
 // ValidateStruct validates a struct and returns a structured custom error
-func ValidateStruct(data interface{}) *custom_errors.CustomError {
+func ValidateStruct(data any) *custom_errors.CustomError {
 	validate := GetValidator()
 	err := validate.Struct(data)
 	if err == nil {
