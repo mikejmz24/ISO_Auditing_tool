@@ -221,51 +221,58 @@ type User struct {
 	Name string `json:"name"`
 }
 
-// Create a package-level validator instance
-// var validate *validator.Validate
+// AuditContentModification represents a modification to audit content
+type AuditContentModification struct {
+	ContentType     string          `json:"content_type"`     // "requirement", "question", "evidence"
+	ContentID       int             `json:"content_id"`       // ID of the content being modified
+	Action          string          `json:"action"`           // "modify", "add", "remove"
+	ModifiedContent json.RawMessage `json:"modified_content"` // New/modified content as JSON
+	OriginalContent json.RawMessage `json:"original_content"` // Original content for reference
+	ModifiedBy      int             `json:"modified_by"`      // User ID who made the change
+	ModifiedAt      time.Time       `json:"modified_at"`      // When the change was made
+	Reason          string          `json:"reason"`           // Optional reason for the change
+}
 
-// Initialize validator withi custom validations
-// func InitValidator() error {
-// 	validate = validator.New()
-//
-// 	if err := RegisterCustomValidators(validate); err != nil {
-// 		return fmt.Errorf("Failed to register custom validators, %w", err)
-// 	}
-// 	// return RegisterCustomValidators(validate)
-// 	return nil
-// }
-//
-// func RegisterCustomValidators(v *validator.Validate) error {
-// 	err := v.RegisterValidation("not_boolean", validateNotBoolean)
-// 	if err != nil {
-// 		return fmt.Errorf("failed to register not_boolean validator: %w", err)
-// 	}
-// 	return nil
-// }
+// RequirementModification represents a modified requirement
+type RequirementModification struct {
+	ID                  int    `json:"id"`
+	StandardID          int    `json:"standard_id"`
+	LevelID             int    `json:"level_id"`
+	ParentID            int    `json:"parent_id"`
+	ReferenceCode       string `json:"reference_code"`
+	Name                string `json:"name"`
+	Description         string `json:"description"`          // This is what gets modified
+	OriginalDescription string `json:"original_description"` // Keep original for reference
+}
 
-// func (f *ISOStandardForm) Validate() *custom_errors.CustomError {
-// 	// Empty string
-// 	if f.Name == "" {
-// 		return custom_errors.EmptyField("string", "name")
-// 	}
-//
-// 	if err := validate.Struct(f); err != nil {
-// 		// Process validation errors
-// 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
-// 			for _, e := range validationErrors {
-// 				switch e.Tag() {
-// 				case "required":
-// 					return custom_errors.EmptyField("string", "name")
-// 				case "min":
-// 					return custom_errors.MinFieldCharacters("name", 2)
-// 				case "max":
-// 					return custom_errors.MaxFieldCharacters("name", 100)
-// 				case "not_boolean":
-// 					return custom_errors.NewCustomError(201, "NOT Boolean error", nil)
-// 				}
-// 			}
-// 		}
-// 		return custom_errors.NewCustomError(http.StatusInternalServerError, "Unexpected validation error", nil)
-// 	}
-// 	return nil
-// }
+// AuditContentDraft represents the draft structure for content modifications
+type AuditContentDraft struct {
+	TypeID   int                      `json:"type_id"`   // Reference to "audit_content" type
+	ObjectID int                      `json:"object_id"` // ID of content being modified
+	StatusID int                      `json:"status_id"` // Draft status
+	Version  int                      `json:"version"`
+	Data     AuditContentModification `json:"data"`    // The modification details
+	UserID   int                      `json:"user_id"` // Admin making the change
+}
+
+// RequirementEditForm represents the form for editing requirements
+type RequirementEditForm struct {
+	RequirementID int    `form:"requirement_id" validate:"required"`
+	Name          string `form:"name" validate:"required,min=3,max=255"`
+	Description   string `form:"description" validate:"required,min=10"`
+	Reason        string `form:"reason" validate:"max=500"`
+}
+
+// Validate validates the requirement edit form
+func (f *RequirementEditForm) Validate() error {
+	if f.RequirementID <= 0 {
+		return ErrRequired
+	}
+	if f.Name == "" {
+		return ErrRequired
+	}
+	if f.Description == "" {
+		return ErrRequired
+	}
+	return nil
+}

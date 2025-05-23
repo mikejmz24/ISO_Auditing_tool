@@ -18,14 +18,18 @@ func NewDraftService(repo repositories.DraftRepository) *DraftService {
 
 func (s *DraftService) Create(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	return s.Repo.CreateDraft(ctx, draft)
+}
 
-	// Create
-	// GetByID
-	// Update
-	// Delete
-	// List
+func (s *DraftService) GetByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
+	return s.Repo.GetByID(ctx, draft)
 }
 
 func (s *DraftService) Update(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	return s.Repo.UpdateDraft(ctx, draft)
 }
+
+func (s *DraftService) Delete(ctx context.Context, draft types.Draft) (types.Draft, error) {
+	return s.Repo.Delete(ctx, draft)
+}
+
+// List

@@ -48,6 +48,25 @@ func (r *repository) CreateDraft(ctx context.Context, draft types.Draft) (types.
 	return draft, nil
 }
 
+func (r *repository) GetByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
+	query := ``
+	result, err := r.db.ExecContext(
+		ctx,
+		query,
+		draft.ID,
+	)
+	if err != nil {
+		return draft, fmt.Errorf("Failed to get draft by ID: %w", err)
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return draft, fmt.Errorf("Failed to get rows affected: %d, %w", rows, err)
+	}
+
+	return draft, nil
+}
+
 func (r *repository) UpdateDraft(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	query := `
   UPDATE drafts
@@ -71,4 +90,70 @@ func (r *repository) UpdateDraft(ctx context.Context, draft types.Draft) (types.
 	}
 
 	return draft, nil
+}
+
+func (r *repository) Delete(ctx context.Context, draft types.Draft) (types.Draft, error) {
+	query := ``
+	result, err := r.db.ExecContext(
+		ctx,
+		query,
+		draft.ID,
+	)
+	if err != nil {
+		return draft, fmt.Errorf("Failed to delete draft by ID: %w", err)
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return draft, fmt.Errorf("Failed to get rows affected: %d, %w", rows, err)
+	}
+
+	return draft, nil
+}
+
+// UpdateRequirementAndDeleteDraft atomically updates a requirement and deletes the associated draft
+func (r *repository) UpdateRequirementAndDeleteDraft(ctx context.Context, requirement types.Requirement, draft types.Draft) (types.Requirement, error) {
+	// Start transaction
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return types.Requirement{}, fmt.Errorf("failed to start transaction: %w", err)
+	}
+	defer tx.Rollback() // Safe to call even after commit
+
+	// 1. Update requirement in transaction
+	updateQuery := `
+		UPDATE requirement 
+		SET standard_id = ?, requirement_level_id = ?, parent_id = ?, 
+		    reference_code = ?, name = ?, description = ?
+		WHERE id = ?
+	`
+
+	_, err = tx.ExecContext(
+		ctx,
+		updateQuery,
+		requirement.StandardID,
+		requirement.LevelID,
+		requirement.ParentID,
+		requirement.ReferenceCode,
+		requirement.Name,
+		requirement.Description,
+		requirement.ID,
+	)
+	if err != nil {
+		return types.Requirement{}, fmt.Errorf("failed to update requirement: %w", err)
+	}
+
+	// 2. Delete draft in transaction
+	deleteQuery := `DELETE FROM drafts WHERE id = ?`
+	_, err = tx.ExecContext(ctx, deleteQuery, draft)
+	if err != nil {
+		return types.Requirement{}, fmt.Errorf("failed to delete draft: %w", err)
+	}
+
+	// 3. Commit transaction
+	if err := tx.Commit(); err != nil {
+		return types.Requirement{}, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return requirement, nil
 }

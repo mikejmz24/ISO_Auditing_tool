@@ -3,6 +3,7 @@ package services_test
 import (
 	"ISO_Auditing_Tool/pkg/services"
 	"ISO_Auditing_Tool/pkg/types"
+	"ISO_Auditing_Tool/tests/testutils"
 	"context"
 	"errors"
 	"testing"
@@ -18,37 +19,22 @@ type MockDraftRepository struct {
 	mock.Mock
 }
 
-func (m *MockDraftRepository) CreateDraft(ctx context.Context, draft types.Draft) (types.Draft, error) {
-	args := m.Called(ctx, draft)
-	return args.Get(0).(types.Draft), args.Error(1)
-}
-
-func (m *MockDraftRepository) GetDraftByID(ctx context.Context, id int) (types.Draft, error) {
-	args := m.Called(ctx, id)
-	return args.Get(0).(types.Draft), args.Error(1)
-}
-
-func (m *MockDraftRepository) UpdateDraft(ctx context.Context, draft types.Draft) (types.Draft, error) {
-	args := m.Called(ctx, draft)
-	return args.Get(0).(types.Draft), args.Error(1)
-}
-
 // Define test suites
 type DraftServiceSuccessSuite struct {
 	suite.Suite
-	mockRepo *MockDraftRepository
+	mockRepo *testutils.MockDraftRepository
 	service  *services.DraftService
 }
 
 type DraftServiceErrorSuite struct {
 	suite.Suite
-	mockRepo *MockDraftRepository
+	mockRepo *testutils.MockDraftRepository
 	service  *services.DraftService
 }
 
 // SetupTest initializes test dependencies before each test
 func (suite *DraftServiceSuccessSuite) SetupTest() {
-	suite.mockRepo = new(MockDraftRepository)
+	suite.mockRepo = new(testutils.MockDraftRepository)
 	suite.service = services.NewDraftService(suite.mockRepo)
 }
 
@@ -59,7 +45,7 @@ func (suite *DraftServiceSuccessSuite) TearDownTest() {
 
 // SetupTest initializes test dependencies before each test
 func (suite *DraftServiceErrorSuite) SetupTest() {
-	suite.mockRepo = new(MockDraftRepository)
+	suite.mockRepo = new(testutils.MockDraftRepository)
 	suite.service = services.NewDraftService(suite.mockRepo)
 }
 

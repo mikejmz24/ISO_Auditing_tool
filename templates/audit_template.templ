@@ -1,0 +1,242 @@
+// pkg/templates/audit_template.templ
+package templates
+
+import (
+	"ISO_Auditing_Tool/pkg/types"
+	"fmt"
+)
+
+// AuditTemplateViewModel contains the data for the audit template view
+type AuditTemplateViewModel struct {
+	Title        string
+	StandardID   int
+	StandardName string
+	Requirements []types.Requirement
+}
+
+// Layout template for consistent page structure
+templ Layout(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+			<script src="https://unpkg.com/htmx.org@1.9.4" integrity="sha384-zUfuhFKKZCbHTY6aRR46gxiqszMk5tcHjsVFxnUo8VMus4kHGVdIYVbOYYNlKmHV" crossorigin="anonymous"></script>
+			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+		</head>
+		<body class="bg-gray-50">
+			<div class="container mx-auto px-4 py-8">
+				{ children... }
+			</div>
+		</body>
+	</html>
+}
+
+// Navigation component for the audit template
+templ TemplateNavigation(standardName string) {
+	<nav class="bg-white shadow-md rounded-lg p-4 mb-6">
+		<div class="flex justify-between items-center">
+			<div class="flex items-center space-x-4">
+				<svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+				</svg>
+				<span class="font-semibold text-xl text-gray-800">{ standardName } Audit Template</span>
+			</div>
+			<div class="flex space-x-2">
+				<button
+					class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+					hx-post="/api/audit-template/save"
+					hx-target="#notification"
+				>
+					Save
+				</button>
+				<button
+					class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+					hx-post="/api/audit-template/publish"
+					hx-target="#notification"
+				>
+					Publish
+				</button>
+			</div>
+		</div>
+	</nav>
+	<div id="notification" class="hidden"></div>
+}
+
+// Requirement component for displaying a single requirement
+templ RequirementItem(req types.Requirement) {
+	<div class="bg-white p-4 rounded-lg shadow-md mb-4" id={ "requirement-" + fmt.Sprint(req.ID) }>
+		<div class="flex justify-between items-center">
+			<h3 class="font-medium text-lg">{ req.Name }</h3>
+			<div class="flex space-x-2">
+				<button
+					class="text-blue-600 hover:text-blue-800"
+					hx-get={ "/api/requirement/" + fmt.Sprint(req.ID) + "/edit" }
+					hx-target={ "#requirement-" + fmt.Sprint(req.ID) }
+				>
+					<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+					</svg>
+				</button>
+				<button
+					class="text-red-600 hover:text-red-800"
+					hx-delete={ "/api/requirement/" + fmt.Sprint(req.ID) }
+					hx-target={ "#requirement-" + fmt.Sprint(req.ID) }
+					hx-confirm="Are you sure you want to remove this requirement?"
+				>
+					<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+					</svg>
+				</button>
+			</div>
+		</div>
+		if req.Description != "" {
+			<p class="text-gray-600 mt-2">{ req.Description }</p>
+		}
+	</div>
+}
+
+// Requirements section for displaying all requirements
+templ RequirementsList(requirements []types.Requirement) {
+	<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+		<div class="flex justify-between items-center mb-4">
+			<h2 class="text-xl font-semibold text-gray-800">Requirements</h2>
+			<button
+				class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm"
+				hx-get="/api/requirement/new"
+				hx-target="#requirements-list"
+				hx-swap="beforeend"
+			>
+				Add Requirement
+			</button>
+		</div>
+		<div id="requirements-list">
+			if len(requirements) == 0 {
+				<p class="text-gray-500 italic">No requirements added yet. Click 'Add Requirement' to get started.</p>
+			} else {
+				for _, req := range requirements {
+					@RequirementItem(req)
+				}
+			}
+		</div>
+	</div>
+}
+
+// Main template for audit templates
+templ AuditTemplate(viewModel AuditTemplateViewModel) {
+	@Layout(viewModel.Title) {
+		@TemplateNavigation(viewModel.StandardName)
+		<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+			<h1 class="text-2xl font-bold text-gray-800 mb-4">{ viewModel.Title }</h1>
+			<div class="grid grid-cols-2 gap-4 mb-4">
+				<div>
+					<p class="text-sm text-gray-500">Standard</p>
+					<p class="font-medium">{ viewModel.StandardName }</p>
+				</div>
+				<div>
+					<p class="text-sm text-gray-500">ID</p>
+					<p class="font-medium">{ fmt.Sprint(viewModel.StandardID) }</p>
+				</div>
+			</div>
+		</div>
+		@RequirementsList(viewModel.Requirements)
+		<div class="bg-white rounded-lg shadow-md p-6">
+			<h2 class="text-xl font-semibold text-gray-800 mb-4">Notes</h2>
+			<textarea
+				class="w-full p-2 border border-gray-300 rounded"
+				rows="4"
+				placeholder="Add notes about this audit template..."
+				hx-post="/api/audit-template/notes"
+				hx-trigger="keyup changed delay:500ms"
+				hx-target="#notes-status"
+			></textarea>
+			<div id="notes-status" class="text-sm text-gray-500 mt-2"></div>
+		</div>
+	}
+}
+
+// EditRequirement component for editing a requirement
+templ EditRequirement(req types.Requirement) {
+	<div class="bg-white p-4 rounded-lg shadow-md mb-4" id={ "requirement-" + fmt.Sprint(req.ID) }>
+		<form hx-put={ "/api/requirement/" + fmt.Sprint(req.ID) } hx-target={ "#requirement-" + fmt.Sprint(req.ID) }>
+			<div class="mb-3">
+				<label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+				<input type="text" name="name" value={ req.Name } class="w-full p-2 border border-gray-300 rounded"/>
+			</div>
+			<div class="mb-3">
+				<label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+				<textarea name="description" class="w-full p-2 border border-gray-300 rounded" rows="3">{ req.Description }</textarea>
+			</div>
+			<div class="flex justify-end space-x-2">
+				<button
+					type="button"
+					class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition"
+					hx-get={ "/api/requirement/" + fmt.Sprint(req.ID) }
+					hx-target={ "#requirement-" + fmt.Sprint(req.ID) }
+				>
+					Cancel
+				</button>
+				<button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+					Save
+				</button>
+			</div>
+		</form>
+	</div>
+}
+
+// NewRequirement component for adding a new requirement
+templ NewRequirement() {
+	<div class="bg-white p-4 rounded-lg shadow-md mb-4" id="new-requirement">
+		<form hx-post="/api/requirement" hx-target="#requirements-list" hx-swap="beforeend">
+			<div class="mb-3">
+				<label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+				<input type="text" name="name" class="w-full p-2 border border-gray-300 rounded" placeholder="Requirement name"/>
+			</div>
+			<div class="mb-3">
+				<label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+				<textarea name="description" class="w-full p-2 border border-gray-300 rounded" rows="3" placeholder="Describe the requirement..."></textarea>
+			</div>
+			<div class="flex justify-end space-x-2">
+				<button
+					type="button"
+					class="px-3 py-1 border border-gray-300 rounded text-gray-700 hover:bg-gray-100 transition"
+					hx-get="/api/requirement/cancel"
+					hx-target="#new-requirement"
+					hx-swap="outerHTML"
+				>
+					Cancel
+				</button>
+				<button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+					Add
+				</button>
+			</div>
+		</form>
+	</div>
+}
+
+// NotificationMessage component for displaying notifications
+templ NotificationMessage(message string, isError bool) {
+	<div
+		class={ "p-4 mb-4 rounded-lg transition-opacity", templ.KV("bg-green-100 text-green-800", !isError), templ.KV("bg-red-100 text-red-800", isError) }
+		hx-swap-oob="true"
+		_="on load wait 5s then add .opacity-0 wait 300ms then remove me"
+	>
+		<div class="flex">
+			<div class="flex-shrink-0">
+				if isError {
+					<svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+					</svg>
+				} else {
+					<svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+					</svg>
+				}
+			</div>
+			<div class="ml-3">
+				<p class="text-sm">{ message }</p>
+			</div>
+		</div>
+	</div>
+}

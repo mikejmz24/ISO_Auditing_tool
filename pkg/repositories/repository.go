@@ -11,7 +11,9 @@ import (
 // Repository interface defines the methods for interacting with the database
 type DraftRepository interface {
 	CreateDraft(ctx context.Context, draft types.Draft) (types.Draft, error)
+	GetByID(ctx context.Context, draft types.Draft) (types.Draft, error)
 	UpdateDraft(ctx context.Context, draft types.Draft) (types.Draft, error)
+	Delete(ctx context.Context, draft types.Draft) (types.Draft, error)
 
 	// Add methods for REST, filtering, searching, etc..
 }
@@ -43,6 +45,8 @@ type StandardRepository interface {
 type RequirementRepository interface {
 	GetByIDRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error)
 	GetByIDWithQuestionsRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error)
+	UpdateRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error)
+	UpdateRequirementAndDeleteDraft(ctx context.Context, requirement types.Requirement, draft types.Draft) (types.Requirement, error)
 	// Add methods for filtering, searching, etc...
 }
 

@@ -83,7 +83,6 @@ func (m *MockStandardRepository) GetByIDStandard(ctx context.Context, standard t
 	args := m.Called(ctx, standard)
 	return args.Get(0).(types.Standard), args.Error(1)
 }
-
 func (m *MockStandardRepository) GetByIDWithFullHierarchyStandard(ctx context.Context, standard types.Standard) (types.Standard, error) {
 	args := m.Called(ctx, standard)
 	return args.Get(0).(types.Standard), args.Error(1)
@@ -113,12 +112,7 @@ type MockRequirementRepository struct {
 	mock.Mock
 }
 
-func (m *MockRequirementRepository) GetByIDRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
-	args := m.Called(ctx, requirement)
-	return args.Get(0).(types.Requirement), args.Error(1)
-}
-
-func (m *MockRequirementRepository) GetByIDWithQuestionsRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
+func (m *MockRequirementRepository) UpdateRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
 	args := m.Called(ctx, requirement)
 	return args.Get(0).(types.Requirement), args.Error(1)
 }

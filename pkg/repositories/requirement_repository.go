@@ -19,3 +19,7 @@ func (r *repository) GetByIDRequirement(ctx context.Context, requirement types.R
 func (r *repository) GetByIDWithQuestionsRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
 	return types.Requirement{}, nil
 }
+
+func (r *repository) UpdateRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
+	return types.Requirement{}, nil
+}
