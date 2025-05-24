@@ -1,9 +1,8 @@
-package testutils
+package mocks
 
 import (
 	"ISO_Auditing_Tool/pkg/types"
 	"context"
-
 	"github.com/stretchr/testify/mock"
 )
 
@@ -16,12 +15,7 @@ func (m *MockDraftRepository) CreateDraft(ctx context.Context, draft types.Draft
 	return args.Get(0).(types.Draft), args.Error(1)
 }
 
-func (m *MockDraftRepository) GetDraftByID(ctx context.Context, id int) (types.Draft, error) {
-	args := m.Called(ctx, id)
-	return args.Get(0).(types.Draft), args.Error(1)
-}
-
-func (m *MockDraftRepository) GetByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
+func (m *MockDraftRepository) GetDraftByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	args := m.Called(ctx, draft)
 	return args.Get(0).(types.Draft), args.Error(1)
 }
@@ -31,7 +25,7 @@ func (m *MockDraftRepository) UpdateDraft(ctx context.Context, draft types.Draft
 	return args.Get(0).(types.Draft), args.Error(1)
 }
 
-func (m *MockDraftRepository) Delete(ctx context.Context, draft types.Draft) (types.Draft, error) {
+func (m *MockDraftRepository) DeleteDraft(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	args := m.Called(ctx, draft)
 	return args.Get(0).(types.Draft), args.Error(1)
 }
@@ -41,11 +35,12 @@ func (m *MockDraftRepository) GetDraftsByTypeAndObject(ctx context.Context, type
 	return args.Get(0).([]types.Draft), args.Error(1)
 }
 
-func (m *MockDraftRepository) Create(ctx context.Context, draft types.Draft) (types.Draft, error) {
-	args := m.Called(ctx, draft)
-	return args.Get(0).(types.Draft), args.Error(1)
+func (m *MockDraftRepository) UpdateRequirementAndDeleteDraft(ctx context.Context, requirement types.Requirement, draft types.Draft) (types.Requirement, error) {
+	args := m.Called(ctx, requirement)
+	return args.Get(0).(types.Requirement), args.Error(1)
 }
 
+// Reset clears all expectations and calls
 func (m *MockDraftRepository) Reset() {
 	m.ExpectedCalls = nil
 	m.Calls = nil

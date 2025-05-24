@@ -1,13 +1,14 @@
 package web_test
 
 import (
-	apiController "ISO_Auditing_Tool/cmd/api/controllers"
-	webController "ISO_Auditing_Tool/cmd/web/controllers"
+	apiController "ISO_Auditing_Tool/pkg/controllers/api"
+	webController "ISO_Auditing_Tool/pkg/controllers/web"
 	"ISO_Auditing_Tool/pkg/custom_errors"
 	"ISO_Auditing_Tool/pkg/middleware"
 	"ISO_Auditing_Tool/pkg/types"
 	"ISO_Auditing_Tool/pkg/validators"
 	"ISO_Auditing_Tool/tests/testutils"
+	"ISO_Auditing_Tool/tests/unit/repositories/mocks"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -15,7 +16,6 @@ import (
 	"fmt"
 	"io"
 
-	// "log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -25,7 +25,6 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	// "github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -34,8 +33,8 @@ import (
 type TestSuite struct {
 	suite.Suite
 	router   *gin.Engine
-	mockRepo *testutils.MockIsoStandardRepository
-	standard types.ISOStandard
+	mockRepo *mocks.MockDraftRepository
+	standard types.Standard
 	cleanup  []func()
 }
 
@@ -47,11 +46,11 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func loadTestData(filePath string) types.ISOStandard {
+func loadTestData(filePath string) types.Standard {
 	data := getJSONData(filePath)
 
 	var jsonData struct {
-		ISOStandards []types.ISOStandard `json:"iso_standards"`
+		ISOStandards []types.Standard `json:"iso_standards"`
 	}
 	if err := json.Unmarshal(data, &jsonData); err != nil {
 		panic(fmt.Sprintf("Failed to unmarshal test data: %v", err))
@@ -92,7 +91,8 @@ func (suite *TestSuite) SetupTest() {
 }
 
 func (suite *TestSuite) setupMockRepo() {
-	suite.mockRepo = new(testutils.MockIsoStandardRepository)
+	// suite.mockRepo = new(testutils.MockIsoStandardRepository)
+	suite.mockRepo = new(mocks.MockDraftRepository)
 	if suite.mockRepo == nil {
 		panic("mockRepo is nil")
 	}

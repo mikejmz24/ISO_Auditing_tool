@@ -9,27 +9,34 @@ import (
 )
 
 type DraftService struct {
-	Repo repositories.DraftRepository
+	Repo repositories.DraftRepositoryInterface
 }
 
-func NewDraftService(repo repositories.DraftRepository) *DraftService {
+// ensure DraftService implements DraftServiceInterface
+var _ DraftServiceInterface = (*DraftService)(nil)
+
+func NewDraftService(repo repositories.DraftRepositoryInterface) DraftServiceInterface {
 	return &DraftService{Repo: repo}
+}
+
+func (s *DraftService) GetAll(ctx context.Context) ([]types.Draft, error) {
+	return s.Repo.GetAllDrafts(ctx)
 }
 
 func (s *DraftService) Create(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	return s.Repo.CreateDraft(ctx, draft)
 }
 
-func (s *DraftService) GetByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
-	return s.Repo.GetByID(ctx, draft)
-}
-
 func (s *DraftService) Update(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	return s.Repo.UpdateDraft(ctx, draft)
 }
 
+func (s *DraftService) GetByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
+	return s.Repo.GetDraftByID(ctx, draft)
+}
+
 func (s *DraftService) Delete(ctx context.Context, draft types.Draft) (types.Draft, error) {
-	return s.Repo.Delete(ctx, draft)
+	return s.Repo.DeleteDraft(ctx, draft)
 }
 
 // List

@@ -14,18 +14,18 @@ import (
 // AuditContentService manages modifications to audit content (requirements, questions, evidence)
 type AuditContentService struct {
 	DraftService    *DraftService
-	RequirementRepo repositories.RequirementRepository
-	QuestionRepo    repositories.QuestionRepository
-	EvidenceRepo    repositories.EvidenceRepository
+	RequirementRepo repositories.RequirementRepositoryInterface
+	QuestionRepo    repositories.QuestionRepositoryInterface
+	EvidenceRepo    repositories.EvidenceRepositoryInterface
 	EventBus        *events.EventBus
 }
 
 // NewAuditContentService creates a new AuditContentService
 func NewAuditContentService(
 	draftService *DraftService,
-	requirementRepo repositories.RequirementRepository,
-	questionRepo repositories.QuestionRepository,
-	evidenceRepo repositories.EvidenceRepository,
+	requirementRepo repositories.RequirementRepositoryInterface,
+	questionRepo repositories.QuestionRepositoryInterface,
+	evidenceRepo repositories.EvidenceRepositoryInterface,
 	eventBus *events.EventBus,
 ) *AuditContentService {
 	return &AuditContentService{

@@ -6,16 +6,22 @@ import (
 	"database/sql"
 )
 
-func NewQuestionRepository(db *sql.DB) (QuestionRepository, error) {
-	return &repository{
-		db: db,
-	}, nil
+// DraftRepository is the concrete implementation
+type QuestionRepository struct {
+	db *sql.DB
 }
 
-func (r *repository) GetByIDQuestion(ctx context.Context, question types.Question) (types.Question, error) {
+// Ensure DraftRepository implements DraftRepositoryInterface
+var _ QuestionRepositoryInterface = (*QuestionRepository)(nil)
+
+func NewQuestionRepository(db *sql.DB) (QuestionRepositoryInterface, error) {
+	return &QuestionRepository{db: db}, nil
+}
+
+func (r *QuestionRepository) GetByIDQuestion(ctx context.Context, question types.Question) (types.Question, error) {
 	return types.Question{}, nil
 }
 
-func (r *repository) GetByIDWithEvidenceQuestion(ctx context.Context, question types.Question) (types.Question, error) {
+func (r *QuestionRepository) GetByIDWithEvidenceQuestion(ctx context.Context, question types.Question) (types.Question, error) {
 	return types.Question{}, nil
 }

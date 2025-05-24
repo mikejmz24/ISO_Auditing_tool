@@ -19,10 +19,10 @@ import (
 
 // HTMLCacheService manages the generation and caching of HTML content
 type HTMLCacheService struct {
-	HTMLRepo         repositories.MaterializedHTMLQueryRepository
-	JSONRepo         repositories.MaterializedJSONQueryRepository
-	StandardRepo     repositories.StandardRepository
-	RequirementRepo  repositories.RequirementRepository
+	HTMLRepo         repositories.MaterializedHTMLQueryRepositoryInterface
+	JSONRepo         repositories.MaterializedJSONQueryRepositoryInterface
+	StandardRepo     repositories.StandardRepositoryInterface
+	RequirementRepo  repositories.RequirementRepositoryInterface
 	EventBus         *events.EventBus
 	debounceTimers   map[string]*time.Timer
 	debounceInterval time.Duration
@@ -31,10 +31,10 @@ type HTMLCacheService struct {
 
 // NewHTMLCacheService creates a new HTMLCacheService
 func NewHTMLCacheService(
-	htmlRepo repositories.MaterializedHTMLQueryRepository,
-	jsonRepo repositories.MaterializedJSONQueryRepository,
-	standardRepo repositories.StandardRepository,
-	requirementRepo repositories.RequirementRepository,
+	htmlRepo repositories.MaterializedHTMLQueryRepositoryInterface,
+	jsonRepo repositories.MaterializedJSONQueryRepositoryInterface,
+	standardRepo repositories.StandardRepositoryInterface,
+	requirementRepo repositories.RequirementRepositoryInterface,
 	eventBus *events.EventBus,
 ) *HTMLCacheService {
 	service := &HTMLCacheService{

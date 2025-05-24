@@ -9,13 +9,19 @@ import (
 	"fmt"
 )
 
-func NewMaterializedQueriesHTMLRepository(db *sql.DB) (MaterializedHTMLQueryRepository, error) {
-	return &repository{
-		db: db,
-	}, nil
+// DraftRepository is the concrete implementation
+type MaterializedHTMLQueryRepository struct {
+	db *sql.DB
 }
 
-func (r *repository) CreateMaterializedHTMLQuery(ctx context.Context, materializedHTMLQuery types.MaterializedHTMLQuery) (types.MaterializedHTMLQuery, error) {
+// Ensure DraftRepository implements DraftRepositoryInterface
+var _ MaterializedHTMLQueryRepositoryInterface = (*MaterializedHTMLQueryRepository)(nil)
+
+func NewMaterializedQueriesHTMLRepository(db *sql.DB) (MaterializedHTMLQueryRepositoryInterface, error) {
+	return &MaterializedHTMLQueryRepository{db: db}, nil
+}
+
+func (r *MaterializedHTMLQueryRepository) CreateMaterializedHTMLQuery(ctx context.Context, materializedHTMLQuery types.MaterializedHTMLQuery) (types.MaterializedHTMLQuery, error) {
 	query := `
   INSERT INTO materialized_html_queries (
     query_name, view_path, html_content, version, error_count, last_error
@@ -49,7 +55,7 @@ func (r *repository) CreateMaterializedHTMLQuery(ctx context.Context, materializ
 	return materializedHTMLQuery, nil
 }
 
-func (r *repository) GetByNameMaterializedHTMLQuery(ctx context.Context, name string) (types.MaterializedHTMLQuery, error) {
+func (r *MaterializedHTMLQueryRepository) GetByNameMaterializedHTMLQuery(ctx context.Context, name string) (types.MaterializedHTMLQuery, error) {
 	query := `
   SELECT 
     id, query_name, view_path, html_content, version,
@@ -96,7 +102,7 @@ func (r *repository) GetByNameMaterializedHTMLQuery(ctx context.Context, name st
 	return materializedHTMLQuery, nil
 }
 
-func (r *repository) UpdateMaterializedHTMLQuery(ctx context.Context, materializedHTMLQuery types.MaterializedHTMLQuery) (types.MaterializedHTMLQuery, error) {
+func (r *MaterializedHTMLQueryRepository) UpdateMaterializedHTMLQuery(ctx context.Context, materializedHTMLQuery types.MaterializedHTMLQuery) (types.MaterializedHTMLQuery, error) {
 	query := `
 	UPDATE materialized_html_queries
 	SET 

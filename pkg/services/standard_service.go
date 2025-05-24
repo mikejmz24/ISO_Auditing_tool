@@ -9,10 +9,10 @@ import (
 )
 
 type StandardService struct {
-	Repo repositories.StandardRepository
+	Repo repositories.StandardRepositoryInterface
 }
 
-func NewStandardService(repo repositories.StandardRepository) *StandardService {
+func NewStandardService(repo repositories.StandardRepositoryInterface) *StandardService {
 	return &StandardService{Repo: repo}
 }
 

@@ -11,11 +11,11 @@ import (
 )
 
 type ApiDraftController struct {
-	Service *services.DraftService
+	Service services.DraftServiceInterface
 }
 
 // NewAPIDraftController creates a new instance of ApiDraftController
-func NewAPIDraftController(service *services.DraftService) *ApiDraftController {
+func NewAPIDraftController(service services.DraftServiceInterface) *ApiDraftController {
 	return &ApiDraftController{Service: service}
 }
 
@@ -59,4 +59,14 @@ func (cc *ApiDraftController) Update(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Updated row with ID": draft.ID})
+}
+
+func (cc *ApiDraftController) GetAll(c *gin.Context) {
+	drafts, err := cc.Service.GetAll(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": drafts, "total": len(drafts)})
 }

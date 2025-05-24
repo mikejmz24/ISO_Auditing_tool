@@ -13,11 +13,11 @@ import (
 )
 
 type MaterializedJSONService struct {
-	JSONRepo         repositories.MaterializedJSONQueryRepository
-	StandardRepo     repositories.StandardRepository
-	RequirementRepo  repositories.RequirementRepository
-	QuestionRepo     repositories.QuestionRepository
-	EvidenceRepo     repositories.EvidenceRepository
+	JSONRepo         repositories.MaterializedJSONQueryRepositoryInterface
+	StandardRepo     repositories.StandardRepositoryInterface
+	RequirementRepo  repositories.RequirementRepositoryInterface
+	QuestionRepo     repositories.QuestionRepositoryInterface
+	EvidenceRepo     repositories.EvidenceRepositoryInterface
 	EventBus         *events.EventBus
 	debounceTimers   map[string]*time.Timer
 	debounceInterval time.Duration
@@ -26,11 +26,11 @@ type MaterializedJSONService struct {
 
 // Service calls the MaterializedJSONQuery, Standard, Requirement, Question, Evidence repos and the Event Bus
 func NewMaterializedJSONService(
-	jsonRepo repositories.MaterializedJSONQueryRepository,
-	standardRepo repositories.StandardRepository,
-	requirementRepo repositories.RequirementRepository,
-	questionRepo repositories.QuestionRepository,
-	evidenceRepo repositories.EvidenceRepository,
+	jsonRepo repositories.MaterializedJSONQueryRepositoryInterface,
+	standardRepo repositories.StandardRepositoryInterface,
+	requirementRepo repositories.RequirementRepositoryInterface,
+	questionRepo repositories.QuestionRepositoryInterface,
+	evidenceRepo repositories.EvidenceRepositoryInterface,
 	eventBus *events.EventBus,
 ) *MaterializedJSONService {
 	service := &MaterializedJSONService{

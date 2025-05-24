@@ -118,7 +118,7 @@ func NewServer() (*Server, error) {
 		return nil, fmt.Errorf("failed to create draft repository: %w", err)
 	}
 
-	materializedJSONQueryRepo, err := repositories.NewMaterializedQueriesJSONRepository(db.DB())
+	materializedJSONQueryRepo, err := repositories.NewMaterializedJSONQueryRepository(db.DB())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create materialized JSON query repository: %w", err)
 	}

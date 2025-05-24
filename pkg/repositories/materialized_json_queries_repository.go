@@ -9,17 +9,23 @@ import (
 	"fmt"
 )
 
-func NewMaterializedQueriesJSONRepository(db *sql.DB) (MaterializedJSONQueryRepository, error) {
-	return &repository{
-		db: db,
-	}, nil
+// DraftRepository is the concrete implementation
+type MaterializedJSONQueryRepository struct {
+	db *sql.DB
 }
 
-func (r *repository) GetByIDWithFullHierarchyMaterializedJSONQuery(ctx context.Context, materializedJSONQuery types.MaterializedJSONQuery) (types.MaterializedJSONQuery, error) {
+// Ensure DraftRepository implements DraftRepositoryInterface
+var _ MaterializedJSONQueryRepositoryInterface = (*MaterializedJSONQueryRepository)(nil)
+
+func NewMaterializedJSONQueryRepository(db *sql.DB) (MaterializedJSONQueryRepositoryInterface, error) {
+	return &MaterializedJSONQueryRepository{db: db}, nil
+}
+
+func (r *MaterializedJSONQueryRepository) GetByIDWithFullHierarchyMaterializedJSONQuery(ctx context.Context, materializedJSONQuery types.MaterializedJSONQuery) (types.MaterializedJSONQuery, error) {
 	return types.MaterializedJSONQuery{}, nil
 }
 
-func (r *repository) GetByNameMaterializedJSONQuery(ctx context.Context, name string) (types.MaterializedJSONQuery, error) {
+func (r *MaterializedJSONQueryRepository) GetByNameMaterializedJSONQuery(ctx context.Context, name string) (types.MaterializedJSONQuery, error) {
 	query := `
   SELECT 
     id, query_name, query_definition, entity_type, entity_id, 
@@ -68,12 +74,12 @@ func (r *repository) GetByNameMaterializedJSONQuery(ctx context.Context, name st
 	return materializedJSONQuery, nil
 }
 
-func (r *repository) GetByEntityTypeAndIDMaterializedJSONQuery(ctx context.Context, entityType string, entityID int) (types.MaterializedJSONQuery, error) {
+func (r *MaterializedJSONQueryRepository) GetByEntityTypeAndIDMaterializedJSONQuery(ctx context.Context, entityType string, entityID int) (types.MaterializedJSONQuery, error) {
 
 	return types.MaterializedJSONQuery{}, nil
 }
 
-func (r *repository) CreateMaterializedJSONQuery(ctx context.Context, materializedJSONQuery types.MaterializedJSONQuery) (types.MaterializedJSONQuery, error) {
+func (r *MaterializedJSONQueryRepository) CreateMaterializedJSONQuery(ctx context.Context, materializedJSONQuery types.MaterializedJSONQuery) (types.MaterializedJSONQuery, error) {
 	query := `
   INSERT INTO materialized_json_queries (
     query_name, query_definition, entity_type, entity_id, data, version, error_count, last_error
@@ -109,7 +115,7 @@ func (r *repository) CreateMaterializedJSONQuery(ctx context.Context, materializ
 	return materializedJSONQuery, nil
 }
 
-func (r *repository) UpdateMaterializedJSONQuery(ctx context.Context, materializedJSONQuery types.MaterializedJSONQuery) (types.MaterializedJSONQuery, error) {
+func (r *MaterializedJSONQueryRepository) UpdateMaterializedJSONQuery(ctx context.Context, materializedJSONQuery types.MaterializedJSONQuery) (types.MaterializedJSONQuery, error) {
 	query := `
 	UPDATE materialized_json_queries
 	SET 

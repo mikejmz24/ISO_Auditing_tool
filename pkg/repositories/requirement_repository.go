@@ -6,20 +6,30 @@ import (
 	"database/sql"
 )
 
-func NewRequirementRepository(db *sql.DB) (RequirementRepository, error) {
-	return &repository{
-		db: db,
-	}, nil
+// DraftRepository is the concrete implementation
+type RequirementRepository struct {
+	db *sql.DB
 }
 
-func (r *repository) GetByIDRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
+// Ensure DraftRepository implements DraftRepositoryInterface
+var _ RequirementRepositoryInterface = (*RequirementRepository)(nil)
+
+func NewRequirementRepository(db *sql.DB) (RequirementRepositoryInterface, error) {
+	return &RequirementRepository{db: db}, nil
+}
+
+func (r *RequirementRepository) GetByIDRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
 	return types.Requirement{}, nil
 }
 
-func (r *repository) GetByIDWithQuestionsRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
+func (r *RequirementRepository) GetByIDWithQuestionsRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
 	return types.Requirement{}, nil
 }
 
-func (r *repository) UpdateRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
+func (r *RequirementRepository) UpdateRequirement(ctx context.Context, requirement types.Requirement) (types.Requirement, error) {
+	return types.Requirement{}, nil
+}
+
+func (r *RequirementRepository) UpdateRequirementAndDeleteDraft(ctx context.Context, requirement types.Requirement, draft types.Draft) (types.Requirement, error) {
 	return types.Requirement{}, nil
 }

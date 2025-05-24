@@ -25,6 +25,7 @@ func (s *Server) RegisterRoutes(db *sql.DB) http.Handler {
 	{
 		api.POST("/drafts", s.apiDraftController.Create)
 		api.PUT("/drafts/:id", s.apiDraftController.Update)
+		api.GET("/drafts", s.apiDraftController.GetAll)
 		// api.GET("/iso_standards", s.apiIsoStandardController.GetAllISOStandards)
 		// api.GET("/iso_standards/:id", s.apiIsoStandardController.GetISOStandardByID)
 		// api.POST("/iso_standards", s.apiIsoStandardController.CreateISOStandard)
