@@ -240,7 +240,7 @@ func createTestContext(method, path string, body *bytes.Buffer) (*gin.Context, *
 
 func (suite *ApiDraftControllerHappyPathSuite) TestCreate_ValidInput_ReturnsCreated() {
 	// Setup
-	suite.mockService.On("Create", mock.AnythingOfType("*context.valueCtx"), mock.AnythingOfType("types.Draft")).
+	suite.mockService.On("Create", mock.Anything, mock.AnythingOfType("types.Draft")).
 		Return(testDraft, nil)
 
 	c, w := createTestContext("POST", "/drafts", bytes.NewBuffer(testDraftJSON))
@@ -255,7 +255,7 @@ func (suite *ApiDraftControllerHappyPathSuite) TestCreate_ValidInput_ReturnsCrea
 
 func (suite *ApiDraftControllerHappyPathSuite) TestUpdate_ValidInput_ReturnsOK() {
 	// Setup
-	suite.mockService.On("Update", mock.AnythingOfType("*context.valueCtx"), mock.AnythingOfType("types.Draft")).
+	suite.mockService.On("Update", mock.Anything, mock.AnythingOfType("types.Draft")).
 		Return(testDraft, nil)
 
 	c, w := createTestContext("PUT", "/drafts/1", bytes.NewBuffer(testDraftJSON))
@@ -284,7 +284,7 @@ func (suite *ApiDraftControllerErrorSuite) TestCreate_InvalidJSON_ReturnsBadRequ
 
 func (suite *ApiDraftControllerErrorSuite) TestCreate_ServiceError_ReturnsInternalServerError() {
 	// Setup
-	suite.mockService.On("Create", mock.AnythingOfType("*context.valueCtx"), mock.AnythingOfType("types.Draft")).
+	suite.mockService.On("Create", mock.Anything, mock.AnythingOfType("types.Draft")).
 		Return(types.Draft{}, errors.New("service error"))
 
 	c, w := createTestContext("POST", "/drafts", bytes.NewBuffer(testDraftJSON))
@@ -323,7 +323,7 @@ func (suite *ApiDraftControllerErrorSuite) TestUpdate_InvalidID_ReturnsBadReques
 
 func (suite *ApiDraftControllerErrorSuite) TestUpdate_ServiceError_ReturnsInternalServerError() {
 	// Setup
-	suite.mockService.On("Update", mock.AnythingOfType("*context.valueCtx"), mock.AnythingOfType("types.Draft")).
+	suite.mockService.On("Update", mock.Anything, mock.AnythingOfType("types.Draft")).
 		Return(types.Draft{}, errors.New("service error"))
 
 	c, w := createTestContext("PUT", "/drafts/1", bytes.NewBuffer(testDraftJSON))

@@ -15,6 +15,11 @@ func (m *MockDraftService) Create(ctx context.Context, draft types.Draft) (types
 	return args.Get(0).(types.Draft), args.Error(1)
 }
 
+func (m *MockDraftService) GetAll(ctx context.Context) ([]types.Draft, error) {
+	args := m.Called(ctx)
+	return args.Get(0).([]types.Draft), args.Error(1)
+}
+
 func (m *MockDraftService) GetByID(ctx context.Context, draft types.Draft) (types.Draft, error) {
 	args := m.Called(ctx, draft)
 	return args.Get(0).(types.Draft), args.Error(1)
